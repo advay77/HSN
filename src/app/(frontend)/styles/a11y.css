@@ -68,3 +68,15 @@
 
 /* Bigger text: buttons may wrap onto two lines instead of running off narrow screens. */
 :is(.a-size-1,.a-size-2,.a-size-3,.a-size-4) .pg main :is(.btn,button){white-space:normal !important;height:auto !important;min-height:44px;max-width:100%;text-align:center}
+
+/* Colour-blind-safe on dark sections: blue headings would vanish on teal/green, so they stay light. */
+.a-cb .pg :is(.bg-teal,.bg-green) :is(.sec-title,.h1,.h2,.h3,.h4,.display,.metric,.metric-l){color:#FFFFFF !important}
+/* Colour-blind-safe buttons: a disabled primary button keeps its grey look (its text is grey). */
+.a-cb .pg .btn-p:disabled{background:#EDE7D8 !important;border-color:transparent !important}
+
+/* Wide letter or word spacing makes long button labels overflow narrow screens: let them wrap too. */
+:is(.a-ls-2,.a-ls-3,.a-ws-2,.a-ws-3) .pg main :is(.btn,button){white-space:normal !important;height:auto !important;min-height:44px;max-width:100%;text-align:center}
+
+/* Bigger text: the membership region box drops under its label instead of running off the screen. */
+:is(.a-size-2,.a-size-3,.a-size-4) .pg main .region-card{flex-wrap:wrap}
+:is(.a-size-2,.a-size-3,.a-size-4) .pg main .region-card .sel{min-width:0 !important;flex:1 1 100% !important;max-width:100%}

@@ -72,7 +72,7 @@ export function MembershipTiers({
       <section className="sec" style={{ paddingTop: '0' }} aria-labelledby="tiers-h">
         <div className="wrap stack g32">
           <h2 className="sr" id="tiers-h">Membership Tiers</h2>
-          <div className="card pad row between g16" style={{ paddingBlock: '20px' }}>
+          <div className="card pad row between g16 region-card" style={{ paddingBlock: '20px' }}>
             <div className="row g12">
               <span className="ic ic-a" style={{ width: '44px', height: '44px' }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg></span>
               <div className="stack"><label className="lbl" htmlFor="region">Region &amp; currency</label><span className="small muted" aria-live="polite">Prices shown in {currency.split(' ').pop()} for {countryName(country)}. Type to search your country.</span></div>
