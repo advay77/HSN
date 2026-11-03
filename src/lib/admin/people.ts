@@ -28,6 +28,12 @@ export const fmtDate = (d?: string | null) => {
   return `${x.getDate()} ${MONTHS[x.getMonth()]} ${x.getFullYear()}`
 }
 
+/** "09:58" */
+export const fmtTime = (d: string) => {
+  const x = new Date(d)
+  return `${pad(x.getHours())}:${pad(x.getMinutes())}`
+}
+
 /** "27 Oct 2026 · 09:58" */
 export const fmtDateTime = (d: string) => {
   const x = new Date(d)

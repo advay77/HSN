@@ -149,7 +149,7 @@ export function ArHeader({ member = null }: { member?: { name: string; initials:
       </div>
       {a11yOpen && (
         <>
-          <div style={{ position: 'fixed', inset: 0, zIndex: 60, background: 'rgba(14,31,34,.32)' }} onClick={() => setA11yOpen(false)} aria-hidden="true"></div>
+          <div className="a11y-scrim" style={{ position: 'fixed', inset: 0, zIndex: 60, background: 'rgba(14,31,34,.32)' }} onClick={() => setA11yOpen(false)} aria-hidden="true"></div>
           <div dir="ltr" lang="en" style={{ position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 61, width: '440px', maxWidth: '100%', overflowY: 'auto', background: '#FFFDF8' }}>
             <A11yPanel onClose={() => setA11yOpen(false)} />
           </div>

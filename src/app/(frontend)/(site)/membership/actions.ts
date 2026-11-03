@@ -6,6 +6,7 @@ import { getCurrentMember } from '@/lib/auth/session'
 import { getPaymentProvider, type Tier } from '@/lib/payments'
 import { getPayloadClient } from '@/lib/payload'
 import { rateLimit, TOO_MANY } from '@/lib/rate-limit'
+import { TURNSTILE_FAILED, verifyTurnstile } from '@/lib/turnstile'
 
 export type JoinState = { ok: boolean; errors: Record<string, string>; redirect?: string }
 
@@ -25,6 +26,7 @@ async function siteOrigin() {
 // activates the membership. Paid (PAYMENT_PROVIDER set): records it as awaiting payment and returns the checkout URL.
 export async function joinMembership(_prev: JoinState, form: FormData): Promise<JoinState> {
   if (!(await rateLimit('membership', 10, 60 * 60))) return { ok: false, errors: { form: TOO_MANY } }
+  if (!(await verifyTurnstile(form.get('cf-turnstile-response')))) return { ok: false, errors: { form: TURNSTILE_FAILED } }
   const s = (k: string) => String(form.get(k) ?? '').trim()
   const ar = s('lang') === 'ar'
   const name = s('name')

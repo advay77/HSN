@@ -1,10 +1,11 @@
 'use client'
 
 // "Register Interest" modal from Membership.dc.html / Membership-Modal.dc.html, shared by the English and Arabic pages.
-import React, { useActionState, useEffect, useRef, startTransition } from 'react'
+import React, { useActionState, useState, useEffect, useRef, startTransition } from 'react'
 import { createPortal } from 'react-dom'
 
 import { joinMembership, type JoinState } from '@/app/(frontend)/(site)/membership/actions'
+import { Turnstile, turnstileOn } from '@/components/site/Turnstile'
 
 export type TierId = 'student' | 'individual' | 'institutional'
 
@@ -55,6 +56,8 @@ export function MembershipModal({
 }) {
   const t = T[lang]
   const [state, formAction, pending] = useActionState<JoinState, FormData>(joinMembership, { ok: false, errors: {} })
+  const [tsToken, setTsToken] = useState('')
+  const [tsReset, setTsReset] = useState(0)
   const dialog = useRef<HTMLDivElement>(null)
   const e = state.errors
   const sent = state.ok && !state.redirect
@@ -92,6 +95,8 @@ export function MembershipModal({
     fd.set('lang', lang)
     fd.set('region', region)
     fd.set('tier', tier)
+    fd.set('cf-turnstile-response', tsToken)
+    setTsReset((n) => n + 1)
     startTransition(() => formAction(fd))
   }
   const inp = (k: string) => (e[k] ? 'inp err' : 'inp')
@@ -122,7 +127,8 @@ export function MembershipModal({
             </div>
             <div className="row g12" style={{ justifyContent: 'flex-end', padding: '16px 28px 24px', borderTop: '1px solid #D9D2C1' }}>
               <button type="button" className="btn btn-s" onClick={onClose}>{t.cancel}</button>
-              <button type="submit" className="btn btn-p" disabled={pending || !!state.redirect}>{pending ? t.sending : live ? t.sendLive : t.send}</button>
+              <Turnstile onToken={setTsToken} resetKey={tsReset} />
+              <button type="submit" className="btn btn-p" disabled={pending || !!state.redirect || (turnstileOn && !tsToken)}>{pending ? t.sending : live ? t.sendLive : t.send}</button>
             </div>
           </form>
         )}

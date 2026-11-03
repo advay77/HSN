@@ -118,6 +118,40 @@ export default async function AdminOverviewPage() {
             </section>
           </div>
         </div>
+        <div className="side-r" style={{ gap: '24px' }}>
+          <section className="card pad stack g12" aria-labelledby="mc">
+            <div className="row between g8"><h2 className="h4" id="mc" style={{ margin: 0 }}>Most clicked</h2><span className="small muted">Last 30 days · {plural(o.traffic.clicks, 'click')} in all</span></div>
+            {o.traffic.topClicks.length ? (
+              o.traffic.topClicks.map((c) => (
+                <div key={c.label + c.section} className="res" style={{ cursor: 'default' }}><span className="bdg b-info">{c.count}</span><span className="grow stack"><span className="strong">{c.label}</span><span className="small muted">on {c.section}</span></span></div>
+              ))
+            ) : (
+              <p className="muted">No clicks recorded yet.</p>
+            )}
+          </section>
+          <div className="stack g24">
+            <section className="card pad stack g12" aria-labelledby="ws">
+              <div className="row between g8"><h2 className="h4" id="ws" style={{ margin: 0 }}>Where visitors come from</h2><span className="small muted">Last 30 days</span></div>
+              {o.traffic.sources.length ? (
+                o.traffic.sources.map(([name, n]) => (
+                  <div key={name} className="row between g8"><span className="strong">{name}</span><span className="small">{plural(n, 'visit')}</span></div>
+                ))
+              ) : (
+                <p className="muted">No visits recorded yet.</p>
+              )}
+            </section>
+            <section className="card pad stack g12" aria-labelledby="cp">
+              <div className="row between g8"><h2 className="h4" id="cp" style={{ margin: 0 }}>Common paths</h2><span className="small muted">Last 30 days</span></div>
+              {o.traffic.paths.length ? (
+                o.traffic.paths.map(([name, n]) => (
+                  <div key={name} className="row between g8"><span className="strong">{name}</span><span className="small">{n}×</span></div>
+                ))
+              ) : (
+                <p className="muted">No page-to-page moves yet.</p>
+              )}
+            </section>
+          </div>
+        </div>
       </main>
     </>
   )

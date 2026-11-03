@@ -6,6 +6,7 @@ import React, { useActionState, useEffect, useRef, useState, startTransition } f
 
 import { submitCaseStudy, type SubmitCaseState } from '@/app/(frontend)/(site)/case-studies/submit/actions'
 import { toUploadable } from '@/lib/uploads/client'
+import { Turnstile, turnstileOn } from '@/components/site/Turnstile'
 
 const DRAFT_KEY = 'hsn-case-study-draft'
 const UNITS = ['tCO2e saved per year', 'kWh saved per year', 'kg waste diverted', 'Cost saved per year']
@@ -40,6 +41,8 @@ export function SubmitCaseForm() {
   const [draftNote, setDraftNote] = useState('')
   const fileInput = useRef<HTMLInputElement>(null)
   const [uploadError, setUploadError] = useState('')
+  const [tsToken, setTsToken] = useState('')
+  const [tsReset, setTsReset] = useState(0)
   const e = uploadError ? { ...state.errors, attachments: uploadError } : state.errors
 
   useEffect(() => {
@@ -82,6 +85,8 @@ export function SubmitCaseForm() {
         return
       }
       setUploadError('')
+      fd.set('cf-turnstile-response', tsToken)
+      setTsReset((n) => n + 1)
       formAction(fd)
     })
   }
@@ -181,8 +186,9 @@ export function SubmitCaseForm() {
         <label className="chk"><input type="checkbox" checked={f.noPatientData} onChange={(x) => set('noPatientData', x.target.checked)} aria-invalid={!!e.noPatientData} /><span>The submission contains no patient-identifiable information.</span></label>
         {msg('noPatientData')}
         <div className="row g16 mstack" style={{ paddingTop: '8px' }}>
+          <Turnstile onToken={setTsToken} resetKey={tsReset} />
           {msg('form')}
-          <button type="submit" className="btn btn-p btn-lg" disabled={pending}>{pending ? 'Submitting…' : 'Submit for review'}</button>
+          <button type="submit" className="btn btn-p btn-lg" disabled={pending || (turnstileOn && !tsToken)}>{pending ? 'Submitting…' : 'Submit for review'}</button>
           <button type="button" className="btn btn-t" onClick={saveDraft}>Save draft</button>
         </div>
         {draftNote && <span className="small muted" role="status">{draftNote}</span>}

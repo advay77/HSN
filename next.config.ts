@@ -19,13 +19,13 @@ const supabaseOrigin = (() => {
 // Content Security Policy for the public site and the HSN admin panel (Payload's own /cms screens keep their defaults).
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ''}`,
+  `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com${dev ? " 'unsafe-eval'" : ''}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https:",
   "media-src 'self' blob:",
   `connect-src 'self'${supabaseOrigin ? ' ' + supabaseOrigin : ''}${dev ? ' ws: wss:' : ''}`,
-  'frame-src https://www.youtube-nocookie.com https://www.youtube.com',
+  'frame-src https://www.youtube-nocookie.com https://www.youtube.com https://challenges.cloudflare.com',
   "frame-ancestors 'none'",
   "form-action 'self'",
   "base-uri 'self'",

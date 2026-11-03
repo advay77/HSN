@@ -4,6 +4,7 @@ import { CASE_CATEGORIES, CASE_REGIONS } from '@/collections/CaseStudies'
 import { toSlug } from '@/collections/fields/slug'
 import { getPayloadClient } from '@/lib/payload'
 import { rateLimit, TOO_MANY } from '@/lib/rate-limit'
+import { TURNSTILE_FAILED, verifyTurnstile } from '@/lib/turnstile'
 import { PURPOSE_LIMITS, readUpload, type ReadUpload } from '@/lib/uploads/server'
 
 export type SubmitCaseState = {
@@ -30,6 +31,7 @@ function sniffType(b: Uint8Array): string | null {
 
 export async function submitCaseStudy(_prev: SubmitCaseState, form: FormData): Promise<SubmitCaseState> {
   if (!(await rateLimit('case-submit', 5, 60 * 60))) return { ok: false, errors: { form: TOO_MANY } }
+  if (!(await verifyTurnstile(form.get('cf-turnstile-response')))) return { ok: false, errors: { form: TURNSTILE_FAILED } }
   const s = (k: string) => String(form.get(k) ?? '').trim()
   const errors: Record<string, string> = {}
 

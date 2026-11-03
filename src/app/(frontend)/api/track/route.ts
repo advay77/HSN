@@ -4,31 +4,13 @@ import { NextResponse } from 'next/server'
 import { getCurrentMember } from '@/lib/auth/session'
 import { getPayloadClient } from '@/lib/payload'
 import { rateLimit } from '@/lib/rate-limit'
+import { sectionOf } from '@/lib/sections'
 
-// Page-view beacon from PageTracker. "enter" only marks the member as online; "leave" stores the visit
-// with the time spent, which feeds "Most viewed sections" on the admin Overview.
-const SECTIONS: [string, string][] = [
-  ['/about', 'About'],
-  ['/services', 'Services'],
-  ['/courses', 'Courses'],
-  ['/case-studies', 'Case Studies'],
-  ['/library', 'Library'],
-  ['/get-involved', 'Get Involved'],
-  ['/membership', 'Membership'],
-  ['/contact', 'Contact'],
-  ['/privacy', 'Privacy'],
-  ['/my', 'My HSN'],
-  ['/register', 'Courses'],
-  ['/login', 'Log in'],
-  ['/ar', 'Arabic'],
-]
-
-const sectionOf = (path: string) =>
-  path === '/' ? 'Home' : SECTIONS.find(([p]) => path === p || path.startsWith(p + '/'))?.[1] ?? null
-
+// Beacon from PageTracker. "enter" only marks the member as online; "leave" stores the page view with the time
+// spent and where the person came from; "click" stores a link or button click. Feeds the admin analytics.
 export async function POST(req: Request) {
-  if (!(await rateLimit('track', 120, 60))) return new NextResponse(null, { status: 429 })
-  let body: { path?: string; seconds?: number; phase?: string }
+  if (!(await rateLimit('track', 300, 60))) return new NextResponse(null, { status: 429 })
+  let body: { path?: string; seconds?: number; phase?: string; from?: string; referrer?: string; label?: string; target?: string; kind?: string }
   try {
     body = JSON.parse(await req.text())
   } catch {
@@ -51,9 +33,22 @@ export async function POST(req: Request) {
   }
   const seconds = Math.max(0, Math.min(Math.round(Number(body.seconds) || 0), 60 * 60))
   // Views under a second are not real visits (and React's dev mode mounts pages twice), so they aren't stored.
+  const text = (v: unknown, max: number) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, max)
+  if (body.phase === 'click') {
+    const label = text(body.label, 80)
+    if (label) {
+      await payload
+        .create({
+          collection: 'click-events',
+          data: { path, label, target: text(body.target, 200) || undefined, kind: body.kind === 'button' ? 'button' : 'link', member: member ? Number(member.id) : undefined, visitor },
+        })
+        .catch(() => {})
+    }
+    return new NextResponse(null, { status: 204 })
+  }
   if (body.phase === 'leave' && seconds > 0) {
     await payload
-      .create({ collection: 'page-views', data: { section, path, seconds, member: member ? Number(member.id) : undefined, visitor } })
+      .create({ collection: 'page-views', data: { section, path, seconds, member: member ? Number(member.id) : undefined, visitor, from: text(body.from, 200).split('?')[0] || undefined, referrer: text(body.referrer, 100) || undefined } })
       .catch(() => {})
   }
   return new NextResponse(null, { status: 204 })

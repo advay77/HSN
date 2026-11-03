@@ -3,7 +3,7 @@
 import { getAdmin } from '@/lib/admin/auth'
 import { rateLimit, TOO_MANY } from '@/lib/rate-limit'
 
-import { directUploadsEnabled, PURPOSE_LIMITS, signUpload, type UploadPurpose } from './server'
+import { directUploadsEnabled, PURPOSE_LIMITS, signUpload, sweepIncoming, type UploadPurpose } from './server'
 
 export type StartUpload = { mode: 'form' } | { mode: 'direct'; url: string; path: string } | { mode: 'error'; error: string }
 
@@ -24,6 +24,7 @@ export async function startUpload(input: { name: string; type: string; size: num
   }
   try {
     const { url, path } = await signUpload(String(input.name || 'file'))
+    void sweepIncoming()
     return { mode: 'direct', url, path }
   } catch (e) {
     console.error('[upload] could not sign upload', e)

@@ -3,6 +3,8 @@ import 'server-only'
 import { initialsOf } from '@/lib/auth/session'
 import { getPayloadClient } from '@/lib/payload'
 
+import { sectionOf } from '@/lib/sections'
+
 import { byPerson, countVisits, visitsBySection } from './visits'
 
 const DAY = 24 * 60 * 60 * 1000
@@ -103,7 +105,7 @@ export async function getOverview() {
     where: { createdAt: { greater_than: iso(new Date(now.getTime() - 30 * DAY)) } },
     pagination: false,
     depth: 0,
-    select: { section: true, seconds: true, member: true, visitor: true, createdAt: true },
+    select: { section: true, seconds: true, member: true, visitor: true, createdAt: true, from: true, referrer: true },
   })
   const people = byPerson(views.docs)
   const bySection = new Map<string, { seconds: number; visits: number }>()
@@ -129,7 +131,34 @@ export async function getOverview() {
   const names = top.length
     ? await payload.find({ collection: 'members', where: { id: { in: top.map((t) => t.id) } }, pagination: false, depth: 0, select: { name: true } })
     : { docs: [] as { id: number; name: string }[] }
+  // Where visits start (outside site or direct) and the most common moves from one section to another.
+  const tally = <K,>(keys: K[]) => {
+    const m = new Map<K, number>()
+    for (const k of keys) m.set(k, (m.get(k) ?? 0) + 1)
+    return [...m.entries()].sort((a, b) => b[1] - a[1])
+  }
+  const sources = tally(views.docs.filter((v) => !v.from).map((v) => v.referrer || 'Direct')).slice(0, 6)
+  const paths = tally(
+    views.docs
+      .map((v) => (v.from ? [sectionOf(v.from), v.section] : null))
+      .filter((p): p is [string, string] => !!p && !!p[0] && p[0] !== p[1])
+      .map(([a, b]) => `${a} → ${b}`),
+  ).slice(0, 6)
+  const clickRows = await payload.find({
+    collection: 'click-events',
+    where: { createdAt: { greater_than: iso(new Date(now.getTime() - 30 * DAY)) } },
+    pagination: false,
+    depth: 0,
+    select: { label: true, path: true },
+  })
+  const topClicks = tally(clickRows.docs.map((c) => `${c.label}\u0000${sectionOf(c.path) ?? c.path}`))
+    .slice(0, 7)
+    .map(([k, n]) => ({ label: k.split('\u0000')[0]!, section: k.split('\u0000')[1]!, count: n }))
   const traffic = {
+    clicks: clickRows.docs.length,
+    topClicks,
+    sources,
+    paths,
     visits,
     visitors: people.size,
     pageViews: views.docs.length,

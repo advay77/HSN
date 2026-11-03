@@ -31,7 +31,7 @@ export const Activity: CollectionConfig = {
   timestamps: true,
 }
 
-// Page views with time spent, for "Most viewed sections". One row per page visit.
+// Page views with time spent, for "Most viewed sections" and each member's journey. One row per page visit.
 export const PageViews: CollectionConfig = {
   slug: 'page-views',
   admin: { hidden: true },
@@ -39,6 +39,25 @@ export const PageViews: CollectionConfig = {
     { name: 'section', type: 'text', required: true, index: true },
     { name: 'path', type: 'text' },
     { name: 'seconds', type: 'number', defaultValue: 0 },
+    { name: 'member', type: 'relationship', relationTo: 'members', index: true },
+    { name: 'visitor', type: 'text', index: true },
+    // The page on this site the person came from (empty on the first page of a visit).
+    { name: 'from', type: 'text' },
+    // Where a visit started from outside the site: a site name such as "google.com", or empty for direct.
+    { name: 'referrer', type: 'text', index: true },
+  ],
+  timestamps: true,
+}
+
+// Clicks on links and buttons (their visible label and where a link goes). Never what anyone types.
+export const ClickEvents: CollectionConfig = {
+  slug: 'click-events',
+  admin: { hidden: true },
+  fields: [
+    { name: 'path', type: 'text', required: true, index: true },
+    { name: 'label', type: 'text', required: true },
+    { name: 'target', type: 'text' },
+    { name: 'kind', type: 'select', options: ['link', 'button'], defaultValue: 'link' },
     { name: 'member', type: 'relationship', relationTo: 'members', index: true },
     { name: 'visitor', type: 'text', index: true },
   ],

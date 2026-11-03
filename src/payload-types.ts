@@ -78,6 +78,7 @@ export interface Config {
     'login-codes': LoginCode;
     activity: Activity;
     'page-views': PageView;
+    'click-events': ClickEvent;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -97,6 +98,7 @@ export interface Config {
     'login-codes': LoginCodesSelect<false> | LoginCodesSelect<true>;
     activity: ActivitySelect<false> | ActivitySelect<true>;
     'page-views': PageViewsSelect<false> | PageViewsSelect<true>;
+    'click-events': ClickEventsSelect<false> | ClickEventsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -292,6 +294,7 @@ export interface Media {
    * Set automatically for members-only and submitted files.
    */
   private?: boolean | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -597,6 +600,23 @@ export interface PageView {
   seconds?: number | null;
   member?: (number | null) | Member;
   visitor?: string | null;
+  from?: string | null;
+  referrer?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "click-events".
+ */
+export interface ClickEvent {
+  id: number;
+  path: string;
+  label: string;
+  target?: string | null;
+  kind?: ('link' | 'button') | null;
+  member?: (number | null) | Member;
+  visitor?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -695,6 +715,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'page-views';
         value: number | PageView;
+      } | null)
+    | ({
+        relationTo: 'click-events';
+        value: number | ClickEvent;
       } | null)
     | ({
         relationTo: 'users';
@@ -946,6 +970,7 @@ export interface LibraryResourcesSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   private?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1073,6 +1098,22 @@ export interface PageViewsSelect<T extends boolean = true> {
   section?: T;
   path?: T;
   seconds?: T;
+  member?: T;
+  visitor?: T;
+  from?: T;
+  referrer?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "click-events_select".
+ */
+export interface ClickEventsSelect<T extends boolean = true> {
+  path?: T;
+  label?: T;
+  target?: T;
+  kind?: T;
   member?: T;
   visitor?: T;
   updatedAt?: T;

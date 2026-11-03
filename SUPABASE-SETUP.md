@@ -21,7 +21,7 @@ Project → **Connect** → Connection string → **Transaction pooler** (port *
 ```
 postgresql://postgres.<project-ref>:<db-password>@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require
 ```
-Also set `DATABASE_POOL_MAX=1` (each Vercel instance keeps one connection; the pooler shares them).
+Also set `DATABASE_POOL_MAX=5` (the pooler shares connections; migrations need at least 2).
 
 ## 3. Lock down Supabase's automatic API
 - Project Settings → **Data API** → remove `public` from "Exposed schemas" (or switch the Data API off).
@@ -50,7 +50,7 @@ project. Vercel adds `KV_REST_API_URL` and `KV_REST_API_TOKEN` automatically; no
 | Variable | Value |
 |---|---|
 | `DATABASE_URL` | Transaction pooler string from step 2 |
-| `DATABASE_POOL_MAX` | `1` |
+| `DATABASE_POOL_MAX` | `5` |
 | `PAYLOAD_SECRET` | 64 random hex characters (new one, not the development one) |
 | `SITE_URL` | `https://<your domain>` |
 | `S3_BUCKET` | `hsn-media` |

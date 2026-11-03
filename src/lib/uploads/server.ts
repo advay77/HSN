@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { DeleteObjectCommand, GetObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command, S3Client } from '@aws-sdk/client-s3'
 import crypto from 'node:crypto'
 
 // Large files and Vercel: a request to a Vercel function can carry at most 4.5 MB, so in production the
@@ -29,6 +29,21 @@ const client = () =>
 
 const safeName = (name: string) => name.replace(/[^\w.\-]+/g, '_').slice(-120) || 'file'
 
+/** Removes uploads left in incoming/ for over a day (the person closed the page before saving). Best effort. */
+export async function sweepIncoming(): Promise<void> {
+  const bucket = process.env.S3_BUCKET
+  if (!bucket) return
+  try {
+    const list = await client().send(new ListObjectsV2Command({ Bucket: bucket, Prefix: 'incoming/', MaxKeys: 100 }))
+    const dayAgo = Date.now() - 24 * 60 * 60 * 1000
+    for (const o of list.Contents ?? []) {
+      if (o.Key && o.LastModified && o.LastModified.getTime() < dayAgo) {
+        await client().send(new DeleteObjectCommand({ Bucket: bucket, Key: o.Key })).catch(() => {})
+      }
+    }
+  } catch {}
+}
+
 /** Asks Supabase for a one-time upload URL for a new path under incoming/. */
 export async function signUpload(name: string): Promise<{ url: string; path: string }> {
   const base = process.env.SUPABASE_URL!.replace(/\/$/, '')
@@ -37,7 +52,8 @@ export async function signUpload(name: string): Promise<{ url: string; path: str
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY!
   const res = await fetch(`${base}/storage/v1/object/upload/sign/${bucket}/${path}`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${key}`, apikey: key, 'Content-Type': 'application/json' },
+    // New secret keys (sb_secret_...) go only in the apikey header; legacy service_role JWTs also as a Bearer token.
+    headers: key.startsWith('sb_') ? { apikey: key, 'Content-Type': 'application/json' } : { Authorization: `Bearer ${key}`, apikey: key, 'Content-Type': 'application/json' },
     body: '{}',
   })
   if (!res.ok) throw new Error(`Could not create an upload URL (${res.status})`)

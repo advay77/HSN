@@ -37,6 +37,7 @@ export async function removeMemberAction(id: number): Promise<Result & { name?: 
   await payload.delete({ collection: 'course-registrations', where: byMember })
   await payload.delete({ collection: 'activity', where: byMember })
   await payload.delete({ collection: 'page-views', where: byMember })
+  await payload.delete({ collection: 'click-events', where: byMember })
   await payload.update({ collection: 'membership-applications', where: byMember, data: { member: null } })
   await payload.delete({ collection: 'members', id: mid })
   revalidatePath('/admin/members')

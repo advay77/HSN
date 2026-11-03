@@ -6,9 +6,10 @@ import React from 'react'
 import { AdminTopbar } from '@/components/admin/AdminTopbar'
 import { MemberActions, MembershipForm } from '@/components/admin/MemberDetailClient'
 import { requireAdmin } from '@/lib/admin/auth'
-import { fmtAgo, fmtDate, fmtDateTime, fmtHM, fmtSession, isOnline, STATUS_LABEL, TIER_CLS, TIER_LABEL } from '@/lib/admin/people'
+import { fmtAgo, fmtDate, fmtDateTime, fmtHM, fmtSession, fmtTime, isOnline, STATUS_LABEL, TIER_CLS, TIER_LABEL } from '@/lib/admin/people'
 import { initialsOf } from '@/lib/auth/session'
 import { getPayloadClient } from '@/lib/payload'
+import { buildJourneys } from '@/lib/admin/journey'
 import { countVisits, plural, visitsBySection } from '@/lib/admin/visits'
 
 export const metadata = { title: 'Member' }
@@ -46,7 +47,7 @@ export default async function AdminMemberPage({ params }: { params: Promise<{ id
   const byMember = { member: { equals: mid } }
   const monthAgo = new Date(Date.now() - 30 * DAY).toISOString()
   const [views, recent, logins, logins30, enrollments, regs, cases] = await Promise.all([
-    payload.find({ collection: 'page-views', where: byMember, pagination: false, depth: 0, select: { section: true, seconds: true, createdAt: true, visitor: true } }),
+    payload.find({ collection: 'page-views', where: byMember, pagination: false, depth: 0, select: { section: true, seconds: true, createdAt: true, visitor: true, path: true, referrer: true } }),
     payload.find({ collection: 'activity', where: byMember, sort: '-createdAt', limit: 8, depth: 0 }),
     payload.find({ collection: 'activity', where: { and: [byMember, { type: { equals: 'login' } }] }, sort: '-createdAt', limit: 10, depth: 0 }),
     payload.count({ collection: 'activity', where: { and: [byMember, { type: { equals: 'login' } }, { createdAt: { greater_than: monthAgo } }] } }),
@@ -69,10 +70,18 @@ export default async function AdminMemberPage({ params }: { params: Promise<{ id
         where: { and: [{ visitor: { in: cookies } }, { member: { exists: false } }] },
         pagination: false,
         depth: 0,
-        select: { section: true, seconds: true, createdAt: true, visitor: true },
+        select: { section: true, seconds: true, createdAt: true, visitor: true, path: true, referrer: true },
       })
     : { docs: [] }
   const allViews = [...views.docs, ...beforeLogin.docs]
+  const clickRows = await payload.find({
+    collection: 'click-events',
+    where: cookies.length ? { or: [byMember, { and: [{ visitor: { in: cookies } }, { member: { exists: false } }] }] } : byMember,
+    pagination: false,
+    depth: 0,
+    select: { createdAt: true, path: true, label: true, target: true },
+  })
+  const journeys = buildJourneys(allViews, clickRows.docs)
 
   const online = isOnline(m.lastSeenAt)
   const totalSeconds = views.docs.reduce((s, v) => s + (v.seconds ?? 0), 0)
@@ -178,6 +187,32 @@ export default async function AdminMemberPage({ params }: { params: Promise<{ id
             )}
           </section>
         </div>
+        <section className="card pad stack g16" aria-labelledby="jr">
+          <div className="row between g8" style={{ flexWrap: 'wrap' }}><h2 className="h4" id="jr" style={{ margin: 0 }}>Journey</h2><span className="small muted">Last {journeys.length || ''} {journeys.length === 1 ? 'visit' : 'visits'} · {plural(clickRows.docs.length, 'click')} in all</span></div>
+          {journeys.length ? (
+            journeys.map((j) => (
+              <div key={j.start} className="stack g8" style={{ borderTop: '1px solid #E6DFCF', paddingTop: '14px' }}>
+                <div className="row between g8" style={{ flexWrap: 'wrap' }}><span className="strong">{fmtDateTime(j.start)}</span><span className="small muted">From {j.source} · {plural(j.steps.length, 'page')} · {fmtHM(j.seconds)} · {plural(j.clicks, 'click')}</span></div>
+                <ol className="stack g8" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  {j.steps.map((s, i) => (
+                    <li key={i} className="stack g4">
+                      <span className="row g8" style={{ flexWrap: 'wrap' }}><span className="small muted" style={{ minWidth: '44px' }}>{fmtTime(s.at)}</span><span className="strong">{s.section}</span><span className="small muted" style={{ overflowWrap: 'anywhere' }}>{s.path}</span><span className="small">{fmtHM(s.seconds)}</span></span>
+                      {s.clicks.length ? (
+                        <span className="row g8" style={{ paddingLeft: '52px', flexWrap: 'wrap' }}>
+                          {s.clicks.map((c, k) => (
+                            <span key={k} className="bdg b-reg" style={{ whiteSpace: 'normal', overflowWrap: 'anywhere' }} title={c.target || undefined}>Clicked: {c.label}</span>
+                          ))}
+                        </span>
+                      ) : null}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ))
+          ) : (
+            <p className="muted">No visits recorded yet.</p>
+          )}
+        </section>
         <div className="side-r" style={{ gap: '24px' }}>
           <section className="card stack" aria-labelledby="lh" style={{ overflowX: 'auto' }}>
             <h2 className="h4" id="lh" style={{ margin: 0, padding: '20px 20px 12px' }}>Login history</h2>

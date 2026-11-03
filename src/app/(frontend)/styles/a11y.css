@@ -57,3 +57,14 @@
 .a-targets .pg :is(.btn,.chp,.nav,.mrow,.ftr-l,.tab,.lang,.seg button,.seg a,.join-item){min-height:56px !important}
 .a-targets .pg :is(.ico,.a11y,.soc){min-width:56px !important;min-height:56px !important}
 .a-targets .pg main p a{display:inline-block;min-height:56px;line-height:56px}
+
+/* The dimmed layer behind the open accessibility panel stays see-through in high contrast
+   (high contrast paints every div black, which hid the whole page). */
+.a-hc .pg .a11y-scrim,.a-hc .a11y-scrim{background:rgba(0,0,0,.45) !important}
+
+/* Bigger text and high contrast: justified paragraphs open wide gaps between words when the text grows,
+   so they read left-aligned unless the person chose an alignment themselves. */
+:is(.a-size-2,.a-size-3,.a-size-4,.a-hc):not(.a-align-justify):not(.a-align-center) .pg main :is(p,li,dd,.lead){text-align:left !important;text-align-last:auto !important}
+
+/* Bigger text: buttons may wrap onto two lines instead of running off narrow screens. */
+:is(.a-size-1,.a-size-2,.a-size-3,.a-size-4) .pg main :is(.btn,button){white-space:normal !important;height:auto !important;min-height:44px;max-width:100%;text-align:center}

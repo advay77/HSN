@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState, useTransition } from 'react'
 
 import { adminLoginAction, sendCodeAction, verifyCodeAction } from './actions'
+import { Turnstile, turnstileOn } from '@/components/site/Turnstile'
 
 type Mode = 'login' | 'signup'
 
@@ -17,6 +18,8 @@ export function LoginForm({ next, initialMode, googleEnabled, initialError, init
   // Admin mode ("HSN Admin Log In" in the design): admin email + password, opens the admin panel.
   const [admin, setAdmin] = useState(initialAdmin)
   const [mode, setMode] = useState<Mode>(initialMode)
+  const [tsToken, setTsToken] = useState('')
+  const [tsReset, setTsReset] = useState(0)
   const [step, setStep] = useState<'email' | 'code'>('email')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -52,12 +55,14 @@ export function LoginForm({ next, initialMode, googleEnabled, initialError, init
     setError(undefined)
     startTransition(async () => {
       if (admin) {
-        const a = await adminLoginAction({ email, password, next })
+        const a = await adminLoginAction({ email, password, next, turnstile: tsToken })
+        setTsReset((n) => n + 1)
         if (a.ok) window.location.assign(a.next)
         else setError(a.error)
         return
       }
-      const r = await sendCodeAction({ email, mode, name, joinNetwork })
+      const r = await sendCodeAction({ email, mode, name, joinNetwork, turnstile: tsToken })
+      setTsReset((n) => n + 1)
       if (r.ok) {
         setDigits(['', '', '', '', '', ''])
         setStep('code')
@@ -130,7 +135,7 @@ export function LoginForm({ next, initialMode, googleEnabled, initialError, init
             <h1 className="h2">{admin ? 'HSN Admin Log In' : isSignup ? 'Join HSN' : 'Welcome Back'}</h1>
             <p className="muted">{admin ? 'For the HSN founder and team. Use your admin email and password.' : isSignup ? 'Create your free account to register for courses and join the community.' : 'Log in to your member area.'}</p>
           </div>
-          {!admin && (<>
+          {!admin && googleEnabled && (<>
           <button className="btn btn-g btn-lg btn-block" type="button" onClick={google}>
             <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"></path><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"></path><path fill="#FBBC05" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2L6.4 14z"></path><path fill="#EA4335" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10c.8-2.3 3-4.1 5.6-4.1z"></path></svg>{' '}Continue with Google</button>
           <div className="row g12 nowrap small muted" aria-hidden="true"><span className="grow divider"></span>or use your email<span className="grow divider"></span></div>
@@ -145,8 +150,9 @@ export function LoginForm({ next, initialMode, googleEnabled, initialError, init
           {isSignup && (
             <label className="chk"><input type="checkbox" checked={joinNetwork} onChange={(e) => setJoinNetwork(e.target.checked)} /><span>Yes, add me to the HSN WhatsApp/LinkedIn Network</span></label>
           )}
+          <Turnstile onToken={setTsToken} resetKey={tsReset} />
           {error && <ErrorMsg>{error}</ErrorMsg>}
-          <button className="btn btn-p btn-lg btn-block" type="submit" disabled={pending}>{admin ? 'Log in to admin panel' : 'Send one-time code'}</button>
+          <button className="btn btn-p btn-lg btn-block" type="submit" disabled={pending || (turnstileOn && !tsToken)}>{admin ? 'Log in to admin panel' : 'Send one-time code'}</button>
           <p className="small muted">By continuing you agree to our{' '}<a href="/privacy">Privacy Policy</a>.</p>
           <div className="row g8" style={{ paddingTop: '12px', borderTop: '1px solid #D9D2C1' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#134E5E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
