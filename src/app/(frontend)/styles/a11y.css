@@ -1,0 +1,59 @@
+/* Accessibility tools from the A11yPanel design. Classes are set on <body> by A11yEffects.
+   High contrast (.a-hc) and the dyslexia font (.a-dys) are defined in hsn2.css. */
+
+/* Bigger text: scales the page content (all sizes in the design are px). */
+.a-size-1 .pg main{zoom:1.12}
+.a-size-2 .pg main{zoom:1.25}
+.a-size-3 .pg main{zoom:1.4}
+.a-size-4 .pg main{zoom:1.6}
+
+/* Fonts */
+.a-readable .pg,.a-readable .pg *{font-family:'Atkinson Hyperlegible',system-ui,sans-serif !important}
+
+/* Spacing */
+.a-lh-1 .pg :is(p,li,dd,dt,.lead,.muted,td){line-height:1.8 !important}
+.a-lh-2 .pg :is(p,li,dd,dt,.lead,.muted,td){line-height:2.1 !important}
+.a-lh-3 .pg :is(p,li,dd,dt,.lead,.muted,td){line-height:2.4 !important}
+.a-ls-1 .pg main *{letter-spacing:.04em !important}
+.a-ls-2 .pg main *{letter-spacing:.08em !important}
+.a-ls-3 .pg main *{letter-spacing:.12em !important}
+.a-ws-1 .pg main *{word-spacing:.12em !important}
+.a-ws-2 .pg main *{word-spacing:.24em !important}
+.a-ws-3 .pg main *{word-spacing:.36em !important}
+
+/* Text align */
+.a-align-left .pg main :is(p,li,dd,dt,h1,h2,h3,h4,h5,.lead){text-align:left !important;text-align-last:auto !important}
+.a-align-center .pg main :is(p,li,dd,dt,h1,h2,h3,h4,h5,.lead){text-align:center !important;text-align-last:center !important}
+.a-align-justify .pg main :is(p,li,dd,.lead){text-align:justify !important;text-align-last:start !important}
+
+/* Colour filters (low/high saturation, greyscale, dark mode). Applied to the page parts, not the
+   wrapper, so the accessibility panel and fixed overlays keep working. */
+.a-filter .pg main,.a-filter .pg .hdr,.a-filter .pg .ftr,.a-filter .pg .msheet{filter:var(--a11y-filter)}
+.a-dark .pg{background:#0E1F22 !important}
+.a-dark .pg :is(main,.hdr,.ftr) :is(img,video,iframe){filter:invert(1) hue-rotate(180deg)}
+
+/* Colour-blind-safe: greens become blue, reds become orange. */
+.a-cb .pg .btn-p{background:#0057B8 !important;border-color:#0057B8 !important}
+.a-cb .pg .btn-s{color:#0057B8 !important;border-color:#0057B8 !important}
+.a-cb .pg :is(.sec-title,.h1,.display,.metric,.metric-l,.nav.cur){color:#0057B8 !important}
+.a-cb .pg .nav.cur::after,.a-cb .pg .prog span{background:#0057B8 !important}
+.a-cb .pg :is(.ic-g,.b-beg,.b-ok,.b-cat,.note-ok){background:#DCE8F7 !important;color:#0057B8 !important;border-color:#9DBCE3 !important}
+.a-cb .pg :is(.b-err,.note-err,.emsg,.req){color:#B84F00 !important}
+.a-cb .pg :is(.inp.err){border-color:#B84F00 !important}
+.a-cb .pg .sec-title::after{background:linear-gradient(90deg,#0057B8,#E08A00) !important}
+
+/* Reading aids */
+.a-links .pg a{text-decoration:underline !important;text-underline-offset:3px;outline:2px solid #E0A526;outline-offset:2px;border-radius:4px}
+.a-heads .pg main :is(h1,h2,h3,h4,h5){outline:2px dashed #1C6E8A;outline-offset:4px;border-radius:4px}
+.a-hideimg .pg main :is(img,video,iframe,svg:not([aria-hidden="true"])){visibility:hidden}
+.a-hideimg .pg main figure{background:#EDE7D8 !important}
+.a-clickread .pg main :is(p,li,h1,h2,h3,h4,dd,dt){cursor:pointer}
+/* The read-aloud word highlight (::highlight) is in A11yEffects.tsx: the CSS build does not parse it yet. */
+
+/* Motion and navigation */
+.a-pause *,.a-pause *::before,.a-pause *::after{animation:none !important;transition:none !important;scroll-behavior:auto !important}
+.a-cursor,.a-cursor *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24'%3E%3Cpath d='M4 2l15 11-7 1 4 8-3 1-4-8-5 5z' fill='%23000' stroke='%23FFD24D' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 4 2,auto !important}
+.a-focus :focus-visible,.a-focus .pg :focus-visible,.a-focus .cq :focus-visible{outline:4px solid #FFD24D !important;outline-offset:2px !important;box-shadow:0 0 0 8px #134E5E !important}
+.a-targets .pg :is(.btn,.chp,.nav,.mrow,.ftr-l,.tab,.lang,.seg button,.seg a,.join-item){min-height:56px !important}
+.a-targets .pg :is(.ico,.a11y,.soc){min-width:56px !important;min-height:56px !important}
+.a-targets .pg main p a{display:inline-block;min-height:56px;line-height:56px}

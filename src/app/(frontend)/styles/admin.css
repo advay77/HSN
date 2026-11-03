@@ -1,0 +1,10 @@
+/* Shared rules from the Admin*.dc.html boards' <style> blocks. */
+.amain,.amain>*,.adm>.stack{min-width:0;max-width:100%}
+.pg a.btn{text-decoration:none}.pg a.btn-p{color:#FFFFFF}.pg a.btn-s{color:#0B6B3A}.pg a.btn-g{color:#17323A}.pg a.btn-dl{color:#B3261E}.pg a.btn-danger{color:#FFFFFF}.pg a.btn-t{text-decoration:underline}
+@container (max-width:600px){.atbl.m{min-width:0 !important}}
+.adm{min-height:100vh}
+html,body{margin:0;background:#F5F1E6}
+/* Full-height shell, but on tablet/phone the sidebar row must stay its natural height. */
+@container (max-width:1100px){.adm{grid-template-rows:auto 1fr}}
+/* Member page: the Visits card spans the row on tablet so the other four sit in a tidy 2x2. */
+@container (max-width:1100px){.c5>.kpi-wide{grid-column:1/-1}}

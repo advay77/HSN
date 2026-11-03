@@ -1,0 +1,4 @@
+.ct-card{align-items:center;text-align:center;gap:16px;max-width:640px;margin-inline:auto;width:100%;box-sizing:border-box;background:linear-gradient(160deg,#EEF7F0 0%,#E6F4F8 100%);border-color:#C9E2CF}
+.ct-mail{font-family:var(--hf,"Aptos Display","Aptos","Segoe UI",Inter,sans-serif);font-weight:600;font-size:26px;line-height:34px;color:#0B6B3A;word-break:break-all;text-decoration:underline;text-underline-offset:5px}
+.ct-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+@container (max-width:600px){.ct-mail{font-size:20px;line-height:28px}}

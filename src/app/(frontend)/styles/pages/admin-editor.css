@@ -1,0 +1,26 @@
+/* Editor styles from AdminCourses.dc.html (cb-*), reused by the case study and library editors. */
+.cb-tabs{display:flex;gap:4px;border-bottom:1px solid #D9D2C1}
+.cb-tab{min-height:48px;padding:0 18px;border:0;border-bottom:3px solid transparent;background:none;font:inherit;font-weight:600;color:#4A5F63;cursor:pointer}
+.cb-tab.on{color:#0B6B3A;border-bottom-color:#0B6B3A}
+.cb-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:24px;align-items:start}
+.cb-mod{border:1px solid #D9D2C1;border-radius:14px;background:#FFFDF8;overflow:hidden}
+.cb-mod-h{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#F5F1E6}
+.cb-mod-h .inp{min-height:44px;font-weight:700}
+.cb-n{display:inline-flex;align-items:center;justify-content:center;flex:none;width:36px;height:36px;border-radius:10px;background:#E3F1E4;color:#0B6B3A;font-family:'Aptos Display','Aptos','Segoe UI Variable Display','Segoe UI',Inter,system-ui,sans-serif;font-weight:800}
+.cb-mini{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;border:1px solid transparent;background:none;color:#4A5F63;cursor:pointer}
+.cb-mini:hover{background:#EDE7D8}
+.cb-mini:disabled{opacity:.35;cursor:default}
+.cb-mini svg.cr-up{transform:rotate(180deg)}
+.cb-add{display:flex;flex-wrap:wrap;gap:8px;padding:8px 16px 14px;border-top:1px dashed #D9D2C1}
+.cb-fs{display:flex;flex-direction:column;gap:16px;margin:0;padding:20px;border:1px solid #D9D2C1;border-radius:14px;background:#FFFDF8;min-width:0}
+.cb-fs legend{padding:0 6px;font-family:'Aptos Display','Aptos','Segoe UI Variable Display','Segoe UI',Inter,system-ui,sans-serif;font-weight:700;font-size:16px;color:#134E5E}
+.cb-status{flex:none;width:150px}
+.cb-status .inp{min-height:40px;font-size:14px}
+@container (max-width:1100px){.cb-grid{grid-template-columns:minmax(0,1fr)}}
+@container (max-width:600px){.cb-grid>*{min-width:0}.cb-mod-h .inp{min-width:0!important;flex-basis:100%}.cb-mod-h{flex-wrap:wrap}.cb-status{width:auto;flex:1}.cb-tabs{overflow-x:auto}.cb-tab{white-space:nowrap;padding:0 12px}.cb-fs{padding:16px}}
+/* Editor additions (no board): repeatable-row body and file row. */
+.cb-mod-b{display:flex;flex-direction:column;gap:16px;padding:16px}
+.cb-sub{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:12px;background:#F5F1E6}
+.cb-line{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.cb-line3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:8px;align-items:center}
+@container (max-width:600px){.cb-line3{grid-template-columns:minmax(0,1fr)}}

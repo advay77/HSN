@@ -1,0 +1,32 @@
+/* Arabic pages (HomeAr.dc.html styles). Selectors use .pg.ar-pg so they win over the English rules in site.css. */
+.pg.ar-pg,.pg.ar-pg *{-webkit-hyphens:none!important;hyphens:none!important}
+.pg.ar-pg main p,.pg.ar-pg main li{text-align:start;-webkit-hyphens:none;hyphens:none;word-spacing:normal}
+@container (min-width:1361px) and (max-width:1500px){.pg.ar-pg .nav{padding:0 7px;font-size:14px}.pg.ar-pg .hdr-in{gap:12px}}
+@container (max-width:1360px){.pg.ar-pg .lap{display:none !important}.pg.ar-pg .nolap{display:flex !important}}
+.pg.ar-pg main .lead,.pg.ar-pg main .box-text,.pg.ar-pg main .box-body,.pg.ar-pg main .card p,.pg.ar-pg main .grid p,.pg.ar-pg main article p{text-align:justify;text-justify:inter-word;text-align-last:start}
+.pg.ar-pg main .grid.c3 p,.pg.ar-pg main .grid.c4 p,.pg.ar-pg main .grid.c3 .lead,.pg.ar-pg main .grid.c4 .lead,.pg.ar-pg main .cs-head p{text-align:start}
+@container (max-width:1100px){.pg.ar-pg main .grid p,.pg.ar-pg main .grid .lead{text-align:start}}
+@container (max-width:700px){.pg.ar-pg main p,.pg.ar-pg main .lead,.pg.ar-pg main .box-text,.pg.ar-pg main .box-body,.pg.ar-pg main .card p,.pg.ar-pg main .grid p,.pg.ar-pg main article p{text-align:start}}
+.pg.ar-pg main [style*="text-align: center"] p,.pg.ar-pg main [style*="text-align:center"] p,.pg.ar-pg main .note span{text-align:inherit;hyphens:none}
+.pg a.btn{text-decoration:none}.pg a.btn-p{color:#FFFFFF}.pg a.btn-s{color:#0B6B3A}.pg a.btn-light,.pg .bg-green a.btn-light,.pg .ftr a.btn-light{color:#134E5E}.pg a.btn-ol,.pg .bg-green a.btn-ol{color:#F5F1E6}
+.pg.ar-pg,.pg.ar-pg .btn,.pg.ar-pg .nav,.pg.ar-pg .bdg{font-family:'Noto Sans Arabic',sans-serif}
+.pg.ar-pg{font-size:17px;line-height:30px}
+.pg.ar-pg .h3,.pg.ar-pg .h4,.pg.ar-pg .over,.pg.ar-pg .ar-k{font-family:'Noto Kufi Arabic',sans-serif;letter-spacing:0;text-transform:none}
+.pg.ar-pg .lead{line-height:34px}
+.pg.ar-pg .sec-title{font-family:'Noto Kufi Arabic',sans-serif;font-weight:800;font-size:40px;line-height:1.5;color:#0B6B3A;margin:0}
+.pg.ar-pg .bg-teal .sec-title{color:#FFFFFF}
+.pg.ar-pg .sec-title:not(.hero-title){font-weight:700}
+.pg.ar-pg .sec-title:not(.hero-title)::after{content:"";display:block;width:56px;height:3px;margin-top:14px;border-radius:2px;background:linear-gradient(270deg,#4FAE4E,#5BC0E3)}
+.pg.ar-pg .sec-title.hero-title{font-size:52px}
+.pg.ar-pg .sec-sub{font-family:'Noto Kufi Arabic',sans-serif;font-weight:600;font-size:28px;line-height:1.6;color:#1C6E8A;margin:0}
+.pg.ar-pg .h3,.pg.ar-pg .h4{color:#1C6E8A;font-weight:600}
+.pg.ar-pg .bg-teal .h3{color:#7FD3EE}
+.pg.ar-pg a.soc{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);color:#FFFFFF;text-decoration:none}
+.pg.ar-pg a.soc:hover{background:#F5F1E6;color:#134E5E}
+.pg.ar-pg a.join-item{display:flex;align-items:center;gap:12px;min-height:56px;padding:6px 10px;border-radius:8px;color:#17323A;font-weight:600;text-decoration:none}
+.pg.ar-pg a.join-item:hover{background:#EDE7D8}
+.pg.ar-pg .join-ic{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;flex:none}
+.pg.ar-pg .join-sub{font-size:13px;font-weight:400;color:#4A5F63}
+@container (max-width:1100px){.pg.ar-pg .sec-title{font-size:32px}.pg.ar-pg .sec-title.hero-title{font-size:42px}.pg.ar-pg .sec-sub{font-size:24px}}
+@container (max-width:600px){.pg.ar-pg .sec-title{font-size:26px}.pg.ar-pg .sec-title.hero-title{font-size:30px}.pg.ar-pg .sec-sub{font-size:20px}}
+.pg.ar-pg .sec-title,.pg.ar-pg .sec-sub{letter-spacing:0}

@@ -1,0 +1,10 @@
+/* MembershipAr.dc.html rules not already in ar.css. */
+.pg.ar-pg select{font-family:'Noto Sans Arabic',sans-serif}
+.pg.ar-pg .display,.pg.ar-pg .h1,.pg.ar-pg .h2{font-family:'Noto Kufi Arabic',sans-serif;letter-spacing:0;text-transform:none}
+.pg.ar-pg .display{line-height:1.45}
+
+/* MembershipAr.dc.html does not load the Arabic home's heading rules (ar.css), so undo them here. */
+.pg.ar-pg main.ar-mem .display{font-weight:800}
+.pg.ar-pg main.ar-mem .h3{font-weight:700;color:#134E5E}
+.pg.ar-pg main.ar-mem .lead{text-align:start;line-height:30px}
+@container (max-width:600px){.pg.ar-pg main.ar-mem .lead{line-height:28px}}

@@ -1,0 +1,6 @@
+/* Aptos (headings). The heading stack in site.css is "Aptos Display", "Aptos", then Segoe UI / Inter,
+   exactly as in the design, so Aptos shows wherever it is installed (Windows with Microsoft 365).
+   For every visitor to see Aptos, add the licensed web font files to public/fonts/ and declare them here, e.g.:
+   @font-face{font-family:"Aptos";font-weight:600;font-display:swap;src:url("/fonts/Aptos-SemiBold.woff2") format("woff2")}
+   @font-face{font-family:"Aptos";font-weight:700;font-display:swap;src:url("/fonts/Aptos-Bold.woff2") format("woff2")}
+   They are not declared yet on purpose: declaring the family without files would hide the installed system Aptos. */

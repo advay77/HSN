@@ -1,0 +1,47 @@
+/* Site-wide rules that the design kept in the Header and Footer boards (Header.dc.html, Footer.dc.html). */
+html,body{margin:0;background:#F5F1E6}
+@container (max-width:600px){.acct{padding:2px;border-color:transparent}}
+.pg a.btn-p,.pg a.btn-p:hover{color:#FFFFFF}
+.pg a.btn-s,.pg a.btn-s:hover{color:#0B6B3A}
+.pg a.btn-g,.pg a.btn-g:hover{color:#17323A}
+.pg a.btn-light,.pg a.btn-light:hover,.pg .bg-green a.btn-light,.pg .bg-teal a.btn-light,.cq .ftr a.btn-light,.cq .ftr a.btn-light:hover{color:#134E5E;text-decoration:none}
+.pg a.btn-ol,.pg .bg-green a.btn-ol,.pg .bg-teal a.btn-ol,.cq .ftr a.btn-ol{color:#F5F1E6;text-decoration:none}
+.pg a.btn-danger{color:#FFFFFF}.pg a.btn-dl{color:#B3261E}
+.pg a.btn{text-decoration:none}.pg a.btn-t{text-decoration:underline}
+.pg,.cq{--hf:"Aptos Display","Aptos","Segoe UI Variable Display","Segoe UI",Inter,system-ui,sans-serif}
+.pg .display,.pg .h1,.pg .h2,.pg .sec-title,.pg h1,.pg h2{font-family:var(--hf);font-weight:700;letter-spacing:-.01em}
+.pg .h3,.pg .h4,.pg .h5,.pg .sec-sub,.pg h3,.pg h4,.pg h5{font-family:var(--hf);font-weight:600;letter-spacing:0}
+.pg .h3,.pg .h4,.pg .h5{color:#1C6E8A}
+.pg .bg-teal .h3,.pg .bg-teal .h4,.pg .bg-teal .h5,.pg .bg-green .h3,.pg .bg-green .h4,.pg .bg-green .h5,.pg .ftr .h4{color:#7FD3EE}
+.pg .over{font-family:var(--hf);font-weight:600}
+.pg .metric,.pg .metric-l,.pg .num{font-family:var(--hf);font-weight:700}
+.pg .sec-title{font-weight:600;font-size:42px;line-height:50px;letter-spacing:-.02em;text-transform:none;color:#0B6B3A;margin:0}
+.pg .sec-title:not(.hero-title)::after{content:"";display:block;width:56px;height:3px;margin-top:14px;border-radius:2px;background:linear-gradient(90deg,#4FAE4E,#5BC0E3)}
+.pg .sec-title.hero-title{font-weight:700}
+.pg .bg-green .sec-title,.pg .bg-teal .sec-title{color:#FFFFFF}
+.pg .sec-sub{font-size:28px;line-height:38px;color:#1C6E8A;margin:0}
+.pg .box-text{font-family:var(--hf);font-weight:600;font-size:24px;line-height:36px;color:#FFFFFF;margin:0;max-width:1000px}
+.pg,.pg *,.cq,.cq *{-webkit-hyphens:none!important;hyphens:none!important}
+.pg main p,.pg main li{text-align:start;-webkit-hyphens:none;hyphens:none;word-spacing:normal}
+@container (min-width:1361px) and (max-width:1500px){.pg .nav{padding:0 7px;font-size:14px}.pg .hdr-in{gap:12px}}
+@container (max-width:1360px){.pg .lap{display:none !important}.pg .nolap{display:flex !important}}
+.pg main .lead,.pg main .box-text,.pg main .box-body,.pg main .card p,.pg main .grid p,.pg main article p{text-align:justify;text-justify:inter-word;text-align-last:start}
+.pg main .grid.c3 p,.pg main .grid.c4 p,.pg main .grid.c3 .lead,.pg main .grid.c4 .lead,.pg main .cs-head p{text-align:start}
+@container (max-width:1100px){.pg main .grid p,.pg main .grid .lead{text-align:start}}
+@container (max-width:700px){.pg main p,.pg main .lead,.pg main .box-text,.pg main .box-body,.pg main .card p,.pg main .grid p,.pg main article p{text-align:start}}
+.pg main [style*="text-align: center"] p,.pg main [style*="text-align:center"] p,.pg main .note span{text-align:inherit;hyphens:none}
+.pg .box-body{font-size:19px;line-height:31px;color:#E3F1E4;margin:0;max-width:1000px}
+.pg .green-box{border-radius:24px;padding:56px;display:flex;flex-direction:column;gap:24px}
+.pg .sec-title.hero-title{font-size:60px;line-height:66px}
+.cq a.join-item{display:flex;align-items:center;gap:12px;min-height:56px;padding:6px 10px;border-radius:8px;color:#17323A;font-weight:600;text-decoration:none}
+.cq a.join-item:hover{background:#EDE7D8}
+.cq .join-ic{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;flex:none}
+.cq .join-sub{font-size:13px;font-weight:400;color:#4A5F63}
+@container (max-width:1100px){.pg .sec-title{font-size:36px;line-height:44px}.pg .sec-sub{font-size:24px;line-height:33px}.pg .box-text{font-size:22px;line-height:33px}.pg .green-box{padding:40px}.pg .sec-title.hero-title{font-size:48px;line-height:54px}}
+@container (max-width:600px){.pg .sec-title{font-size:30px;line-height:37px}.pg .sec-sub{font-size:21px;line-height:30px}.pg .box-text{font-size:19px;line-height:29px}.pg .box-body{font-size:17px;line-height:28px}.pg .green-box{padding:24px;border-radius:18px}.pg .sec-title.hero-title{font-size:36px;line-height:42px}}
+
+
+.cq a.soc{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);color:#FFFFFF;text-decoration:none}
+.cq a.soc:hover{background:#F5F1E6;color:#134E5E}
+.cq .ftr-contact{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16)}
+.cq a.ftr-mail{color:#FFFFFF;font-size:14px;font-weight:600;word-break:break-all;text-decoration:underline;text-underline-offset:3px}
