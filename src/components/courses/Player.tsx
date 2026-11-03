@@ -40,6 +40,18 @@ type Props = {
   whatsapp: string
 }
 
+// Lesson text: a blank line starts a new paragraph, a single line break stays a line break.
+function Paras({ text }: { text?: string | null }) {
+  if (!text) return null
+  return (
+    <>
+      {text.split(/\n\s*\n/).map((para, i) => (
+        <p key={i}>{para.split('\n').map((line, j) => (j ? [<br key={j} />, line] : line))}</p>
+      ))}
+    </>
+  )
+}
+
 const shortUrl = (u: string) => u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
 
 export function Player({ course, modules, initialCompleted, initialResults, startAt, whatsapp }: Props) {
@@ -214,20 +226,20 @@ export function Player({ course, modules, initialCompleted, initialResults, star
           <section className="pl-stage" aria-label="Lesson">
             <div className="pl-brand"><span className="row g8"><img src="/images/hsn-logo.jpg" alt="" />Healthcare Sustainability Network</span><span className="tabup">Created by Healthcare Sustainability Network</span></div>
             {s.type === 'cover' && (
-              <div className="pl-slide pl-cover"><span className="over" style={{ color: '#BFE6F3' }}>{course.title}</span><h2>{s.title}</h2>{s.body && <p>{s.body}</p>}</div>
+              <div className="pl-slide pl-cover"><span className="over" style={{ color: '#BFE6F3' }}>{course.title}</span><h2>{s.title}</h2><Paras text={s.body} /></div>
             )}
             {s.type === 'text' && (
-              <div className="pl-slide"><h2>{s.title}</h2>{s.body && <p>{s.body}</p>}</div>
+              <div className="pl-slide"><h2>{s.title}</h2><Paras text={s.body} /></div>
             )}
             {s.type === 'reflection' && (
               <div className="pl-slide"><h2>{s.title}</h2><p className="pl-ask">{s.body}</p>{s.extra && <p className="muted" style={{ fontSize: '17px' }}>{s.extra}</p>}</div>
             )}
             {s.type === 'diagram' && (
-              <div className="pl-slide"><div className="pl-loop"><div className="stack g16"><h2>{s.title}</h2>{s.body && <p>{s.body}</p>}</div>{s.image && <img src={s.image.url} alt={s.image.alt} />}</div></div>
+              <div className="pl-slide"><div className="pl-loop"><div className="stack g16"><h2>{s.title}</h2><Paras text={s.body} /></div>{s.image && <img src={s.image.url} alt={s.image.alt} />}</div></div>
             )}
             {s.type === 'video' && (
               <div className="pl-slide" style={{ justifyContent: 'flex-start' }}>
-                {s.body && <p>{s.body}</p>}
+                <Paras text={s.body} />
                 {s.youtube ? (
                   <>
                     <div className="pl-video">
@@ -249,7 +261,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
             )}
             {s.type === 'references' && (
               <div className="pl-slide" style={{ justifyContent: 'flex-start' }}><h2>{s.title}</h2>
-                {s.body && <p>{s.body}</p>}
+                <Paras text={s.body} />
                 <ol className="pl-refs">
                   {s.references.map((r, i) => (
                     <li key={i}>{r.text}{r.url && (<>{' '}<a href={r.url} target="_blank" rel="noopener">{r.linkText || shortUrl(r.url)}</a></>)}</li>
@@ -261,7 +273,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
               <div className="pl-slide pl-cover" style={{ alignItems: 'flex-start' }}>
                 <span className="ic" style={{ background: '#4FAE4E', color: '#0E1F22' }}><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
                 <h2>{s.title}</h2>
-                {s.body && <p>{s.body}</p>}
+                <Paras text={s.body} />
                 <div className="row g12 mstack">
                   {nextItem && <button className="btn btn-lg btn-light" onClick={next}>{nextItem.l.type === 'quiz' ? `Start ${nextItem.l.title}` : 'Continue'}</button>}
                   {nextModule && <span className="small" style={{ color: '#BFE6F3' }}>Next module: {nextModule.title}</span>}

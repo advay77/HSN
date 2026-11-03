@@ -175,8 +175,8 @@ export default async function CoursePage({ params }: Props) {
                 </div>
                 <ol className="cr-steps">
                   <li><span className="cr-step-n">1</span><span><b>{course.certificate?.step1 || 'Complete every lesson'}</b><span>Work through all modules at your own pace.</span></span></li>
-                  <li><span className="cr-step-n">2</span><span><b>{course.certificate?.step2 || 'Pass each module quiz'}</b><span>{quizStep}</span></span></li>
-                  <li><span className="cr-step-n">3</span><span><b>{course.certificate?.step3 || 'Download and share'}</b><span>Save your certificate as a PDF or add it to LinkedIn.</span></span></li>
+                  {firstQuiz && <li><span className="cr-step-n">2</span><span><b>{course.certificate?.step2 || 'Pass each module quiz'}</b><span>{quizStep}</span></span></li>}
+                  <li><span className="cr-step-n">{firstQuiz ? 3 : 2}</span><span><b>{course.certificate?.step3 || 'Download and share'}</b><span>Save your certificate as a PDF or add it to LinkedIn.</span></span></li>
                 </ol>
                 <div className="row g16 mstack" style={{ alignItems: 'center' }}><a className="btn btn-lg btn-light" href={learnHref}>Start course now</a></div>
               </div>
