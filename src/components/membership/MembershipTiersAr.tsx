@@ -4,6 +4,8 @@
 import Link from 'next/link'
 import React, { useCallback, useState } from 'react'
 
+import { regionOfCountry } from '@/lib/regions'
+
 import { MembershipModal, type TierId } from './MembershipModal'
 
 const REGIONS = [
@@ -18,15 +20,17 @@ const TIERS: { id: TierId; name: string; blurb: string; features: string[] }[] =
 const TIER_NAMES = Object.fromEntries(TIERS.map((t) => [t.id, t.name])) as Record<TierId, string>
 
 export function MembershipTiersAr({
+  country,
   live,
   prices,
   defaults,
 }: {
+  country?: string | null
   live: boolean
   prices: Partial<Record<TierId, Record<string, string>>>
   defaults: { name: string; email: string } | null
 }) {
-  const [region, setRegion] = useState('AE')
+  const [region, setRegion] = useState(country ? regionOfCountry(country) : 'AE')
   const [modalTier, setModalTier] = useState<TierId | null>(null)
   const close = useCallback(() => setModalTier(null), [])
   const currency = (REGIONS.find((r) => r.id === region) || REGIONS[1]!).cur

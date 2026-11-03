@@ -4,6 +4,8 @@
 import Link from 'next/link'
 import React, { useCallback, useState } from 'react'
 
+import { COUNTRY_CODES, regionOfCountry } from '@/lib/regions'
+
 import { MembershipModal, type TierId } from './MembershipModal'
 
 const REGIONS = [
@@ -23,16 +25,35 @@ const TIERS: { id: TierId; name: string; initial: string; ic: string; tag?: stri
 ]
 const TIER_NAMES = Object.fromEntries(TIERS.map((t) => [t.id, t.name])) as Record<TierId, string>
 
+const countryName = (() => {
+  let names: Intl.DisplayNames | null = null
+  try {
+    names = new Intl.DisplayNames(['en'], { type: 'region' })
+  } catch {}
+  return (code: string) => names?.of(code) || code
+})()
+const COUNTRIES = COUNTRY_CODES.map((code) => ({ code, name: countryName(code) })).sort((a, b) => a.name.localeCompare(b.name))
+
 export function MembershipTiers({
+  country: detected,
   live,
   prices,
   defaults,
 }: {
+  country?: string | null
   live: boolean
   prices: Partial<Record<TierId, Record<string, string>>>
   defaults: { name: string; email: string } | null
 }) {
-  const [region, setRegion] = useState('IN')
+  const start = COUNTRIES.find((c) => c.code === (detected || '').toUpperCase())?.code ?? 'IN'
+  const [country, setCountry] = useState(start)
+  const [query, setQuery] = useState(countryName(start))
+  const region = regionOfCountry(country)
+  const pick = (value: string) => {
+    setQuery(value)
+    const hit = COUNTRIES.find((c) => c.name.toLowerCase() === value.trim().toLowerCase())
+    if (hit) setCountry(hit.code)
+  }
   const [modalTier, setModalTier] = useState<TierId | null>(null)
   const close = useCallback(() => setModalTier(null), [])
   const currency = (REGIONS.find((r) => r.id === region) || REGIONS[0]!).cur
@@ -54,12 +75,11 @@ export function MembershipTiers({
           <div className="card pad row between g16" style={{ paddingBlock: '20px' }}>
             <div className="row g12">
               <span className="ic ic-a" style={{ width: '44px', height: '44px' }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg></span>
-              <div className="stack"><label className="lbl" htmlFor="region">Region &amp; currency</label><span className="small muted">Prices will be shown in your local currency.</span></div>
+              <div className="stack"><label className="lbl" htmlFor="region">Region &amp; currency</label><span className="small muted" aria-live="polite">Prices shown in {currency.split(' ').pop()} for {countryName(country)}. Type to search your country.</span></div>
             </div>
             <span className="sel" style={{ flex: '0 1 340px', minWidth: '260px' }}>
-              <select className="inp" id="region" style={{ fontWeight: '600' }} value={region} onChange={(e) => setRegion(e.target.value)}>
-                {REGIONS.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
-              </select>
+              <input className="inp" id="region" list="region-countries" autoComplete="country-name" style={{ fontWeight: '600' }} value={query} onChange={(e) => pick(e.target.value)} onFocus={(e) => e.currentTarget.select()} onBlur={() => setQuery(countryName(country))} />
+              <datalist id="region-countries">{COUNTRIES.map((c) => <option key={c.code} value={c.name} />)}</datalist>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#134E5E" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
             </span>
           </div>
