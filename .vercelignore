@@ -1,0 +1,10 @@
+# Never upload secrets, local data or design sources to Vercel.
+.env
+.env.*
+!.env.example
+hsn.db*
+media/
+design-src/
+.next/
+node_modules/
+tests/

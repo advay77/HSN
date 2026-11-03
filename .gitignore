@@ -56,3 +56,6 @@ node_modules/
 
 # generated design reference (rebuild with tools/dc2jsx.mjs)
 /design-src
+
+.vercel
+.env*
