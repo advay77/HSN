@@ -4,7 +4,7 @@ import React from 'react'
 
 import { CourseLibrary, type CourseCard } from '@/components/courses/CourseLibrary'
 import { requireMember } from '@/lib/auth/guard'
-import { getEnrollmentsFor, getPublishedCourses, hasVideo, media, progressOf, visibleModules } from '@/lib/courses/data'
+import { getEnrollmentsFor, getPublishedCourses, hasVideo, media, progressOf, visibleModules, availableModules } from '@/lib/courses/data'
 
 export const metadata: Metadata = { title: 'Courses' }
 export const dynamic = 'force-dynamic'
@@ -32,7 +32,7 @@ export default async function CoursesPage() {
       color: c.coverColor || '#134E5E',
       duration: c.facts?.duration || '',
       meta: `${mods} ${mods === 1 ? 'module' : 'modules'}`,
-      cta: member ? ctaFor(progressFor(c), 'View course', 'Continue') : 'View course',
+      cta: availableModules(c).length === 0 ? 'Coming soon' : member ? ctaFor(progressFor(c), 'View course', 'Continue') : 'View course',
     }
   })
 
@@ -46,7 +46,7 @@ export default async function CoursesPage() {
         modules: visibleModules(f).length,
         video: hasVideo(f),
         cover: media(f.cover)?.url ?? null,
-        cta: member ? ctaFor(progressFor(f), 'Start course', 'Continue course') : 'Start course',
+        cta: availableModules(f).length === 0 ? 'Coming soon' : member ? ctaFor(progressFor(f), 'Start course', 'Continue course') : 'Start course',
       }
     : null
 

@@ -33,6 +33,7 @@ export default async function LearnPage({ params, searchParams }: Props) {
   const { lesson: startAt } = await searchParams
   const course = await getCourseBySlug(slug)
   if (!course) notFound()
+  if (!(course.modules ?? []).some((m) => m.status === 'available')) redirect(`/courses/${slug}`)
   const member = await requireMember(`/courses/${slug}/learn`)
   if (course.audience === 'members' && member.membershipStatus !== 'active') redirect('/membership')
 

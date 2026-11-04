@@ -63,6 +63,9 @@ export default async function CoursePage({ params }: Props) {
           ? 'Coming soon'
           : `${avail.length} available now`
   const certOn = course.certificate?.enabled !== false
+  // Every module "Coming soon": the course is shown but cannot be started yet.
+  const soon = avail.length === 0
+  const SoonButton = ({ light = false }: { light?: boolean }) => <span className={light ? 'btn btn-lg btn-light' : 'btn btn-p btn-lg'} aria-disabled="true" style={{ opacity: 0.7, cursor: 'default' }}>Coming soon</span>
 
   const moduleViews: ModuleView[] = mods.map((m, i) => {
     const lessons = m.lessons ?? []
@@ -107,7 +110,7 @@ export default async function CoursePage({ params }: Props) {
               <h1 className="sec-title hero-title" style={{ textTransform: 'none', letterSpacing: '0' }}>{course.title}</h1>
               <p className="lead measure">{course.description}</p>
               <div className="row g12 mstack" style={{ paddingTop: '4px' }}>
-                <a className="btn btn-p btn-lg" href={learnHref}>{enrollment && (enrollment.progress ?? 0) > 0 ? 'Continue course' : 'Start course now'}{' '}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></a>
+                {soon ? <SoonButton /> : <a className="btn btn-p btn-lg" href={learnHref}>{enrollment && (enrollment.progress ?? 0) > 0 ? 'Continue course' : 'Start course now'}{' '}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></a>}
                 <SaveButton courseId={course.id} initial={!!enrollment?.savedForLater} signedIn={!!member} loginHref={`/login?next=${encodeURIComponent(href)}`} />
               </div>
               <span className="row g12 small muted"><img src="/images/hsn-logo.jpg" alt="" style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover' }} /><span>Created by{' '}<strong style={{ color: '#17323A' }}>{course.createdBy || 'Healthcare Sustainability Network'}</strong></span></span>
@@ -162,7 +165,12 @@ export default async function CoursePage({ params }: Props) {
         </section>
       )}
       {/* Modules */}
-      <CourseModules modules={moduleViews} learnHref={learnHref} />
+      {soon && (
+        <section className="sec" style={{ paddingTop: 0, paddingBottom: 0 }}>
+          <div className="wrap"><div className="note" role="status"><span><b>Coming soon.</b> This course is being prepared for accreditation. Save it now and we will let you know when it opens.</span></div></div>
+        </section>
+      )}
+      <CourseModules modules={moduleViews} learnHref={soon ? '' : learnHref} />
       {/* Certificate */}
       {certOn && (
         <section className="sec" aria-labelledby="ce">
@@ -178,7 +186,7 @@ export default async function CoursePage({ params }: Props) {
                   {firstQuiz && <li><span className="cr-step-n">2</span><span><b>{course.certificate?.step2 || 'Pass each module quiz'}</b><span>{quizStep}</span></span></li>}
                   <li><span className="cr-step-n">{firstQuiz ? 3 : 2}</span><span><b>{course.certificate?.step3 || 'Download and share'}</b><span>Save your certificate as a PDF or add it to LinkedIn.</span></span></li>
                 </ol>
-                <div className="row g16 mstack" style={{ alignItems: 'center' }}><a className="btn btn-lg btn-light" href={learnHref}>Start course now</a></div>
+                <div className="row g16 mstack" style={{ alignItems: 'center' }}>{soon ? <SoonButton light /> : <a className="btn btn-lg btn-light" href={learnHref}>Start course now</a>}</div>
               </div>
               <figure className="cr-paper" aria-label="Example certificate">
                 <div className="cr-paper-in">

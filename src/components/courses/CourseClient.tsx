@@ -70,7 +70,7 @@ export function CourseModules({ modules, learnHref }: { modules: ModuleView[]; l
             </div>
           ))}
         </div>
-        <a className="btn btn-p btn-lg self-start" href={learnHref}>Start course now</a>
+        {learnHref && <a className="btn btn-p btn-lg self-start" href={learnHref}>Start course now</a>}
       </div>
     </section>
   )
