@@ -3,6 +3,9 @@ import React from 'react'
 import './styles/fonts.css'
 import './styles/hsn.css'
 import './styles/hsn2.css'
+import './styles/motion.css'
+
+import { NavProgress } from '@/components/site/NavProgress'
 
 export const metadata = {
   title: {
@@ -28,7 +31,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@600;700;800&family=Lexend:wght@400;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <NavProgress />
+        {children}
+      </body>
     </html>
   )
 }

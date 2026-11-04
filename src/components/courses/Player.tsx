@@ -105,7 +105,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
       <>
         <TopBar title={course.title} pct={0} slug={course.slug} outlineOpen={false} onOutline={() => {}} onA11y={() => setA11yOpen(true)} a11yOpen={a11yOpen} />
         <main className="pl-main">
-          <section className="pl-stage" aria-label="Lesson">
+          <section key={idx} className="pl-stage" aria-label="Lesson">
             <div className="pl-slide"><h2>Lessons are coming soon</h2><p>This course does not have any lessons available yet.</p></div>
           </section>
         </main>

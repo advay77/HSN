@@ -1,0 +1,40 @@
+/* Motion: gentle page entrances, hover easing, skeleton shimmer and the navigation progress bar.
+   Everything here is off for people who ask for less motion (OS setting or the "Pause animations" tool). */
+
+@keyframes hsn-page-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes hsn-fade{from{opacity:0}to{opacity:1}}
+@keyframes hsn-shimmer{from{background-position:-200% 0}to{background-position:200% 0}}
+
+/* Each new page (and each new lesson in the player) eases in instead of snapping. */
+.pg main{animation:hsn-page-in .38s cubic-bezier(.22,.61,.36,1) both}
+.pg .pl-stage{animation:hsn-fade .3s ease both}
+
+/* Smooth hover and press states on links, buttons and cards. */
+.pg a,.pg button,.pg .btn,.pg .card-link,.pg .inp{transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .2s ease,transform .18s ease,opacity .18s ease}
+.pg .card-link:hover{transform:translateY(-2px)}
+.pg .btn:not(:disabled):active{transform:translateY(1px)}
+html{scroll-behavior:smooth}
+
+/* Skeletons: grey placeholders with a soft moving sheen while a page loads. */
+.sk{display:block;border-radius:10px;background:linear-gradient(90deg,#E9E3D5 25%,#F3EEE3 50%,#E9E3D5 75%);background-size:200% 100%;animation:hsn-shimmer 1.4s ease-in-out infinite}
+.sk-line{height:14px;border-radius:7px}
+.sk-title{height:34px;border-radius:10px}
+.sk-btn{height:48px;width:170px;border-radius:12px}
+.sk-img{border-radius:16px;aspect-ratio:16/10;width:100%}
+.sk-circle{border-radius:50%}
+.sk-card{background:#FFFDF8;border:1px solid #D9D2C1;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.pg main.sk-page{animation:none}
+.a-dark .sk{background:linear-gradient(90deg,#1E3438 25%,#29444A 50%,#1E3438 75%);background-size:200% 100%}
+.a-dark .sk-card{background:#13292D;border-color:#2D4A50}
+
+/* Thin bar at the top while the next page is on its way. */
+.nav-prog{position:fixed;top:0;left:0;z-index:9999;height:3px;width:100%;transform-origin:0 50%;background:linear-gradient(90deg,#1F7A4D,#2E8FA8);box-shadow:0 0 8px rgba(46,143,168,.5);pointer-events:none;transition:transform .25s ease,opacity .3s ease}
+
+@media (prefers-reduced-motion:reduce){
+  .pg main,.pg .pl-stage,.pg main.sk-page{animation:none}
+  .pg a,.pg button,.pg .btn,.pg .card-link,.pg .inp{transition:none}
+  .pg .card-link:hover,.pg .btn:not(:disabled):active{transform:none}
+  .sk{animation:none}
+  html{scroll-behavior:auto}
+  .nav-prog{transition:none}
+}
