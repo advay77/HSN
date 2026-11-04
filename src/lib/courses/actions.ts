@@ -39,6 +39,14 @@ export async function toggleSaveCourse(courseId: number): Promise<boolean> {
   return saved
 }
 
+/** The first earlier lesson (or quiz) this member has not finished yet; lessons are done in order. */
+function earlierUnfinished(course: Parameters<typeof playableLessons>[0], e: Parameters<typeof completedIds>[0], lessonId: string) {
+  const all = playableLessons(course)
+  const pos = all.findIndex((l) => l.id === lessonId)
+  const done = new Set(completedIds(e))
+  return all.slice(0, Math.max(0, pos)).find((l) => l.id && !done.has(l.id)) ?? null
+}
+
 /** Marks a lesson complete (quizzes are completed only by passing them). Returns the new progress %. */
 export async function completeLesson(courseId: number, lessonId: string): Promise<{ progress: number; completed: string[] }> {
   const member = await requireMember()
@@ -46,6 +54,7 @@ export async function completeLesson(courseId: number, lessonId: string): Promis
   const lesson = playableLessons(course).find((l) => l.id === lessonId)
   if (!lesson || isQuiz(lesson)) throw new Error('Lesson not found')
   const e = await getOrCreateEnrollment(member.id, courseId)
+  if (earlierUnfinished(course, e, lessonId)) throw new Error('Finish the earlier lessons first')
   const completed = Array.from(new Set([...completedIds(e), lessonId]))
   const next = { ...e, completedLessons: completed }
   const progress = progressOf(course, next)
@@ -66,6 +75,7 @@ export async function submitQuiz(courseId: number, lessonId: string, answers: nu
   const lesson = playableLessons(course).find((l) => l.id === lessonId)
   if (!lesson || !isQuiz(lesson)) throw new Error('Quiz not found')
   const e = await getOrCreateEnrollment(member.id, courseId)
+  if (earlierUnfinished(course, e, lessonId)) throw new Error('Finish the earlier lessons first')
   const results = quizResults(e)
   const maxAttempts = course.certificate?.retakes === false ? 1 : course.certificate?.maxAttempts || 0
   const qs = lesson.questions ?? []

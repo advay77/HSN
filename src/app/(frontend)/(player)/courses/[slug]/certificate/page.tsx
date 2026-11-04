@@ -1,0 +1,87 @@
+// Course certificate: made automatically when a member finishes every lesson (and passes any quizzes).
+// Download as PDF through the browser's print dialog; anyone can check it at /verify/<id>.
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import React from 'react'
+
+import '@/app/(frontend)/styles/pages/certificate.css'
+
+import { CertificateActions } from '@/components/courses/CertificateActions'
+import { requireMember } from '@/lib/auth/guard'
+import { certificateId, formatIssued } from '@/lib/courses/certificate'
+import { getCourseBySlug, getEnrollment, progressOf } from '@/lib/courses/data'
+
+export const dynamic = 'force-dynamic'
+export const metadata: Metadata = { title: 'Certificate', robots: { index: false } }
+
+type Props = { params: Promise<{ slug: string }> }
+
+export default async function CertificatePage({ params }: Props) {
+  const { slug } = await params
+  const course = await getCourseBySlug(slug)
+  if (!course) notFound()
+  const member = await requireMember(`/courses/${slug}/certificate`)
+  const enrollment = await getEnrollment(member.id, course.id)
+  const progress = progressOf(course, enrollment)
+  const enabled = course.certificate?.enabled !== false
+  const issuer = course.certificate?.issuer || 'Healthcare Sustainability Network'
+
+  if (!enabled || !enrollment || progress < 100) {
+    return (
+      <main className="cert-wrap">
+        <div className="cert-note card pad stack g16">
+          <h1 className="h3">{enabled ? 'Your certificate is not ready yet' : 'This course has no certificate'}</h1>
+          {enabled && (
+            <>
+              <p>Finish every lesson{course.modules?.some((m) => m.lessons?.some((l) => l.type === 'quiz')) ? ' and pass each module quiz' : ''} in <b>{course.title}</b> and your certificate is created automatically.</p>
+              <div className="prog" aria-label={`${progress}% complete`}><span style={{ width: `${progress}%` }} /></div>
+              <p className="small muted">{progress}% complete</p>
+            </>
+          )}
+          <div className="row g12" style={{ flexWrap: 'wrap' }}>
+            <a className="btn btn-p" href={`/courses/${slug}/learn`}>{progress > 0 ? 'Continue course' : 'Start course'}</a>
+            <a className="btn btn-s" href="/my">Back to My HSN</a>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
+  const id = certificateId(enrollment.id)
+  const issued = enrollment.completedAt || enrollment.updatedAt
+  const site = (process.env.SITE_URL || 'https://healthcaresustainabilitynetwork.com').replace(/\/$/, '')
+  const verifyUrl = `${site}/verify/${id}`
+  const d = new Date(issued)
+  const linkedIn =
+    'https://www.linkedin.com/profile/add?' +
+    new URLSearchParams({
+      startTask: 'CERTIFICATION_NAME',
+      name: course.title,
+      organizationName: issuer,
+      issueYear: String(d.getFullYear()),
+      issueMonth: String(d.getMonth() + 1),
+      certUrl: verifyUrl,
+      certId: id,
+    }).toString()
+
+  return (
+    <main className="cert-wrap">
+      <CertificateActions linkedIn={linkedIn} />
+      <article className="cert" aria-label="Certificate of completion">
+        <div className="cert-in">
+          <img src="/images/hsn-logo.jpg" alt="Healthcare Sustainability Network" className="cert-logo" />
+          <span className="cert-k">Certificate of completion</span>
+          <span className="cert-s">This certifies that</span>
+          <span className="cert-name">{member.name}</span>
+          <span className="cert-s">has successfully completed the course</span>
+          <span className="cert-c">{course.title}</span>
+          <div className="cert-f">
+            <span><b>{formatIssued(issued)}</b><span>Date issued</span></span>
+            <span><b>{issuer}</b><span>Issued by</span></span>
+          </div>
+          <span className="cert-id">Certificate ID {id} · Verify at {verifyUrl.replace(/^https?:\/\//, '')}</span>
+        </div>
+      </article>
+    </main>
+  )
+}

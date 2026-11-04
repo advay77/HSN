@@ -38,3 +38,6 @@ html{scroll-behavior:smooth}
   html{scroll-behavior:auto}
   .nav-prog{transition:none}
 }
+
+/* Course outline: lessons that open later look quieter. */
+.pg .pl-item.locked{opacity:.55;cursor:not-allowed}

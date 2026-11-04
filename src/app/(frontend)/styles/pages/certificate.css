@@ -1,0 +1,33 @@
+/* Course certificate page: screen view and an A4 landscape print/PDF layout. */
+.cert-wrap{max-width:1040px;margin:0 auto;padding:24px 16px 48px;display:flex;flex-direction:column;gap:20px}
+.cert-note{max-width:640px;margin:40px auto}
+.cert-actions{justify-content:space-between;flex-wrap:wrap;align-items:center}
+.cert-tip{flex-basis:100%;margin:0;text-align:right}
+.cert{background:#FFFDF8;border-radius:18px;padding:14px;box-shadow:0 2px 6px rgba(19,78,94,.08),0 12px 32px rgba(19,78,94,.12)}
+.cert-in{border:2px solid #1F7A4D;outline:1px solid #B9D8C4;outline-offset:-10px;border-radius:12px;padding:48px 40px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;aspect-ratio:297/210}
+.cert-logo{height:84px;width:auto;max-width:260px;border-radius:12px;object-fit:contain;margin-bottom:6px}
+.cert-k{font-family:Montserrat,Inter,sans-serif;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#134E5E;font-size:18px}
+.cert-s{color:#4A5A57;font-size:16px}
+.cert-name{font-family:Montserrat,Inter,sans-serif;font-weight:800;font-size:44px;line-height:1.15;color:#0B6B3A;border-bottom:2px solid #D9D2C1;padding:4px 24px 10px;margin:4px 0}
+.cert-c{font-family:Montserrat,Inter,sans-serif;font-weight:700;font-size:24px;line-height:1.3;color:#17323A;max-width:80%}
+.cert-f{display:flex;gap:64px;margin-top:auto;padding-top:24px}
+.cert-f>span{display:flex;flex-direction:column;gap:4px;min-width:200px;border-top:1px solid #7A8580;padding-top:8px}
+.cert-f b{font-size:16px;color:#17323A}
+.cert-f span span{font-size:13px;color:#66706C}
+.cert-id{font-size:12px;color:#66706C;margin-top:10px;overflow-wrap:anywhere}
+@media (max-width:720px){
+  .cert-in{aspect-ratio:auto;padding:32px 18px}
+  .cert-name{font-size:30px;padding:4px 8px 8px}
+  .cert-c{font-size:19px;max-width:100%}
+  .cert-f{flex-direction:column;gap:16px}
+  .cert-tip{text-align:left}
+}
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  html,body,.pg{background:#FFFFFF !important}
+  .cert-actions,.nav-prog,.a11y-fab,.a11y-btn{display:none !important}
+  .cert-wrap{padding:0;max-width:none}
+  .cert{box-shadow:none;padding:0;border-radius:0}
+  .cert-in{height:188mm;aspect-ratio:auto;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pg main{animation:none !important}
+}

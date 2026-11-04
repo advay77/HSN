@@ -32,7 +32,7 @@ export type PlayerModule = {
 }
 
 type Props = {
-  course: { id: number; slug: string; title: string; retakes: boolean; maxAttempts: number }
+  course: { id: number; slug: string; title: string; retakes: boolean; maxAttempts: number; certificate: boolean }
   modules: PlayerModule[]
   initialCompleted: string[]
   initialResults: Record<string, QuizResult>
@@ -89,9 +89,14 @@ export function Player({ course, modules, initialCompleted, initialResults, star
   const allPlayable = avail.flatMap((m) => m.lessons)
   const total = list.length
 
+  // Lessons open in order: everything up to the first unfinished one.
+  const reachOf = (d: Set<string>) => {
+    const i = list.findIndex((x) => !d.has(x.l.id))
+    return i < 0 ? total - 1 : i
+  }
   const firstOpen = () => {
     const byId = startAt ? list.findIndex((x) => x.l.id === startAt) : -1
-    if (byId >= 0) return byId
+    if (byId >= 0) return Math.min(byId, reachOf(done))
     const i = list.findIndex((x) => !done.has(x.l.id))
     return i >= 0 ? i : 0
   }
@@ -121,7 +126,13 @@ export function Player({ course, modules, initialCompleted, initialResults, star
   const nextItem = list[idx + 1]
   const nextModule = modules.find((m) => m.n > mod.n)
 
-  const go = (i: number) => {
+  const reach = reachOf(done)
+  const go = (i: number, force = false) => {
+    if (!force && i > reach) {
+      setError(`Please finish the earlier lessons first. Next up: “${list[reach]?.l.title ?? ''}”.`)
+      setOutlineOpen(false)
+      return
+    }
     setIdx(i)
     setPlaying(false)
     setOutlineOpen(false)
@@ -143,7 +154,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
   }
   const next = () => {
     if (s.type !== 'quiz') markDone(s.id)
-    go(Math.min(idx + 1, total - 1))
+    go(Math.min(idx + 1, total - 1), true)
   }
 
   // Quiz state for the current lesson
@@ -206,7 +217,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
                     const i = offset + j
                     const isDone = done.has(l.id)
                     return (
-                      <li key={l.id}><button className={i === idx ? 'pl-item cur' : 'pl-item'} aria-current={i === idx ? 'step' : undefined} onClick={() => go(i)}><span className={isDone ? 'pl-st done' : i === idx ? 'pl-st now' : 'pl-st'} aria-hidden="true">{isDone ? '✓' : i === idx ? '' : String(j + 1)}</span><span><span>{l.title}</span><span className="pl-k">{l.kind}</span></span></button></li>
+                      <li key={l.id}><button className={i === idx ? 'pl-item cur' : i > reach ? 'pl-item locked' : 'pl-item'} aria-current={i === idx ? 'step' : undefined} aria-disabled={i > reach || undefined} title={i > reach ? 'Finish the earlier lessons first' : undefined} onClick={() => go(i)}><span className={isDone ? 'pl-st done' : i === idx ? 'pl-st now' : 'pl-st'} aria-hidden="true">{isDone ? '✓' : i === idx ? '' : i > reach ? '🔒' : String(j + 1)}</span><span><span>{l.title}</span><span className="pl-k">{l.kind}</span></span></button></li>
                     )
                   })}
                 </ol>
@@ -276,6 +287,11 @@ export function Player({ course, modules, initialCompleted, initialResults, star
                 <Paras text={s.body} />
                 <div className="row g12 mstack">
                   {nextItem && <button className="btn btn-lg btn-light" onClick={next}>{nextItem.l.type === 'quiz' ? `Start ${nextItem.l.title}` : 'Continue'}</button>}
+                  {!nextItem && !nextModule && course.certificate && (
+                    pctNum === 100
+                      ? <a className="btn btn-lg btn-light" href={`/courses/${course.slug}/certificate`}>Get your certificate</a>
+                      : !done.has(s.id) && <button className="btn btn-lg btn-light" onClick={() => markDone(s.id)}>Finish course</button>
+                  )}
                   {nextModule && <span className="small" style={{ color: '#BFE6F3' }}>Next module: {nextModule.title}</span>}
                 </div>
               </div>

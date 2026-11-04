@@ -80,7 +80,7 @@ export default async function LearnPage({ params, searchParams }: Props) {
 
   return (
     <Player
-      course={{ id: course.id, slug: course.slug!, title: course.title, retakes: course.certificate?.retakes !== false, maxAttempts: course.certificate?.maxAttempts ?? 0 }}
+      course={{ id: course.id, slug: course.slug!, title: course.title, retakes: course.certificate?.retakes !== false, maxAttempts: course.certificate?.maxAttempts ?? 0, certificate: course.certificate?.enabled !== false }}
       modules={modules}
       initialCompleted={completedIds(enrollment)}
       initialResults={results}
