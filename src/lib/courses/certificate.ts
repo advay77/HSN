@@ -2,6 +2,8 @@ import 'server-only'
 
 import crypto from 'node:crypto'
 
+import QRCode from 'qrcode'
+
 import { getPayloadClient } from '@/lib/payload'
 
 // Certificate IDs look like HSN-42-7F3A9C1B: the enrollment number plus a signature only the server can make,
@@ -28,5 +30,29 @@ export async function verifyCertificate(id: string): Promise<VerifiedCertificate
   return { id: certificateId(e.id), name: member.name, course: course.title, slug: course.slug || '', issued: e.completedAt }
 }
 
+const zone = () => process.env.SITE_TIMEZONE || 'Asia/Kolkata'
+
 export const formatIssued = (iso: string) =>
-  new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: process.env.SITE_TIMEZONE || 'Asia/Kolkata' })
+  new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: zone() })
+
+export const formatIssuedAt = (iso: string) =>
+  new Date(iso).toLocaleString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: zone(),
+  })
+
+/** SVG of the public verification link, for printing on the certificate. */
+export async function certificateQr(url: string) {
+  const svg = await QRCode.toString(url, {
+    type: 'svg',
+    margin: 1,
+    errorCorrectionLevel: 'M',
+    color: { dark: '#17323A', light: '#00000000' },
+  })
+  return svg.replace(/<\?xml[^>]*>/, '')
+}

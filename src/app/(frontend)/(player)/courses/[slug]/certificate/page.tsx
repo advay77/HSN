@@ -8,7 +8,7 @@ import '@/app/(frontend)/styles/pages/certificate.css'
 
 import { CertificateActions } from '@/components/courses/CertificateActions'
 import { requireMember } from '@/lib/auth/guard'
-import { certificateId, formatIssued } from '@/lib/courses/certificate'
+import { certificateId, certificateQr, formatIssued } from '@/lib/courses/certificate'
 import { getCourseBySlug, getEnrollment, progressOf } from '@/lib/courses/data'
 
 export const dynamic = 'force-dynamic'
@@ -51,6 +51,7 @@ export default async function CertificatePage({ params }: Props) {
   const issued = enrollment.completedAt || enrollment.updatedAt
   const site = (process.env.SITE_URL || 'https://healthcaresustainabilitynetwork.com').replace(/\/$/, '')
   const verifyUrl = `${site}/verify/${id}`
+  const qr = await certificateQr(verifyUrl)
   const d = new Date(issued)
   const linkedIn =
     'https://www.linkedin.com/profile/add?' +
@@ -70,16 +71,22 @@ export default async function CertificatePage({ params }: Props) {
       <article className="cert" aria-label="Certificate of completion">
         <div className="cert-in">
           <img src="/images/hsn-logo.jpg" alt="Healthcare Sustainability Network" className="cert-logo" />
-          <span className="cert-k">Certificate of completion</span>
-          <span className="cert-s">This certifies that</span>
+          <span className="cert-k">Certificate</span>
           <span className="cert-name">{member.name}</span>
-          <span className="cert-s">has successfully completed the course</span>
+          <span className="cert-s">has received this award for successfully completing this course</span>
           <span className="cert-c">{course.title}</span>
-          <div className="cert-f">
-            <span><b>{formatIssued(issued)}</b><span>Date issued</span></span>
-            <span><b>{issuer}</b><span>Issued by</span></span>
+          <div className="cert-foot">
+            <span className="cert-date"><b>{formatIssued(issued)}</b><span>Date of award</span></span>
+            <span className="cert-qr">
+              <span dangerouslySetInnerHTML={{ __html: qr }} />
+              <span className="cert-id">Certificate ID {id}</span>
+            </span>
+            <span className="cert-sign">
+              <span className="cert-sign-line" />
+              <b>Dr. Nishant Jaiswal, PhD</b>
+              <span>Founder, Healthcare Sustainability Network (HSN)</span>
+            </span>
           </div>
-          <span className="cert-id">Certificate ID {id} · Verify at {verifyUrl.replace(/^https?:\/\//, '')}</span>
         </div>
       </article>
     </main>

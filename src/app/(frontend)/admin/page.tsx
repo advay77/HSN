@@ -4,8 +4,10 @@ import React from 'react'
 import '@/app/(frontend)/styles/pages/admin-overview.css'
 
 import { AdminTopbar } from '@/components/admin/AdminTopbar'
+import { listCompletions } from '@/lib/admin/certificates'
 import { requireAdmin } from '@/lib/admin/auth'
 import { formatDuration, getOverview } from '@/lib/admin/overview'
+import { formatIssuedAt } from '@/lib/courses/certificate'
 import { plural } from '@/lib/admin/visits'
 
 export const metadata = { title: 'Overview' }
@@ -16,7 +18,7 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 
 export default async function AdminOverviewPage() {
   const admin = await requireAdmin('/admin')
-  const o = await getOverview()
+  const [o, certs] = await Promise.all([getOverview(), listCompletions()])
   const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 
   const max = Math.max(1, ...o.perDay.map((d) => d.v))
@@ -35,6 +37,7 @@ export default async function AdminOverviewPage() {
     { n: o.regsWeek, cls: 'bdg b-info', label: 'New course registrations this week', href: '/admin/registrations' },
     { n: o.interestWeek, cls: 'bdg b-info', label: 'New membership interest entries', href: '/admin/interest' },
     { n: o.feedbackWeek, cls: 'bdg b-ok', label: 'Course feedback responses this week', href: '/admin/feedback' },
+    { n: certs.generated, cls: 'bdg b-ok', label: certs.generated === 1 ? 'Certificate generated' : 'Certificates generated', href: '/admin/certificates' },
   ]
 
   return (
@@ -57,6 +60,32 @@ export default async function AdminOverviewPage() {
           <div className="kpi"><span className="small strong muted">Active today</span><span className="kpi-n">{o.activeToday}</span><span className="small muted">{pct(o.activeToday, o.total)}</span></div>
           <div className="kpi"><span className="small strong muted">Active, last 7 days</span><span className="kpi-n">{o.active7}</span><span className="small muted">{pct(o.active7, o.total)}</span></div>
         </div>
+        <section className="card pad stack g12" aria-labelledby="certs">
+          <div className="row between g8">
+            <h2 className="h4" id="certs" style={{ margin: 0 }}>Course completions</h2>
+            <a className="small strong" href="/admin/certificates">{certs.generated} {certs.generated === 1 ? 'certificate' : 'certificates'} generated</a>
+          </div>
+          {certs.rows.length ? (
+            <div style={{ overflowX: 'auto' }}>
+              <table className="atbl m">
+                <caption className="sr">Latest course completions</caption>
+                <thead><tr><th scope="col">Person</th><th scope="col">Course</th><th scope="col">Completed</th><th scope="col">Certificate</th></tr></thead>
+                <tbody>
+                  {certs.rows.slice(0, 5).map((row) => (
+                    <tr key={row.enrollmentId}>
+                      <td><strong>{row.name}</strong></td>
+                      <td data-l="Course" className="small">{row.course}</td>
+                      <td data-l="Completed" className="small" style={{ whiteSpace: 'nowrap' }}>{formatIssuedAt(row.when)}</td>
+                      <td data-l="Certificate"><span className={row.generated ? 'bdg b-ok' : 'bdg b-reg'}>{row.generated ? 'Generated' : 'Not generated'}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="muted" style={{ margin: 0 }}>No one has completed a course yet.</p>
+          )}
+        </section>
         <section className="stack g12" aria-labelledby="wv">
           <div className="row between g8"><h2 className="h4" id="wv" style={{ margin: 0 }}>Website visits</h2><span className="small muted">Last 30 days · members and guests</span></div>
           <div className="grid c4" style={{ gap: '16px' }}>
