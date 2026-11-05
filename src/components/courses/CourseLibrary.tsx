@@ -3,6 +3,8 @@
 // "All Courses" section of Courses.dc.html: level filter, search and the card grid.
 import React, { useState } from 'react'
 
+import { CourseTagRow } from '@/components/courses/CourseTags'
+
 export type CourseCard = {
   slug: string
   title: string
@@ -13,6 +15,8 @@ export type CourseCard = {
   duration: string
   meta: string
   cta: string
+  access: 'open' | 'paid'
+  registration: boolean
 }
 
 const LEVELS = ['All', 'Beginner', 'Intermediate', 'Advanced']
@@ -67,7 +71,9 @@ export function CourseLibrary({ courses: all }: { courses: CourseCard[] }) {
                   <span className="bdg b-reg" style={{ background: '#FFFDF8' }}>{c.kind}</span>
                 </div>
                 <div className="pad stack g12" style={{ paddingTop: '20px', flex: '1' }}>
-                  <div className="row g8"><span className={LEVEL_CLS[c.level] ?? 'bdg b-beg'}>{c.level}</span></div>
+                  <CourseTagRow access={c.access} registration={c.registration}>
+                    <span className={LEVEL_CLS[c.level] ?? 'bdg b-beg'}>{c.level}</span>
+                  </CourseTagRow>
                   <h3 className="h4">{c.title}</h3>
                   <div className="row g16 small muted strong">
                     {c.duration && (

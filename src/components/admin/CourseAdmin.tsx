@@ -12,8 +12,10 @@ import {
   saveCourseAction,
   uploadImageAction,
   uploadImportedImageAction,
+  uploadTutorialAction,
 } from '@/app/(frontend)/admin/courses/actions'
 import type { ImportResult } from '@/lib/admin/pptx'
+import { CourseTagRow, OpenAccessIcon, PaidAccessIcon, RegistrationIcon } from '@/components/courses/CourseTags'
 import { AdminTopbar } from './AdminTopbar'
 import { toUploadable } from '@/lib/uploads/client'
 import {
@@ -32,8 +34,9 @@ type Tab = 'basics' | 'learn' | 'build' | 'cert' | 'publish'
 type Sel = { m: number; l: number } | null
 
 const LV: Record<string, string> = { Beginner: 'bdg b-beg', Intermediate: 'bdg b-int', Advanced: 'bdg b-adv' }
-const ICON: Record<LessonType, string> = { Slide: String.fromCharCode(9636), Video: '▶', Reading: '≡', Quiz: '?' }
-const IC: Record<LessonType, string> = { Slide: 'cb-ti', Video: 'cb-ti v', Reading: 'cb-ti r', Quiz: 'cb-ti q' }
+const ICON: Record<LessonType, string> = { Slide: String.fromCharCode(9636), Video: '▶', Reading: '≡', Document: String.fromCharCode(9638), Quiz: '?' }
+const IC: Record<LessonType, string> = { Slide: 'cb-ti', Video: 'cb-ti v', Reading: 'cb-ti r', Document: 'cb-ti d', Quiz: 'cb-ti q' }
+const TUTORIAL_ACCEPT = '.pdf,.doc,.docx,.odt,.rtf,.txt,.ppt,.pptx,.xls,.xlsx,.csv'
 const PASS: [number, string][] = [
   [60, '3 of 5'],
   [80, '4 of 5'],
@@ -53,7 +56,14 @@ const Tick = ({ color = '#0B6B3A', size = 20 }: { color?: string; size?: number 
 const blankLesson = (type: LessonType): EditorLesson =>
   type === 'Quiz'
     ? { kind: 'quiz', title: 'New quiz', body: '', video: '', refs: [], qs: [{ q: '', o: ['', '', '', ''], a: 0 }] }
-    : { kind: type === 'Video' ? 'video' : type === 'Reading' ? 'references' : 'text', title: 'New ' + type.toLowerCase(), body: '', video: '', refs: [], qs: [] }
+    : {
+        kind: type === 'Video' ? 'video' : type === 'Reading' ? 'references' : type === 'Document' ? 'document' : 'text',
+        title: 'New ' + (type === 'Document' ? 'tutorial' : type.toLowerCase()),
+        body: '',
+        video: '',
+        refs: [],
+        qs: [],
+      }
 
 const listText = (ns: number[]) => (ns.length > 1 ? `slides ${ns.slice(0, -1).join(', ')} and ${ns[ns.length - 1]}` : `slide ${ns[0]}`)
 
@@ -74,6 +84,8 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
   const coverInput = useRef<HTMLInputElement>(null)
   const slideInput = useRef<HTMLInputElement>(null)
   const pptxInput = useRef<HTMLInputElement>(null)
+  const tutorialInput = useRef<HTMLInputElement>(null)
+  const lessonFileInput = useRef<HTMLInputElement>(null)
 
   const mods = f.modules
   const lessonTotal = mods.reduce((a, m) => a + m.lessons.length, 0)
@@ -193,6 +205,45 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
     else setImporting(r.result)
   }
 
+  const attachTutorial = async (file: File | undefined | null, into: 'module' | 'lesson') => {
+    if (!file) return
+    setImportError('')
+    setError('')
+    const fd = new FormData()
+    setBusy('Uploading the tutorial…')
+    try {
+      fd.set('file', await toUploadable(file, 'admin'))
+    } catch (err) {
+      setBusy('')
+      const message = err instanceof Error ? err.message : 'The file could not be uploaded.'
+      if (into === 'lesson') setError(message)
+      else setImportError(message)
+      return
+    }
+    fd.set('alt', file.name.replace(/\.[^.]+$/, '') || 'Tutorial')
+    const r = await uploadTutorialAction(fd)
+    setBusy('')
+    if (!r.ok) {
+      if (into === 'lesson') setError(r.error)
+      else setImportError(r.error)
+      return
+    }
+    const title = file.name.replace(/\.[^.]+$/, '') || 'Tutorial'
+    if (into === 'lesson') {
+      updL({ kind: 'document', file: r.file, title: L?.title && L.title !== 'New tutorial' ? L.title : title })
+      return
+    }
+    const m = clone()
+    m.push({
+      title,
+      status: 'Available',
+      lessons: [{ kind: 'document', title, body: '', video: '', refs: [], qs: [], file: r.file }],
+    })
+    setMods(m, { m: m.length - 1, l: 0 })
+    setOpen((o) => ({ ...o, [m.length - 1]: true }))
+    setImporting(null)
+  }
+
   const doImport = () => {
     if (!importing) return
     const res = importing
@@ -241,6 +292,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
     if (t === 'Quiz') updL({ kind: 'quiz', qs: L.qs.length ? L.qs : [{ q: '', o: ['', '', '', ''], a: 0 }] })
     else if (t === 'Video') updL({ kind: 'video' })
     else if (t === 'Reading') updL({ kind: 'references' })
+    else if (t === 'Document') updL({ kind: 'document' })
     else updL({ kind: L.image ? 'diagram' : 'text' })
   }
 
@@ -334,9 +386,13 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                   <div className="fld"><label className="lbl" htmlFor="c-k">Course type</label><span className="sel"><select className="inp" id="c-k" value={f.kind} onChange={upd('kind')}><option>Full course</option><option>Micro-course</option></select><SelArrow /></span><span className="hint">Shown on the course card in the library.</span></div>
                   <div className="stack g8"><span className="lbl">Tags shown above the title</span>
                     <div className="row g8">
+                      <button className={f.access === 'open' ? 'chp on' : 'chp'} aria-pressed={f.access === 'open'} onClick={() => change({ access: 'open' })}><OpenAccessIcon size={16} />Open access</button>
+                      <button className={f.access === 'paid' ? 'chp on' : 'chp'} aria-pressed={f.access === 'paid'} onClick={() => change({ access: 'paid' })}><PaidAccessIcon size={16} />Paid access</button>
+                      <button className={f.tagRegistration ? 'chp on' : 'chp'} aria-pressed={f.tagRegistration} onClick={() => change({ tagRegistration: !f.tagRegistration })}><RegistrationIcon size={16} />Registration</button>
                       <button className={f.tagSelf ? 'chp on' : 'chp'} aria-pressed={f.tagSelf} onClick={() => change({ tagSelf: !f.tagSelf })}>Self-paced</button>
                       <button className={f.tagVideo ? 'chp on' : 'chp'} aria-pressed={f.tagVideo} onClick={() => change({ tagVideo: !f.tagVideo })}>Contains video</button>
                     </div>
+                    <span className="hint">Visitors see these above the course title. Access is always first. This screen is only the editor.</span>
                   </div>
                 </fieldset>
                 <fieldset className="cb-fs">
@@ -360,7 +416,11 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                 <article className="card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ position: 'relative' }}><img src={coverSrc} alt="" style={{ display: 'block', width: '100%', height: '150px', objectFit: 'cover', background: '#0B6B3A' }} />{f.coverBadge && <span className="bdg b-feat" style={{ position: 'absolute', top: '12px', left: '12px' }}>{f.coverBadge}</span>}{!f.published && <span className="bdg" style={{ position: 'absolute', bottom: '12px', left: '12px', background: '#EDE7D8', color: '#4A5F63' }}>Draft · not visible</span>}</div>
                   <div className="pad stack g12" style={{ paddingTop: '20px' }}>
-                    <div className="row g8"><span className={LV[f.level]}>{f.level}</span>{f.tagSelf && <span className="bdg b-reg">Self-paced</span>}{f.tagVideo && <span className="bdg b-reg">Contains video</span>}</div>
+                    <CourseTagRow access={f.access} registration={f.tagRegistration}>
+                      <span className={LV[f.level]}>{f.level}</span>
+                      {f.tagSelf && <span className="bdg b-reg">Self-paced</span>}
+                      {f.tagVideo && <span className="bdg b-reg">Contains video</span>}
+                    </CourseTagRow>
                     <h4 className="h4" style={{ margin: 0 }}>{f.title || 'Course title'}</h4>
                     <p className="small muted" style={{ margin: 0 }}>{f.desc ? (f.desc.length > 140 ? f.desc.slice(0, 140) + '…' : f.desc) : 'A short description appears here.'}</p>
                     <span className="small muted strong">{mods.length} modules · {lessonTotal} lessons · {f.duration || 'Duration'}</span>
@@ -485,9 +545,13 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
               <div className="stack g16">
                 <div className="cb-imp">
                   <span className="ic ic-a"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"></rect><path d="M8 21h8M12 17v4"></path><path d="M12 8v5M9.5 10.5 12 13l2.5-2.5"></path></svg></span>
-                  <span className="stack g4"><strong>Import a PowerPoint as a module</strong><span className="small muted">Each slide becomes a lesson. YouTube links and a References slide are detected automatically.</span></span>
-                  <button className="btn btn-s btn-sm" onClick={() => pptxInput.current?.click()} disabled={!!busy}>Choose .pptx</button>
+                  <span className="stack g4"><strong>Import a PowerPoint or a tutorial</strong><span className="small muted">PowerPoint: each slide becomes a lesson. A tutorial (Word, PDF, and similar files) is added as one lesson learners can open.</span></span>
+                  <span className="cb-imp-actions">
+                    <button className="btn btn-s btn-sm" onClick={() => pptxInput.current?.click()} disabled={!!busy}>Choose .pptx</button>
+                    <button className="btn btn-s btn-sm" onClick={() => tutorialInput.current?.click()} disabled={!!busy}>Upload tutorial</button>
+                  </span>
                   <input ref={pptxInput} type="file" accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation" className="sr" tabIndex={-1} aria-hidden="true" onChange={pickPptx} />
+                  <input ref={tutorialInput} type="file" accept={TUTORIAL_ACCEPT} className="sr" tabIndex={-1} aria-hidden="true" onChange={(e) => { attachTutorial(e.target.files?.[0], 'module'); e.target.value = '' }} />
                 </div>
                 {busy && <p className="small muted" role="status">{busy}</p>}
                 {importError && <div className="note note-err" role="alert"><span>{importError}</span></div>}
@@ -537,6 +601,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                           <button className="btn btn-g btn-sm" onClick={addL(i, 'Slide')}>+ Slide</button>
                           <button className="btn btn-g btn-sm" onClick={addL(i, 'Video')}>+ Video</button>
                           <button className="btn btn-g btn-sm" onClick={addL(i, 'Reading')}>+ Reading</button>
+                          <button className="btn btn-g btn-sm" onClick={addL(i, 'Document')}>+ Tutorial</button>
                           <button className="btn btn-g btn-sm" onClick={addL(i, 'Quiz')}>+ Quiz</button>
                         </div>
                       </>
@@ -544,7 +609,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                   </div>
                 ))}
                 {mods.length === 0 && (
-                  <div className="card pad stack g8" style={{ alignItems: 'center', textAlign: 'center' }}><strong>No modules yet</strong><span className="small muted">Import a PowerPoint or add an empty module to start.</span></div>
+                  <div className="card pad stack g8" style={{ alignItems: 'center', textAlign: 'center' }}><strong>No modules yet</strong><span className="small muted">Import a PowerPoint, upload a tutorial, or add an empty module to start.</span></div>
                 )}
                 <button className="btn btn-s self-start" onClick={addModule}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Add empty module</button>
               </div>
@@ -556,10 +621,23 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                       <div className="stack g4"><span className="over">{'Module ' + (selL.m + 1) + ' · Lesson ' + (selL.l + 1) + ' · ' + LT}</span><h3 className="h4" id="le" style={{ margin: 0 }}>Edit lesson</h3></div>
                       <div className="fld"><span className="lbl" id="lt-l">Lesson type</span>
                         <div className="seg" role="group" aria-labelledby="lt-l" style={{ maxWidth: '100%', overflowX: 'auto' }}>
-                          {(['Slide', 'Video', 'Reading', 'Quiz'] as LessonType[]).map((t) => <button key={t} className={LT === t ? 'on' : ''} aria-pressed={LT === t} onClick={() => pickType(t)}>{t}</button>)}
+                          {(['Slide', 'Video', 'Reading', 'Document', 'Quiz'] as LessonType[]).map((t) => <button key={t} className={LT === t ? 'on' : ''} aria-pressed={LT === t} onClick={() => pickType(t)}>{t === 'Document' ? 'Tutorial' : t}</button>)}
                         </div>
                       </div>
                       <div className="fld"><label className="lbl" htmlFor="l-t">Lesson title</label><input className="inp" id="l-t" value={L.title} onChange={(e) => updL({ title: e.target.value })} /></div>
+                      {LT === 'Document' && (
+                        <div className="stack g8">
+                          <span className="lbl">Tutorial file</span>
+                          {L.file ? (
+                            <div className="res"><span className="grow small strong">{L.file.name}</span><button type="button" className="btn btn-t btn-sm" onClick={() => lessonFileInput.current?.click()} disabled={!!busy}>Replace</button><button className="cb-mini" aria-label="Remove file" onClick={() => updL({ file: null })}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+                          ) : (
+                            <button type="button" className="btn btn-s btn-sm self-start" onClick={() => lessonFileInput.current?.click()} disabled={!!busy}>Choose a file</button>
+                          )}
+                          <input ref={lessonFileInput} type="file" accept={TUTORIAL_ACCEPT} className="sr" tabIndex={-1} aria-hidden="true" onChange={(e) => { attachTutorial(e.target.files?.[0], 'lesson'); e.target.value = '' }} />
+                          <span className="hint">Word, PDF, and similar files. Learners open or download it in the lesson.</span>
+                          <div className="fld"><label className="lbl" htmlFor="l-b">Text shown with the file (optional)</label><textarea className="inp" id="l-b" value={L.body} onChange={(e) => updL({ body: e.target.value })} style={{ minHeight: '100px' }}></textarea></div>
+                        </div>
+                      )}
                       {LT === 'Reading' && (
                         <div className="fld"><label className="lbl" htmlFor="l-b">Reading text or references</label><textarea className="inp" id="l-b" value={readingText} onChange={(e) => updL({ readingText: e.target.value })} style={{ minHeight: '150px' }}></textarea><span className="hint">One reference per line. A link at the end of a line becomes its web address.</span></div>
                       )}
@@ -615,6 +693,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                           <h4>{L.title}</h4>
                           {(LT === 'Slide' || LT === 'Video') && <p>{previewBody}</p>}
                           {LT === 'Reading' && <p>{readingText ? (readingText.length > 220 ? readingText.slice(0, 220) + '…' : readingText) : 'Lesson text appears here.'}</p>}
+                          {LT === 'Document' && <p>{L.file ? L.file.name : 'A Word document, PDF, or similar file appears here.'}</p>}
                           {LT === 'Video' && <div className="cb-vid"><svg width="44" height="44" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg></div>}
                           {LT === 'Slide' && L.image && <img src={L.image.url} alt="" style={{ width: '160px', alignSelf: 'center' }} />}
                           {LT === 'Quiz' && <p className="muted">{qs.length} questions · pass mark {passLabel}</p>}
@@ -624,7 +703,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                   </>
                 )}
                 {!L && (
-                  <div className="card pad stack g8"><strong id="le">Select a lesson to edit it</strong><span className="small muted">Or import a PowerPoint to create a module in one step.</span></div>
+                  <div className="card pad stack g8"><strong id="le">Select a lesson to edit it</strong><span className="small muted">Or import a PowerPoint, or upload a Word document, PDF, or similar tutorial.</span></div>
                 )}
               </aside>
             </div>

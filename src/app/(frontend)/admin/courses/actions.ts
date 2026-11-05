@@ -79,6 +79,56 @@ async function storeImage(buf: Buffer, name: string, mime: string, alt: string) 
   return { ok: true as const, image: { id: doc.id, url: doc.url || '', name: doc.filename || name } }
 }
 
+const TUTORIAL_MIME: Record<string, string> = {
+  pdf: 'application/pdf',
+  doc: 'application/msword',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  odt: 'application/vnd.oasis.opendocument.text',
+  rtf: 'application/rtf',
+  txt: 'text/plain',
+  ppt: 'application/vnd.ms-powerpoint',
+  pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  xls: 'application/vnd.ms-excel',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  csv: 'text/csv',
+}
+const TUTORIAL_EXT = new Set(Object.keys(TUTORIAL_MIME))
+const tutorialExt = (name: string) => name.split('.').pop()?.toLowerCase() || ''
+
+function tutorialMime(name: string, type: string) {
+  const ext = tutorialExt(name)
+  if (!TUTORIAL_EXT.has(ext)) return null
+  if (type && type !== 'application/octet-stream' && Object.values(TUTORIAL_MIME).includes(type)) return type
+  return TUTORIAL_MIME[ext]!
+}
+
+/** Word, PDF, and similar files added as a tutorial lesson. */
+export async function uploadTutorialAction(form: FormData) {
+  await requireAdmin('/admin/courses')
+  let file
+  try {
+    file = await readUpload(form.get('file'), PURPOSE_LIMITS.admin)
+  } catch (e) {
+    return { ok: false as const, error: e instanceof Error ? e.message : 'The file could not be uploaded.' }
+  }
+  if (!file) return { ok: false as const, error: 'Choose a tutorial file.' }
+  const mime = tutorialMime(file.name, file.type)
+  if (!mime) return { ok: false as const, error: 'Use a Word document, PDF, or a similar file (PDF, DOC, DOCX, ODT, RTF, TXT, PPT, XLS, CSV).' }
+  if (file.size > PURPOSE_LIMITS.admin) return { ok: false as const, error: 'The file is larger than 30 MB.' }
+  const payload = await getPayloadClient()
+  try {
+    const doc = await payload.create({
+      collection: 'media',
+      data: { alt: String(form.get('alt') || file.name) },
+      file: { data: file.data, mimetype: mime, name: file.name, size: file.size },
+    })
+    return { ok: true as const, file: { id: doc.id, url: doc.url || '', name: doc.filename || file.name } }
+  } catch (err) {
+    payload.logger.error({ err }, 'Could not store tutorial file')
+    return { ok: false as const, error: 'The file could not be saved. Try a Word document, PDF, or a similar file.' }
+  }
+}
+
 /** Cover image or slide image chosen in the editor. */
 export async function uploadImageAction(form: FormData) {
   await requireAdmin('/admin/courses')

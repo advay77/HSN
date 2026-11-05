@@ -154,6 +154,8 @@ export interface Course {
   level: 'Beginner' | 'Intermediate' | 'Advanced';
   kind: 'Full course' | 'Micro-course';
   createdBy?: string | null;
+  access: 'open' | 'paid';
+  tagRegistration?: boolean | null;
   tagSelfPaced?: boolean | null;
   /**
    * Left unset, the tag shows when the course has a video lesson.
@@ -216,10 +218,12 @@ export interface Course {
         lessons?:
           | {
               title: string;
-              type: 'cover' | 'text' | 'reflection' | 'diagram' | 'video' | 'references' | 'summary' | 'quiz';
+              type:
+                'cover' | 'text' | 'reflection' | 'diagram' | 'video' | 'references' | 'document' | 'summary' | 'quiz';
               body?: string | null;
               extra?: string | null;
               image?: (number | null) | Media;
+              file?: (number | null) | Media;
               youtubeId?: string | null;
               references?:
                 | {
@@ -777,6 +781,8 @@ export interface CoursesSelect<T extends boolean = true> {
   level?: T;
   kind?: T;
   createdBy?: T;
+  access?: T;
+  tagRegistration?: T;
   tagSelfPaced?: T;
   tagVideo?: T;
   tags?:
@@ -829,6 +835,7 @@ export interface CoursesSelect<T extends boolean = true> {
               body?: T;
               extra?: T;
               image?: T;
+              file?: T;
               youtubeId?: T;
               references?:
                 | T

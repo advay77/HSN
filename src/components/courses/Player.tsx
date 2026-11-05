@@ -10,12 +10,13 @@ import type { QuizResult } from '@/lib/courses/data'
 
 export type PlayerLesson = {
   id: string
-  type: 'cover' | 'text' | 'reflection' | 'diagram' | 'video' | 'references' | 'summary' | 'quiz'
+  type: 'cover' | 'text' | 'reflection' | 'diagram' | 'video' | 'references' | 'document' | 'summary' | 'quiz'
   title: string
   kind: string
   body: string
   extra: string
   image: { url: string; alt: string } | null
+  file: { url: string; name: string; pdf: boolean } | null
   youtube: string | null
   references: { text: string; url: string; linkText: string }[]
   draft: boolean
@@ -267,6 +268,24 @@ export function Player({ course, modules, initialCompleted, initialResults, star
                   </>
                 ) : (
                   <p className="muted">The video for this lesson will be added soon.</p>
+                )}
+              </div>
+            )}
+            {s.type === 'document' && (
+              <div className="pl-slide" style={{ justifyContent: 'flex-start' }}>
+                <h2>{s.title}</h2>
+                <Paras text={s.body} />
+                {s.file ? (
+                  <>
+                    {s.file.pdf && <iframe className="pl-doc" src={s.file.url} title={s.title}></iframe>}
+                    <a className="res" href={s.file.url} download>
+                      <span className="ic ic-a" style={{ width: '44px', height: '44px' }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"></path><path d="M14 3v6h6"></path></svg></span>
+                      <span className="stack grow"><span className="strong">{s.file.pdf ? 'Download this PDF' : 'Open this file'}</span><span className="small muted">{s.file.name}</span></span>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C6E8A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v11"></path><path d="m7 10 5 5 5-5"></path><path d="M5 20h14"></path></svg>
+                    </a>
+                  </>
+                ) : (
+                  <p className="muted">The file for this lesson will be added soon.</p>
                 )}
               </div>
             )}

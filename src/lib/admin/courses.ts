@@ -78,6 +78,8 @@ export function toEditor(c: Course): EditorCourse {
     level: c.level,
     kind: c.kind,
     by: c.createdBy || '',
+    access: c.access === 'paid' ? 'paid' : 'open',
+    tagRegistration: c.tagRegistration !== false,
     tagSelf: c.tagSelfPaced !== false,
     tagVideo: c.tagVideo ?? (c.modules ?? []).some((m) => (m.lessons ?? []).some((l) => l.type === 'video')),
     cover: mediaRef(c.cover),
@@ -118,6 +120,7 @@ export function toEditor(c: Course): EditorCourse {
             extra: l.extra,
             video: l.youtubeId || '',
             image: mediaRef(l.image),
+            file: mediaRef(l.file),
             refs: (l.references ?? []).map((r) => ({ text: r.text, url: r.url || '', linkText: r.linkText })),
             qs: (l.questions ?? []).map((q) => {
               const opts = q.options ?? []
@@ -144,6 +147,8 @@ export function fromEditor(e: EditorCourse) {
     level: e.level,
     kind: e.kind,
     createdBy: trim(e.by),
+    access: e.access === 'paid' ? ('paid' as const) : ('open' as const),
+    tagRegistration: e.tagRegistration,
     tagSelfPaced: e.tagSelf,
     tagVideo: e.tagVideo,
     cover: e.cover?.id ?? null,
@@ -179,7 +184,7 @@ export function fromEditor(e: EditorCourse) {
       slides: m.slidesId ?? null,
       lessons: m.lessons.map((l) => {
         // Slides with a picture are shown as diagrams in the Player; without one, as text slides.
-        const slideLike = l.kind !== 'video' && l.kind !== 'references' && l.kind !== 'quiz'
+        const slideLike = l.kind !== 'video' && l.kind !== 'references' && l.kind !== 'document' && l.kind !== 'quiz'
         const kind = slideLike && l.kind !== 'cover' ? (l.image ? 'diagram' : l.kind === 'diagram' ? 'text' : l.kind) : l.kind
         return {
           ...(l.id ? { id: l.id } : {}),
@@ -188,6 +193,7 @@ export function fromEditor(e: EditorCourse) {
           body: l.body ?? '',
           extra: l.extra ?? null,
           image: slideLike ? l.image?.id ?? null : null,
+          file: kind === 'document' ? l.file?.id ?? null : null,
           youtubeId: kind === 'video' ? trim(l.video) : null,
           references:
             kind === 'references'

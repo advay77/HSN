@@ -55,6 +55,7 @@ export default async function LearnPage({ params, searchParams }: Props) {
       m.status === 'available'
         ? (m.lessons ?? []).map((l): PlayerLesson => {
             const img = media(l.image)
+            const file = media(l.file)
             const passedBefore = isQuiz(l) && !!results[l.id!]?.passed
             return {
               id: l.id!,
@@ -64,6 +65,7 @@ export default async function LearnPage({ params, searchParams }: Props) {
               body: l.body ?? '',
               extra: l.extra ?? '',
               image: img?.url ? { url: img.url, alt: img.alt || '' } : null,
+              file: file?.url ? { url: file.url, name: file.filename || 'Tutorial', pdf: file.mimeType === 'application/pdf' || /\.pdf$/i.test(file.filename || '') } : null,
               youtube: youtubeId(l.youtubeId),
               references: (l.references ?? []).map((r) => ({ text: r.text, url: r.url ?? '', linkText: r.linkText ?? '' })),
               draft: !!l.draftQuestions,

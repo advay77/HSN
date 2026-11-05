@@ -2,6 +2,7 @@ import * as migration_20261103_040758_initial from './20261103_040758_initial';
 import * as migration_20261103_050000_enable_rls from './20261103_050000_enable_rls';
 import * as migration_20261103_065039_tracking from './20261103_065039_tracking';
 import * as migration_20261103_152640_storage_object_key from './20261103_152640_storage_object_key';
+import * as migration_20261106_010000_course_access_documents from './20261106_010000_course_access_documents';
 
 export const migrations = [
   {
@@ -23,5 +24,10 @@ export const migrations = [
     up: migration_20261103_152640_storage_object_key.up,
     down: migration_20261103_152640_storage_object_key.down,
     name: '20261103_152640_storage_object_key'
+  },
+  {
+    up: migration_20261106_010000_course_access_documents.up,
+    down: migration_20261106_010000_course_access_documents.down,
+    name: '20261106_010000_course_access_documents',
   },
 ];

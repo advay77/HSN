@@ -6,7 +6,8 @@ import React from 'react'
 import '../../../styles/pages/course.css'
 
 import { CourseModules, SaveButton, type ModuleView } from '@/components/courses/CourseClient'
-import { requireMember } from '@/lib/auth/guard'
+import { CourseTagRow } from '@/components/courses/CourseTags'
+import { getCurrentMember } from '@/lib/auth/session'
 import {
   availableModules,
   getCourseBySlug,
@@ -36,7 +37,7 @@ export default async function CoursePage({ params }: Props) {
   const { slug } = await params
   const course = await getCourseBySlug(slug)
   if (!course) notFound()
-  const member = await requireMember(`/courses/${slug}`)
+  const member = await getCurrentMember()
   const enrollment = member ? await getEnrollment(member.id, course.id) : null
 
   const href = `/courses/${course.slug}`
@@ -101,12 +102,12 @@ export default async function CoursePage({ params }: Props) {
         <div className="wrap stack g32">
           <div className="cr-hero">
             <div className="stack g20">
-              <div className="row g8">
+              <CourseTagRow access={course.access === 'paid' ? 'paid' : 'open'} registration={course.tagRegistration !== false}>
                 <span className={LEVEL_CLS[course.level] ?? 'bdg b-beg'}>{course.level}</span>
                 {course.tagSelfPaced !== false && <span className="bdg b-reg">Self-paced</span>}
                 {(course.tagVideo ?? hasVideo(course)) && <span className="bdg b-reg">Contains video</span>}
                 {(course.tags ?? []).map((t) => <span key={t.id} className="bdg b-reg">{t.label}</span>)}
-              </div>
+              </CourseTagRow>
               <h1 className="sec-title hero-title" style={{ textTransform: 'none', letterSpacing: '0' }}>{course.title}</h1>
               <p className="lead measure">{course.description}</p>
               <div className="row g12 mstack" style={{ paddingTop: '4px' }}>

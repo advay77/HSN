@@ -17,6 +17,8 @@ export function topicKind(l: Lesson): string {
       return 'Video'
     case 'references':
       return 'Reading'
+    case 'document':
+      return 'Tutorial'
     case 'summary':
       return 'Summary'
     case 'quiz':

@@ -27,6 +27,7 @@
 .cr-topic:last-child{border-bottom:0}
 .cr-ti{display:inline-flex;align-items:center;justify-content:center;flex:none;width:32px;height:32px;border-radius:8px;background:#F5F1E6;color:#134E5E;font-size:14px;font-weight:700}
 .cr-ti.v{background:#DDF0F6;color:#1C6E8A}
+.cr-ti.d{background:#E3F1E4;color:#0B6B3A}
 .cr-ti.q{background:#FBEFD5;color:#8A5A00}
 .cr-topic .grow{min-width:0}
 .cr-kind{font-size:13px;color:#4A5F63;white-space:nowrap}

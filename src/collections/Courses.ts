@@ -46,6 +46,18 @@ export const Courses: CollectionConfig = {
             {
               type: 'row',
               fields: [
+                {
+                  name: 'access',
+                  label: 'Access (first tag above the title)',
+                  type: 'select',
+                  required: true,
+                  defaultValue: 'open',
+                  options: [
+                    { label: 'Open access', value: 'open' },
+                    { label: 'Paid access', value: 'paid' },
+                  ],
+                },
+                { name: 'tagRegistration', label: 'Show "Registration" tag', type: 'checkbox', defaultValue: true },
                 { name: 'tagSelfPaced', label: 'Show "Self-paced" tag', type: 'checkbox', defaultValue: true },
                 {
                   name: 'tagVideo',
@@ -155,6 +167,7 @@ export const Courses: CollectionConfig = {
                             { label: 'Diagram (image)', value: 'diagram' },
                             { label: 'Video', value: 'video' },
                             { label: 'Reading / references', value: 'references' },
+                            { label: 'Tutorial file', value: 'document' },
                             { label: 'Module summary', value: 'summary' },
                             { label: 'Quiz', value: 'quiz' },
                           ],
@@ -173,6 +186,13 @@ export const Courses: CollectionConfig = {
                       type: 'upload',
                       relationTo: 'media',
                       admin: { condition: (_, s) => s?.type === 'diagram' || s?.type === 'cover' },
+                    },
+                    {
+                      name: 'file',
+                      label: 'Tutorial file (Word, PDF, and similar)',
+                      type: 'upload',
+                      relationTo: 'media',
+                      admin: { condition: (_, s) => s?.type === 'document' },
                     },
                     {
                       name: 'youtubeId',

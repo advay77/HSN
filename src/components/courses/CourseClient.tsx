@@ -60,7 +60,7 @@ export function CourseModules({ modules, learnHref }: { modules: ModuleView[]; l
                 <ol className="cr-topics">
                   {m.topics.map((t, j) => (
                     <li className="cr-topic" key={j}>
-                      <span className={t.kind === 'Video' ? 'cr-ti v' : t.kind === 'Quiz' ? 'cr-ti q' : 'cr-ti'} aria-hidden="true">{t.kind === 'Video' ? '▶' : t.kind === 'Quiz' ? '?' : String.fromCharCode(9636)}</span>{' '}
+                      <span className={t.kind === 'Video' ? 'cr-ti v' : t.kind === 'Quiz' ? 'cr-ti q' : t.kind === 'Tutorial' ? 'cr-ti d' : 'cr-ti'} aria-hidden="true">{t.kind === 'Video' ? '▶' : t.kind === 'Quiz' ? '?' : t.kind === 'Tutorial' ? String.fromCharCode(9638) : String.fromCharCode(9636)}</span>{' '}
                       <span className="grow">{t.title}</span>{' '}
                       <span className="cr-kind">{t.kind}</span>
                     </li>

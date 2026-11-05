@@ -3,7 +3,8 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { CourseLibrary, type CourseCard } from '@/components/courses/CourseLibrary'
-import { requireMember } from '@/lib/auth/guard'
+import { CourseTagRow } from '@/components/courses/CourseTags'
+import { getCurrentMember } from '@/lib/auth/session'
 import { getEnrollmentsFor, getPublishedCourses, hasVideo, media, progressOf, visibleModules, availableModules } from '@/lib/courses/data'
 
 export const metadata: Metadata = { title: 'Courses' }
@@ -14,7 +15,7 @@ const ctaFor = (progress: number, start: string, cont: string) =>
   progress === 0 ? start : progress === 100 ? 'Review course' : cont
 
 export default async function CoursesPage() {
-  const [courses, member] = await Promise.all([getPublishedCourses(), requireMember('/courses')])
+  const [courses, member] = await Promise.all([getPublishedCourses(), getCurrentMember()])
   const enrollments = member ? await getEnrollmentsFor(member.id) : []
   const progressFor = (c: (typeof courses)[number]) => {
     const e = enrollments.find((x) => (typeof x.course === 'object' ? x.course.id : x.course) === c.id)
@@ -33,6 +34,8 @@ export default async function CoursesPage() {
       duration: c.facts?.duration || '',
       meta: `${mods} ${mods === 1 ? 'module' : 'modules'}`,
       cta: availableModules(c).length === 0 ? 'Coming soon' : member ? ctaFor(progressFor(c), 'View course', 'Continue') : 'View course',
+      access: c.access === 'paid' ? 'paid' : 'open',
+      registration: c.tagRegistration !== false,
     }
   })
 
@@ -45,6 +48,8 @@ export default async function CoursesPage() {
         level: f.level,
         modules: visibleModules(f).length,
         video: hasVideo(f),
+        access: f.access === 'paid' ? ('paid' as const) : ('open' as const),
+        registration: f.tagRegistration !== false,
         cover: media(f.cover)?.url ?? null,
         cta: availableModules(f).length === 0 ? 'Coming soon' : member ? ctaFor(progressFor(f), 'Start course', 'Continue course') : 'Start course',
       }
@@ -72,11 +77,11 @@ export default async function CoursesPage() {
                 <span className="bdg b-feat" style={{ position: 'absolute', top: '16px', left: '16px' }}>Featured course</span>
               </div>
               <div className="pad-l stack g16" style={{ flex: '2 1 480px' }}>
-                <div className="row g8">
+                <CourseTagRow access={featured.access} registration={featured.registration}>
                   <span className={LEVEL_CLS[featured.level] ?? 'bdg b-beg'}>{featured.level}</span>
                   <span className="bdg b-reg">{featured.modules} {featured.modules === 1 ? 'module' : 'modules'}</span>
                   {featured.video && <span className="bdg b-reg">Contains video</span>}
-                </div>
+                </CourseTagRow>
                 <h2 className="h2" id="ft">{featured.title}</h2>
                 <p className="muted measure">{featured.description}</p>
                 <span className="btn btn-p self-start" style={{ marginTop: '4px' }}>{featured.cta}</span>

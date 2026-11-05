@@ -27,6 +27,7 @@ export const Media: CollectionConfig = {
       'image/jpeg', 'image/png', 'image/webp', 'image/gif',
       'application/pdf',
       'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.oasis.opendocument.text', 'application/rtf', 'text/rtf', 'text/plain',
       'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
       'text/csv', 'application/zip',

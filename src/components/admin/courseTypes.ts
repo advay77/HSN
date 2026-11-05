@@ -2,8 +2,9 @@
 // plain objects; src/lib/admin/courses.ts converts them to and from the `courses` collection.
 
 /** Stored lesson kinds. The editor groups the slide-like ones under "Slide". */
-export type LessonKind = 'cover' | 'text' | 'reflection' | 'diagram' | 'video' | 'references' | 'summary' | 'quiz'
-export type LessonType = 'Slide' | 'Video' | 'Reading' | 'Quiz'
+export type LessonKind = 'cover' | 'text' | 'reflection' | 'diagram' | 'video' | 'references' | 'document' | 'summary' | 'quiz'
+export type LessonType = 'Slide' | 'Video' | 'Reading' | 'Document' | 'Quiz'
+export type CourseAccess = 'open' | 'paid'
 
 export type EditorQuestion = { q: string; o: string[]; a: number }
 export type EditorRef = { text: string; url: string; linkText?: string | null }
@@ -16,6 +17,8 @@ export type EditorLesson = {
   extra?: string | null
   video: string
   image?: { id: number; url: string; name: string } | null
+  /** Word, PDF, or similar file attached to a tutorial lesson. */
+  file?: { id: number; url: string; name: string } | null
   refs: EditorRef[]
   /** Raw text of the Reading box while it is being edited (one reference per line); parsed on save. */
   readingText?: string
@@ -42,6 +45,8 @@ export type EditorCourse = {
   level: 'Beginner' | 'Intermediate' | 'Advanced'
   kind: 'Full course' | 'Micro-course'
   by: string
+  access: CourseAccess
+  tagRegistration: boolean
   tagSelf: boolean
   tagVideo: boolean
   cover: { id: number; url: string; name: string } | null
@@ -94,7 +99,7 @@ export const textToRefs = (text: string, old: EditorRef[] = []): EditorRef[] =>
     })
 
 export const typeOfKind = (k: LessonKind): LessonType =>
-  k === 'video' ? 'Video' : k === 'references' ? 'Reading' : k === 'quiz' ? 'Quiz' : 'Slide'
+  k === 'video' ? 'Video' : k === 'references' ? 'Reading' : k === 'document' ? 'Document' : k === 'quiz' ? 'Quiz' : 'Slide'
 
 export const CERT_DEFAULTS = {
   title: 'Earn Your HSN Certificate',
@@ -112,6 +117,8 @@ export const blankCourse = (): EditorCourse => ({
   level: 'Beginner',
   kind: 'Full course',
   by: 'Healthcare Sustainability Network',
+  access: 'open',
+  tagRegistration: true,
   tagSelf: true,
   tagVideo: false,
   cover: null,

@@ -21,6 +21,8 @@
 .cb-mini svg.cr-up{transform:rotate(180deg)}
 .cb-add{display:flex;flex-wrap:wrap;gap:8px;padding:8px 16px 14px;border-top:1px dashed #D9D2C1}
 .cb-imp{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;padding:18px 20px;border-radius:14px;border:2px dashed #7A8580;background:#FFFDF8}
+.cb-imp-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.cb-ti.d{background:#E3F1E4;color:#0B6B3A}
 .cb-found{display:flex;flex-direction:column;gap:12px;padding:18px 20px;border-radius:14px;background:#E3F1E4;border:1px solid #B5D8B9}
 .cb-q{display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:12px;border:1px solid #D9D2C1;background:#F5F1E6}
 .cb-opt{display:flex;align-items:center;gap:10px}
