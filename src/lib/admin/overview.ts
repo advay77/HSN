@@ -56,10 +56,10 @@ export async function getOverview() {
   const twoWeeksAgo = new Date(now.getTime() - 14 * DAY)
   const first = new Date(today.getTime() - 13 * DAY)
 
-  const count = (collection: 'members' | 'case-studies' | 'course-registrations' | 'membership-applications', where = {}) =>
+  const count = (collection: 'members' | 'case-studies' | 'course-registrations' | 'membership-applications' | 'course-feedback', where = {}) =>
     payload.count({ collection, where }).then((r) => r.totalDocs)
 
-  const [total, newWeek, newPrevWeek, online, activeToday, active7, pendingCases, regsWeek, interestWeek] = await Promise.all([
+  const [total, newWeek, newPrevWeek, online, activeToday, active7, pendingCases, regsWeek, interestWeek, feedbackWeek] = await Promise.all([
     count('members'),
     count('members', { createdAt: { greater_than: iso(weekAgo) } }),
     count('members', { and: [{ createdAt: { greater_than: iso(twoWeeksAgo) } }, { createdAt: { less_than_equal: iso(weekAgo) } }] }),
@@ -69,6 +69,7 @@ export async function getOverview() {
     count('case-studies', { status: { equals: 'submitted' } }),
     count('course-registrations', { createdAt: { greater_than: iso(weekAgo) } }),
     count('membership-applications', { createdAt: { greater_than: iso(weekAgo) } }),
+    count('course-feedback', { createdAt: { greater_than: iso(weekAgo) } }),
   ])
 
   // Logins per day, last 14 days (today last).
@@ -182,6 +183,7 @@ export async function getOverview() {
     pendingCases,
     regsWeek,
     interestWeek,
+    feedbackWeek,
   }
 }
 

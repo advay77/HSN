@@ -74,6 +74,7 @@ export interface Config {
     members: Member;
     enrollments: Enrollment;
     'course-registrations': CourseRegistration;
+    'course-feedback': CourseFeedback;
     'membership-applications': MembershipApplication;
     'login-codes': LoginCode;
     activity: Activity;
@@ -94,6 +95,7 @@ export interface Config {
     members: MembersSelect<false> | MembersSelect<true>;
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
     'course-registrations': CourseRegistrationsSelect<false> | CourseRegistrationsSelect<true>;
+    'course-feedback': CourseFeedbackSelect<false> | CourseFeedbackSelect<true>;
     'membership-applications': MembershipApplicationsSelect<false> | MembershipApplicationsSelect<true>;
     'login-codes': LoginCodesSelect<false> | LoginCodesSelect<true>;
     activity: ActivitySelect<false> | ActivitySelect<true>;
@@ -525,6 +527,35 @@ export interface CourseRegistration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-feedback".
+ */
+export interface CourseFeedback {
+  id: number;
+  delegateName: string;
+  email?: string | null;
+  completionDate?: string | null;
+  courseTitle: string;
+  course?: (number | null) | Course;
+  member?: (number | null) | Member;
+  overallSatisfaction: 'excellent' | 'good' | 'average' | 'below-average' | 'poor';
+  recommend: 'yes' | 'maybe' | 'no';
+  objectivesClear: number;
+  contentRelevant: number;
+  structuredLogically: number;
+  lengthPace: number;
+  examplesHelpful: number;
+  platformEasy: number;
+  mediaClear: number;
+  quizzesHelpful: number;
+  takeaway?: string | null;
+  application?: string | null;
+  futureTopics?: string | null;
+  comments?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "membership-applications".
  */
 export interface MembershipApplication {
@@ -703,6 +734,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'course-registrations';
         value: number | CourseRegistration;
+      } | null)
+    | ({
+        relationTo: 'course-feedback';
+        value: number | CourseFeedback;
       } | null)
     | ({
         relationTo: 'membership-applications';
@@ -1046,6 +1081,34 @@ export interface CourseRegistrationsSelect<T extends boolean = true> {
   joinNetwork?: T;
   course?: T;
   member?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-feedback_select".
+ */
+export interface CourseFeedbackSelect<T extends boolean = true> {
+  delegateName?: T;
+  email?: T;
+  completionDate?: T;
+  courseTitle?: T;
+  course?: T;
+  member?: T;
+  overallSatisfaction?: T;
+  recommend?: T;
+  objectivesClear?: T;
+  contentRelevant?: T;
+  structuredLogically?: T;
+  lengthPace?: T;
+  examplesHelpful?: T;
+  platformEasy?: T;
+  mediaClear?: T;
+  quizzesHelpful?: T;
+  takeaway?: T;
+  application?: T;
+  futureTopics?: T;
+  comments?: T;
   updatedAt?: T;
   createdAt?: T;
 }

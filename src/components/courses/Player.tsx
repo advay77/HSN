@@ -311,6 +311,9 @@ export function Player({ course, modules, initialCompleted, initialResults, star
                       ? <a className="btn btn-lg btn-light" href={`/courses/${course.slug}/certificate`}>Get your certificate</a>
                       : !done.has(s.id) && <button className="btn btn-lg btn-light" onClick={() => markDone(s.id)}>Finish course</button>
                   )}
+                  {!nextItem && !nextModule && pctNum === 100 && (
+                    <a className="btn btn-lg btn-light" href={`/courses/${course.slug}/feedback`}>Share feedback</a>
+                  )}
                   {nextModule && <span className="small" style={{ color: '#BFE6F3' }}>Next module: {nextModule.title}</span>}
                 </div>
               </div>

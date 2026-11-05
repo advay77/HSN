@@ -53,6 +53,7 @@ export default function AboutPage() {
             <div className="stack g8 grow" style={{ minWidth: '260px' }}>
               <h3 className="h3" style={{ color: '#FFFFFF' }}>Core Advisory &amp; Leadership</h3>
               <p className="lead" style={{ color: '#DCE6E2', maxWidth: 'none', margin: '0' }}>Healthcare leaders with extensive backgrounds in hospital accreditation, clinical audit, risk management, and Sustainable Quality Improvement (SusQI).</p>
+              <Link className="btn btn-light" href="/advisory" style={{ alignSelf: 'flex-start' }}>Meet the Advisory Board</Link>
             </div>
           </article>
         </div>

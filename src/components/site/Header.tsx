@@ -14,6 +14,7 @@ export type HeaderMember = { name: string; initials: string; membershipType?: st
 const NAV: [string, string, string][] = [
   ['home', 'Home', '/'],
   ['about', 'About Us', '/about'],
+  ['advisory', 'Advisory Board', '/advisory'],
   ['services', 'Services', '/services'],
   ['courses', 'Courses', '/courses'],
   ['cases', 'Case Studies', '/case-studies'],

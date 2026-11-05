@@ -1,0 +1,7 @@
+.adv-person{display:flex;gap:28px;align-items:flex-start}
+.adv-photo{width:220px;height:260px;object-fit:cover;object-position:center top;border-radius:16px;flex:none;background:#E7EEF0}
+.adv-bio p{margin:0;color:#17323A;font-size:17px;line-height:28px}
+@container (max-width:720px){
+  .adv-person{flex-direction:column}
+  .adv-photo{width:min(100%,280px);height:auto;aspect-ratio:4/5}
+}

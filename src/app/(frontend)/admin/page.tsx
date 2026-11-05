@@ -34,6 +34,7 @@ export default async function AdminOverviewPage() {
     { n: o.pendingCases, cls: 'bdg b-warn', label: o.pendingCases === 1 ? 'Case study waiting for approval' : 'Case studies waiting for approval', href: '/admin/case-studies' },
     { n: o.regsWeek, cls: 'bdg b-info', label: 'New course registrations this week', href: '/admin/registrations' },
     { n: o.interestWeek, cls: 'bdg b-info', label: 'New membership interest entries', href: '/admin/interest' },
+    { n: o.feedbackWeek, cls: 'bdg b-ok', label: 'Course feedback responses this week', href: '/admin/feedback' },
   ]
 
   return (

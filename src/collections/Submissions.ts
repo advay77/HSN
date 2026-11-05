@@ -102,3 +102,58 @@ export const MembershipApplications: CollectionConfig = {
   hooks: { afterChange: [membershipActivity] },
   timestamps: true,
 }
+
+// Course completion delegate feedback. One response per member per course.
+export const CourseFeedback: CollectionConfig = {
+  slug: 'course-feedback',
+  admin: {
+    useAsTitle: 'delegateName',
+    defaultColumns: ['delegateName', 'courseTitle', 'overallSatisfaction', 'recommend', 'createdAt'],
+    group: 'Inbox',
+  },
+  fields: [
+    { name: 'delegateName', label: 'Delegate name', type: 'text', required: true },
+    { name: 'email', type: 'email' },
+    { name: 'completionDate', label: 'Completion date', type: 'date' },
+    { name: 'courseTitle', label: 'Course title', type: 'text', required: true },
+    { name: 'course', type: 'relationship', relationTo: 'courses', index: true },
+    { name: 'member', type: 'relationship', relationTo: 'members', index: true },
+    {
+      name: 'overallSatisfaction',
+      label: 'Overall satisfaction',
+      type: 'select',
+      required: true,
+      options: [
+        { label: 'Excellent', value: 'excellent' },
+        { label: 'Good', value: 'good' },
+        { label: 'Average', value: 'average' },
+        { label: 'Below Average', value: 'below-average' },
+        { label: 'Poor', value: 'poor' },
+      ],
+    },
+    {
+      name: 'recommend',
+      label: 'Would recommend',
+      type: 'select',
+      required: true,
+      options: [
+        { label: 'Yes, definitely', value: 'yes' },
+        { label: 'Maybe', value: 'maybe' },
+        { label: 'No', value: 'no' },
+      ],
+    },
+    { name: 'objectivesClear', label: 'Learning objectives were clear and met', type: 'number', required: true, min: 1, max: 5 },
+    { name: 'contentRelevant', label: 'Content was relevant to their role', type: 'number', required: true, min: 1, max: 5 },
+    { name: 'structuredLogically', label: 'Topics were structured logically', type: 'number', required: true, min: 1, max: 5 },
+    { name: 'lengthPace', label: 'Length and pace were appropriate', type: 'number', required: true, min: 1, max: 5 },
+    { name: 'examplesHelpful', label: 'Examples and case studies were helpful', type: 'number', required: true, min: 1, max: 5 },
+    { name: 'platformEasy', label: 'Platform was easy to navigate', type: 'number', required: true, min: 1, max: 5 },
+    { name: 'mediaClear', label: 'Video, audio and visuals were clear', type: 'number', required: true, min: 1, max: 5 },
+    { name: 'quizzesHelpful', label: 'Quizzes reinforced learning', type: 'number', required: true, min: 1, max: 5 },
+    { name: 'takeaway', label: 'Most valuable takeaway', type: 'textarea' },
+    { name: 'application', label: 'How they will apply it', type: 'textarea' },
+    { name: 'futureTopics', label: 'Topics they want next', type: 'textarea' },
+    { name: 'comments', label: 'Additional comments', type: 'textarea' },
+  ],
+  timestamps: true,
+}

@@ -66,7 +66,7 @@ export default async function CertificatePage({ params }: Props) {
 
   return (
     <main className="cert-wrap">
-      <CertificateActions linkedIn={linkedIn} />
+      <CertificateActions linkedIn={linkedIn} feedbackHref={`/courses/${slug}/feedback`} />
       <article className="cert" aria-label="Certificate of completion">
         <div className="cert-in">
           <img src="/images/hsn-logo.jpg" alt="Healthcare Sustainability Network" className="cert-logo" />

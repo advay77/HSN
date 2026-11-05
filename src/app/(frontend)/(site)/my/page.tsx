@@ -95,11 +95,14 @@ export default async function DashboardPage() {
                 <div className="lrow" style={{ flexWrap: 'wrap' }} key={c.id}>
                   <span className="ic" style={{ width: '48px', height: '48px', background: '#0B6B3A', color: '#FFFFFF' }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
                   <div className="stack g4 grow" style={{ minWidth: '240px' }}><span className="h5">{c.course.title}</span><span className="small muted">{c.course.certificate?.enabled ? 'Completed · certificate ready' : 'Completed'}</span></div>
-                  {c.course.certificate?.enabled ? (
-                    <Link className="btn btn-s btn-sm" href={`/courses/${c.course.slug}/certificate`}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v11"></path><path d="m7 10 5 5 5-5"></path><path d="M5 20h14"></path></svg>Certificate</Link>
-                  ) : (
-                    <Link className="btn btn-s btn-sm" href={`/courses/${c.course.slug}/learn`}>Review course</Link>
-                  )}
+                  <span className="row g8">
+                    {c.course.certificate?.enabled ? (
+                      <Link className="btn btn-s btn-sm" href={`/courses/${c.course.slug}/certificate`}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v11"></path><path d="m7 10 5 5 5-5"></path><path d="M5 20h14"></path></svg>Certificate</Link>
+                    ) : (
+                      <Link className="btn btn-s btn-sm" href={`/courses/${c.course.slug}/learn`}>Review course</Link>
+                    )}
+                    <Link className="btn btn-s btn-sm" href={`/courses/${c.course.slug}/feedback`}>Feedback</Link>
+                  </span>
                 </div>
               ))}
             </div>
