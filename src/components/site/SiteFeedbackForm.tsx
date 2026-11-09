@@ -147,15 +147,6 @@ export function SiteFeedbackForm({ page }: { page: string }) {
         </div>
       </fieldset>
 
-      <fieldset className="sfb-q">
-        <legend><span className="sfb-n">8</span>Your details <span className="muted" style={{ fontWeight: 400 }}>(optional)</span></legend>
-        <div className="grid c2 t1 g16">
-          <div className="fld"><label className="lbl" htmlFor="sf-name">Name</label><input className="inp" id="sf-name" name="name" autoComplete="name" maxLength={200} /></div>
-          <div className="fld"><label className="lbl" htmlFor="sf-email">Email</label><input className="inp" id="sf-email" name="email" type="email" autoComplete="email" maxLength={200} aria-invalid={state.field === 'email' || undefined} />{err('email')}</div>
-        </div>
-        <label className="chk"><input type="checkbox" name="contactOk" /><span>HSN may contact me about my feedback.</span></label>
-      </fieldset>
-
       {/* Hidden from people; bots fill it in. */}
       <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}>
         <label htmlFor="sf-web">Website</label><input id="sf-web" name="website" tabIndex={-1} autoComplete="off" />

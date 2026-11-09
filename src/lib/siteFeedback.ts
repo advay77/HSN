@@ -18,8 +18,7 @@ export const WANTS = [
   'More case studies',
   'Webinars and live sessions',
   'Downloadable toolkits',
-  'Certificates and CPD',
-  'Hindi and Arabic versions',
+  'Certificates',
   'Community events',
   'Newsletter',
 ] as const

@@ -4,12 +4,15 @@ import React from 'react'
 import '@/app/(frontend)/styles/pages/site-feedback.css'
 
 import { SiteFeedbackForm } from '@/components/site/SiteFeedbackForm'
+import { requireMember } from '@/lib/auth/guard'
 
 export const metadata: Metadata = { title: 'Give Your Feedback', description: 'Tell the Healthcare Sustainability Network what works for you and what we can do better.' }
 
 const Tick = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7BD389" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
 
-export default function FeedbackPage() {
+export default async function FeedbackPage() {
+  // Members only: their name and email come from their account.
+  await requireMember('/feedback')
   return (
     <main>
       <section className="sec" style={{ paddingBottom: '24px' }}>
@@ -19,8 +22,8 @@ export default function FeedbackPage() {
             <h1 className="sec-title hero-title" style={{ textTransform: 'none', letterSpacing: 0 }}>Help us improve HSN</h1>
             <p>Your feedback shapes what we build next: new courses, case studies and resources for healthcare teams. It takes about 3 minutes.</p>
             <ul>
-              <li><Tick />8 short questions</li>
-              <li><Tick />Name and email are optional</li>
+              <li><Tick />7 short questions</li>
+              <li><Tick />Only 2 are required</li>
               <li><Tick />Read by the HSN team</li>
             </ul>
           </div>

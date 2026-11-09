@@ -10,7 +10,7 @@ export function FeedbackSection({ title = 'Help Us Improve HSN' }: { page?: stri
         <div className="sfb-band">
           <div>
             <h2 className="h2" id="sfb-h">{title}</h2>
-            <p>Tell us what works for you and what we can do better. 8 short questions, about 3 minutes.</p>
+            <p>Tell us what works for you and what we can do better. 7 short questions, about 3 minutes. Log in as a member to take part.</p>
           </div>
           <a className="btn btn-p btn-lg" href="/feedback">
             Give your feedback{' '}
