@@ -92,8 +92,6 @@ export default async function CertificatePage({ params }: Props) {
 
   return (
     <main className="cert-wrap">
-      {/* Script font for the signature line. */}
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" />
       <CertificateActions linkedIn={linkedIn} />
       <CertificateSheet name={member.name} course={course.title} issued={formatIssued(issued)} id={id} verifyUrl={verifyUrl} qr={qr} issuer={issuer} />
     </main>

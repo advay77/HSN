@@ -4,7 +4,10 @@
 // PowerPoint import). Edits stay in this component until "Save course" / "Save lesson" writes the whole
 // course through saveCourseAction.
 import { useRouter } from 'next/navigation'
-import React, { useRef, useState, useTransition } from 'react'
+import QRCode from 'qrcode'
+import React, { useEffect, useRef, useState, useTransition } from 'react'
+
+import '@/app/(frontend)/styles/pages/certificate.css'
 
 import {
   deleteCourseAction,
@@ -16,6 +19,7 @@ import {
   uploadVideoAction,
 } from '@/app/(frontend)/admin/courses/actions'
 import type { ImportResult } from '@/lib/admin/pptx'
+import { CertificateSheet } from '@/components/courses/CertificateSheet'
 import { CourseTagRow, OpenAccessIcon, PaidAccessIcon, RegistrationIcon } from '@/components/courses/CourseTags'
 import { AdminTopbar } from './AdminTopbar'
 import { toUploadable } from '@/lib/uploads/client'
@@ -40,7 +44,8 @@ type Sel = { m: number; l: number } | null
 const LV: Record<string, string> = { Beginner: 'bdg b-beg', Intermediate: 'bdg b-int', Advanced: 'bdg b-adv' }
 const ICON: Record<LessonType, string> = { Slide: String.fromCharCode(9636), Video: '▶', Reading: '≡', Document: String.fromCharCode(9638), Quiz: '?' }
 const IC: Record<LessonType, string> = { Slide: 'cb-ti', Video: 'cb-ti v', Reading: 'cb-ti r', Document: 'cb-ti d', Quiz: 'cb-ti q' }
-const PLAY_ICON = <svg width="44" height="44" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
+const SAMPLE_VERIFY = 'https://healthcaresustainabilitynetwork.com/verify/EXAMPLE'
+const PLAY_ICON =<svg width="44" height="44" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
 const ytId = (v: string) => v.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/)?.[1] ?? (/^[\w-]{11}$/.test(v.trim()) ? v.trim() : null)
 
 /** Learner-preview video: plays the uploaded file, else the YouTube link (click to load), else a placeholder. Mirrors the course player's order. */
@@ -93,6 +98,12 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
   const [tab, setTab] = useState<Tab>('basics')
   const [open, setOpen] = useState<Record<number, boolean>>({ 0: true })
   const [selL, setSelL] = useState<Sel>(initial.modules[0]?.lessons.length ? { m: 0, l: 0 } : null)
+  // QR for the certificate preview, made in the browser once the Certificate tab opens.
+  const [sampleQr, setSampleQr] = useState('')
+  useEffect(() => {
+    if (tab !== 'cert' || sampleQr) return
+    QRCode.toString(SAMPLE_VERIFY, { type: 'svg', margin: 1, errorCorrectionLevel: 'M', color: { dark: '#17323A', light: '#00000000' } }).then((svg) => setSampleQr(svg.replace(/<\?xml[^>]*>/, ''))).catch(() => {})
+  }, [tab, sampleQr])
   const [newSkill, setNewSkill] = useState('')
   const [dirty, setDirty] = useState(false)
   const [saved, setSaved] = useState<'' | 'course' | 'lesson'>('')
@@ -368,7 +379,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
   const liveHref = f.id && f.published && f.slug ? `/courses/${f.slug}` : null
   const previewBody = L ? (L.body.length > 220 ? L.body.slice(0, 220) + '…' : L.body || 'Lesson text appears here.') : ''
   const readingText = L ? L.readingText ?? refsToText(L.refs) : ''
-  const today = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+  const certDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
   return (
     <>
@@ -552,15 +563,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
               </div>
               <aside className="stack g12 sticky">
                 <h3 className="h5" style={{ margin: 0 }}>Certificate preview</h3>
-                <div className="cb-paper">
-                  <img src="/images/hsn-logo.jpg" alt="" style={{ width: '44px', height: '44px', borderRadius: '10px', objectFit: 'cover' }} />
-                  <span className="cb-paper-k">Certificate of completion</span>
-                  <span className="small muted">This certifies that</span>
-                  <span className="cb-paper-name">Learner name</span>
-                  <span className="small muted">has successfully completed</span>
-                  <strong style={{ fontFamily: "'Aptos Display','Aptos','Segoe UI Variable Display','Segoe UI',Inter,system-ui,sans-serif", fontSize: '15px', lineHeight: '21px' }}>{f.title || 'Course title'}</strong>
-                  <div className="cb-paper-f"><span><b>{today}</b>Date issued</span><span><b>{f.certIssuer}</b>Issued by</span></div>
-                </div>
+                <CertificateSheet name="Learner Name" course={f.title || 'Course title'} issued={certDate} id="EXAMPLE" verifyUrl={SAMPLE_VERIFY} qr={sampleQr} issuer={f.certIssuer || 'Healthcare Sustainability Network'} />
                 <span className="small muted">Learners download it as a PDF after passing the last quiz.</span>
               </aside>
             </div>

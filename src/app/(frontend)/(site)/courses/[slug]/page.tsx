@@ -4,9 +4,12 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import '../../../styles/pages/course.css'
+import '../../../styles/pages/certificate.css'
 
 import { CourseModules, SaveButton, type ModuleView } from '@/components/courses/CourseClient'
+import { CertificateSheet } from '@/components/courses/CertificateSheet'
 import { CourseTagRow } from '@/components/courses/CourseTags'
+import { certificateQr, formatIssued } from '@/lib/courses/certificate'
 import { courseTestimonials } from '@/lib/courses/testimonials'
 import { getCurrentMember } from '@/lib/auth/session'
 import {
@@ -93,9 +96,11 @@ export default async function CoursePage({ params }: Props) {
     : `Score at least ${course.certificate?.passMark ?? 80}%.${course.certificate?.retakes !== false ? ' You can retake it.' : ''}`
   const aboutParas = (course.about || '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
   const issuer = course.certificate?.issuer || 'Healthcare Sustainability Network'
+  // Example certificate: its QR opens the public verify page.
+  const sampleVerify = `${(process.env.SITE_URL || 'https://healthcaresustainabilitynetwork.com').replace(/\/$/, '')}/verify/EXAMPLE`
+  const sampleQr = certOn ? await certificateQr(sampleVerify) : ''
   // Admin label on the cover; left unset, the label follows who can take the course.
   const badge = course.coverBadge ?? (course.audience === 'members' ? 'Free for members' : 'Free course')
-  const today = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
 
   return (
     <main>
@@ -213,20 +218,9 @@ export default async function CoursePage({ params }: Props) {
                 </ol>
                 <div className="row g16 mstack" style={{ alignItems: 'center' }}>{soon ? <SoonButton light /> : <a className="btn btn-lg btn-light" href={learnHref}>Start course now</a>}</div>
               </div>
-              <figure className="cr-paper" aria-label="Example certificate">
-                <div className="cr-paper-in">
-                  <img src="/images/hsn-logo.jpg" alt="" className="cr-paper-logo" />
-                  <span className="cr-paper-k">Certificate of completion</span>
-                  <span className="cr-paper-s">This certifies that</span>
-                  <span className="cr-paper-name">{member?.name || 'Your Name'}</span>
-                  <span className="cr-paper-s">has successfully completed</span>
-                  <span className="cr-paper-c">{course.title}</span>
-                  <div className="cr-paper-f">
-                    <span><b>{today}</b><span>Date issued</span></span>
-                    <span><b>{issuer}</b><span>Issued by</span></span>
-                  </div>
-                  <span className="cr-paper-id">Example certificate</span>
-                </div>
+              <figure className="cr-sample">
+                <CertificateSheet name={member?.name || 'Your Name'} course={course.title} issued={formatIssued(new Date().toISOString())} id="EXAMPLE" verifyUrl={sampleVerify} qr={sampleQr} issuer={issuer} />
+                <figcaption>Example certificate</figcaption>
               </figure>
             </div>
           </div>

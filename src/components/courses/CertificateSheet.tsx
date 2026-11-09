@@ -61,6 +61,8 @@ export function CertificateSheet({ name, course, issued, id, verifyUrl, qr, issu
   const shortUrl = verifyUrl.replace(/^https?:\/\//, '')
   return (
     <CertificateFit label={`Certificate of completion: ${course}, awarded to ${name}`}>
+      {/* Script font for the signature line (React loads it once, wherever the certificate appears). */}
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" precedence="default" />
       <div className="cert-sheet">
         <aside className="cert-side">
           <span className="cert-ribbon" aria-hidden="true" />
