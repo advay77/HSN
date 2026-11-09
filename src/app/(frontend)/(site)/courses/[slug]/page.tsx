@@ -7,6 +7,7 @@ import '../../../styles/pages/course.css'
 
 import { CourseModules, SaveButton, type ModuleView } from '@/components/courses/CourseClient'
 import { CourseTagRow } from '@/components/courses/CourseTags'
+import { courseTestimonials } from '@/lib/courses/testimonials'
 import { getCurrentMember } from '@/lib/auth/session'
 import {
   availableModules,
@@ -64,6 +65,7 @@ export default async function CoursePage({ params }: Props) {
           ? 'Coming soon'
           : `${avail.length} available now`
   const certOn = course.certificate?.enabled !== false
+  const { items: testimonials, summary: fbSummary } = await courseTestimonials(course.id)
   // Every module "Coming soon": the course is shown but cannot be started yet.
   const soon = avail.length === 0
   const SoonButton = ({ light = false }: { light?: boolean }) => <span className={light ? 'btn btn-lg btn-light' : 'btn btn-p btn-lg'} aria-disabled="true" style={{ opacity: 0.7, cursor: 'default' }}>Coming soon</span>
@@ -172,6 +174,28 @@ export default async function CoursePage({ params }: Props) {
         </section>
       )}
       <CourseModules modules={moduleViews} learnHref={soon ? '' : learnHref} />
+      {/* What learners say: feedback learners agreed to share and HSN chose to show */}
+      {(testimonials.length > 0 || fbSummary) && (
+        <section className="sec" aria-labelledby="ls">
+          <div className="wrap stack g24">
+            <div className="stack g8">
+              <h2 className="sec-title" id="ls">What Learners Say</h2>
+              {fbSummary && <p className="muted">{fbSummary.recommendPct}% would recommend this course · rated {fbSummary.averageRating} out of 5 on average · {fbSummary.responses} responses</p>}
+            </div>
+            {testimonials.length > 0 && (
+              <div className="grid c3 t1 g24">
+                {testimonials.map((t) => (
+                  <figure key={t.id} className="card pad stack g12" style={{ margin: 0 }}>
+                    <span className="bdg b-ok" style={{ alignSelf: 'flex-start' }}>{t.rating}</span>
+                    <blockquote style={{ margin: 0, fontSize: '17px', lineHeight: 1.6 }}>“{t.quote}”</blockquote>
+                    <figcaption className="small strong muted">{t.name}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
       {/* Certificate */}
       {certOn && (
         <section className="sec" aria-labelledby="ce">

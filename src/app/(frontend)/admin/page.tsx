@@ -37,6 +37,7 @@ export default async function AdminOverviewPage() {
     { n: o.regsWeek, cls: 'bdg b-info', label: 'New course registrations this week', href: '/admin/registrations' },
     { n: o.interestWeek, cls: 'bdg b-info', label: 'New membership interest entries', href: '/admin/interest' },
     { n: o.feedbackWeek, cls: 'bdg b-ok', label: 'Course feedback responses this week', href: '/admin/feedback' },
+    { n: o.siteFeedbackNew, cls: 'bdg b-ok', label: 'New website feedback', href: '/admin/feedback' },
     { n: certs.generated, cls: 'bdg b-ok', label: certs.generated === 1 ? 'Certificate generated' : 'Certificates generated', href: '/admin/certificates' },
   ]
 

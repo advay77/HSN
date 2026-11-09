@@ -4,6 +4,8 @@ import * as migration_20261103_065039_tracking from './20261103_065039_tracking'
 import * as migration_20261103_152640_storage_object_key from './20261103_152640_storage_object_key';
 import * as migration_20261105_200201_course_feedback from './20261105_200201_course_feedback';
 import * as migration_20261106_010000_course_access_documents from './20261106_010000_course_access_documents';
+import * as migration_20261109_120000_feedback_publish from './20261109_120000_feedback_publish';
+import * as migration_20261109_130000_site_feedback from './20261109_130000_site_feedback';
 
 export const migrations = [
   {
@@ -35,5 +37,15 @@ export const migrations = [
     up: migration_20261106_010000_course_access_documents.up,
     down: migration_20261106_010000_course_access_documents.down,
     name: '20261106_010000_course_access_documents'
+  },
+  {
+    up: migration_20261109_120000_feedback_publish.up,
+    down: migration_20261109_120000_feedback_publish.down,
+    name: '20261109_120000_feedback_publish',
+  },
+  {
+    up: migration_20261109_130000_site_feedback.up,
+    down: migration_20261109_130000_site_feedback.down,
+    name: '20261109_130000_site_feedback',
   },
 ];

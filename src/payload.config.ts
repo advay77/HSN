@@ -15,7 +15,7 @@ import { LibraryResources } from './collections/LibraryResources'
 import { LoginCodes } from './collections/LoginCodes'
 import { Media } from './collections/Media'
 import { Members } from './collections/Members'
-import { CourseFeedback, CourseRegistrations, Enrollments, MembershipApplications } from './collections/Submissions'
+import { CourseFeedback, CourseRegistrations, Enrollments, MembershipApplications, SiteFeedback } from './collections/Submissions'
 import { Users } from './collections/Users'
 
 const filename = fileURLToPath(import.meta.url)
@@ -56,6 +56,7 @@ export default buildConfig({
     Enrollments,
     CourseRegistrations,
     CourseFeedback,
+    SiteFeedback,
     MembershipApplications,
     LoginCodes,
     Activity,

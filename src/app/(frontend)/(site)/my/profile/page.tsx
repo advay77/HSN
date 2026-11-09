@@ -1,4 +1,5 @@
 // Ported from Profile.dc.html.
+import { headers } from 'next/headers'
 import Link from 'next/link'
 import React from 'react'
 
@@ -27,6 +28,7 @@ export default async function ProfilePage() {
             <div className="stack g4"><h1 className="h1">My Profile</h1>{tier && <div className="row g8"><span className="bdg b-cat">{tier}</span></div>}</div>
           </div>
           <ProfileForm
+            geo={(await headers()).get('x-vercel-ip-country')}
             values={{
               name: m.name,
               email: m.email,

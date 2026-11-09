@@ -8,6 +8,8 @@ import { fmtWhen } from '@/lib/admin/people'
 import { labelOf, RATINGS, RECOMMEND, SATISFACTION } from '@/lib/courses/feedback'
 import { getPayloadClient } from '@/lib/payload'
 
+import { setFeedbackOnSite } from '../actions'
+
 export const metadata = { title: 'Feedback response' }
 export const dynamic = 'force-dynamic'
 
@@ -36,6 +38,21 @@ export default async function AdminFeedbackDetailPage({ params }: Props) {
         }
       />
       <main className="amain">
+        <div className="card pad row between g16" style={{ maxWidth: '820px', marginBottom: '16px', flexWrap: 'wrap' }}>
+          <div className="stack g4">
+            <span className="strong">Course page</span>
+            <span className="small muted">
+              {!row.sharePublicly ? 'The learner did not agree to show this feedback on the website.' : row.showOnSite ? 'Shown in “What learners say” on the course page.' : 'The learner agreed. It is not shown yet.'}
+            </span>
+          </div>
+          {row.sharePublicly && (
+            <form action={setFeedbackOnSite}>
+              <input type="hidden" name="id" value={row.id} />
+              <input type="hidden" name="show" value={row.showOnSite ? '0' : '1'} />
+              <button className={row.showOnSite ? 'btn btn-s' : 'btn btn-p'} type="submit">{row.showOnSite ? 'Hide from website' : 'Show on website'}</button>
+            </form>
+          )}
+        </div>
         <article className="card pad stack" style={{ maxWidth: '820px' }}>
           <div className="stack g4" style={{ padding: '8px 0 14px', borderBottom: '1px solid #E4EBE6' }}>
             <span className="small muted">Course</span>

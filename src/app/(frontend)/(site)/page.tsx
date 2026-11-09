@@ -1,5 +1,6 @@
 // Ported from Home.dc.html.
 import React from 'react'
+import { FeedbackSection } from '@/components/site/FeedbackSection'
 
 export default function HomePage() {
   return (
@@ -63,6 +64,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <FeedbackSection page="/" />
     </main>
   )
 }

@@ -147,7 +147,7 @@ textarea.inp{padding:12px 14px;min-height:140px;resize:vertical}
 .sel select{appearance:none;-webkit-appearance:none;padding-inline-end:44px;cursor:pointer}
 .sel svg{position:absolute;inset-inline-end:14px;top:14px;pointer-events:none}
 .phone{display:flex;gap:8px}
-.phone .cc{width:120px;flex:none}
+.phone .cc{width:140px;flex:none}
 .chk{display:flex;gap:12px;align-items:flex-start;min-height:44px;padding:10px 0;cursor:pointer}
 .chk input{appearance:none;-webkit-appearance:none;flex:none;width:24px;height:24px;margin:1px 0 0;border-radius:6px;border:2px solid #7A8580;background:#FFFDF8;cursor:pointer}
 .chk input:checked{background:#0B6B3A url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E") center/16px no-repeat;border-color:#0B6B3A}
@@ -246,7 +246,7 @@ textarea.inp{padding:12px 14px;min-height:140px;resize:vertical}
   .tbl-m thead{display:none}
   .tbl-m tr{display:block;border-top:1px solid #D9D2C1;padding:12px 0}
   .tbl-m td{display:block;border:0;padding:4px 16px}
-  .phone .cc{width:108px}
+  .phone .cc{width:128px}
   .code input{width:44px;height:54px}
   .scrim{padding:0;align-items:stretch}
   .modal{max-width:none;border-radius:0;min-height:100%}

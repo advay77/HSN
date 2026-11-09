@@ -66,6 +66,7 @@ export function FeedbackForm({
         application: String(f.get('application') || ''),
         futureTopics: String(f.get('futureTopics') || ''),
         comments: String(f.get('comments') || ''),
+        sharePublicly: f.get('sharePublicly') === 'on',
       })
       if (result.ok) {
         setDone(true)
@@ -164,6 +165,7 @@ export function FeedbackForm({
         </section>
 
         <div className="row g16 mstack">
+          <label className="chk"><input type="checkbox" name="sharePublicly" /><span>HSN may show my takeaway or comments, with my first name, on the course page.</span></label>
           <button type="submit" className="btn btn-p btn-lg" disabled={pending}>{pending ? 'Sending…' : 'Submit feedback'}</button>
           <span className="small muted">By submitting you agree to our <a href="/privacy">Privacy Policy</a>.</span>
         </div>

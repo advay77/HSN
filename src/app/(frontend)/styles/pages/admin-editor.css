@@ -13,7 +13,7 @@
 .cb-mini svg.cr-up{transform:rotate(180deg)}
 .cb-add{display:flex;flex-wrap:wrap;gap:8px;padding:8px 16px 14px;border-top:1px dashed #D9D2C1}
 .cb-fs{display:flex;flex-direction:column;gap:16px;margin:0;padding:20px;border:1px solid #D9D2C1;border-radius:14px;background:#FFFDF8;min-width:0}
-.cb-fs legend{padding:0 6px;font-family:'Aptos Display','Aptos','Segoe UI Variable Display','Segoe UI',Inter,system-ui,sans-serif;font-weight:700;font-size:16px;color:#134E5E}
+.cb-fs legend{float:left;width:100%;margin:0;padding:0;line-height:1.3;font-family:'Aptos Display','Aptos','Segoe UI Variable Display','Segoe UI',Inter,system-ui,sans-serif;font-weight:700;font-size:16px;color:#134E5E}
 .cb-status{flex:none;width:150px}
 .cb-status .inp{min-height:40px;font-size:14px}
 @container (max-width:1100px){.cb-grid{grid-template-columns:minmax(0,1fr)}}
@@ -24,3 +24,6 @@
 .cb-line{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
 .cb-line3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:8px;align-items:center}
 @container (max-width:600px){.cb-line3{grid-template-columns:minmax(0,1fr)}}
+
+/* The box title is a heading inside the box (floated legends leave the border line). */
+.cb-fs legend+*{clear:both}

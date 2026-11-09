@@ -17,6 +17,7 @@ export type FeedbackInput = {
   application: string
   futureTopics: string
   comments: string
+  sharePublicly?: boolean
 }
 
 const isChoice = <T extends string>(list: readonly { value: T }[], value: string): value is T => list.some((item) => item.value === value)
@@ -71,6 +72,8 @@ export async function submitCourseFeedback(input: FeedbackInput): Promise<{ ok: 
       application: clip(input.application),
       futureTopics: clip(input.futureTopics),
       comments: clip(input.comments),
+      sharePublicly: input.sharePublicly === true,
+      showOnSite: false,
     },
   })
   return { ok: true }

@@ -154,6 +154,38 @@ export const CourseFeedback: CollectionConfig = {
     { name: 'application', label: 'How they will apply it', type: 'textarea' },
     { name: 'futureTopics', label: 'Topics they want next', type: 'textarea' },
     { name: 'comments', label: 'Additional comments', type: 'textarea' },
+    { name: 'sharePublicly', label: 'Learner agreed to show their feedback on the website', type: 'checkbox', defaultValue: false },
+    { name: 'showOnSite', label: 'Shown on the course page', type: 'checkbox', defaultValue: false },
+  ],
+  timestamps: true,
+}
+
+// Website feedback form shown on Home, About and /feedback. Anyone can send it; admins read it in Admin → Feedback.
+export const SiteFeedback: CollectionConfig = {
+  slug: 'site-feedback',
+  admin: {
+    useAsTitle: 'message',
+    defaultColumns: ['name', 'rating', 'message', 'page', 'createdAt'],
+    group: 'Inbox',
+  },
+  fields: [
+    { name: 'name', type: 'text' },
+    { name: 'email', type: 'email' },
+    {
+      name: 'rating',
+      type: 'select',
+      options: [
+        { label: 'Excellent', value: '5' },
+        { label: 'Good', value: '4' },
+        { label: 'Okay', value: '3' },
+        { label: 'Poor', value: '2' },
+        { label: 'Very poor', value: '1' },
+      ],
+    },
+    { name: 'message', type: 'textarea', required: true },
+    { name: 'page', label: 'Sent from page', type: 'text' },
+    { name: 'member', type: 'relationship', relationTo: 'members' },
+    { name: 'read', label: 'Read by HSN', type: 'checkbox', defaultValue: false },
   ],
   timestamps: true,
 }

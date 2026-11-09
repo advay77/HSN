@@ -75,6 +75,7 @@ export interface Config {
     enrollments: Enrollment;
     'course-registrations': CourseRegistration;
     'course-feedback': CourseFeedback;
+    'site-feedback': SiteFeedback;
     'membership-applications': MembershipApplication;
     'login-codes': LoginCode;
     activity: Activity;
@@ -96,6 +97,7 @@ export interface Config {
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
     'course-registrations': CourseRegistrationsSelect<false> | CourseRegistrationsSelect<true>;
     'course-feedback': CourseFeedbackSelect<false> | CourseFeedbackSelect<true>;
+    'site-feedback': SiteFeedbackSelect<false> | SiteFeedbackSelect<true>;
     'membership-applications': MembershipApplicationsSelect<false> | MembershipApplicationsSelect<true>;
     'login-codes': LoginCodesSelect<false> | LoginCodesSelect<true>;
     activity: ActivitySelect<false> | ActivitySelect<true>;
@@ -551,6 +553,24 @@ export interface CourseFeedback {
   application?: string | null;
   futureTopics?: string | null;
   comments?: string | null;
+  sharePublicly?: boolean | null;
+  showOnSite?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-feedback".
+ */
+export interface SiteFeedback {
+  id: number;
+  name?: string | null;
+  email?: string | null;
+  rating?: ('5' | '4' | '3' | '2' | '1') | null;
+  message: string;
+  page?: string | null;
+  member?: (number | null) | Member;
+  read?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -738,6 +758,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'course-feedback';
         value: number | CourseFeedback;
+      } | null)
+    | ({
+        relationTo: 'site-feedback';
+        value: number | SiteFeedback;
       } | null)
     | ({
         relationTo: 'membership-applications';
@@ -1109,6 +1133,23 @@ export interface CourseFeedbackSelect<T extends boolean = true> {
   application?: T;
   futureTopics?: T;
   comments?: T;
+  sharePublicly?: T;
+  showOnSite?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-feedback_select".
+ */
+export interface SiteFeedbackSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  rating?: T;
+  message?: T;
+  page?: T;
+  member?: T;
+  read?: T;
   updatedAt?: T;
   createdAt?: T;
 }
