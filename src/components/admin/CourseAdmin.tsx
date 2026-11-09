@@ -22,6 +22,9 @@ import { toUploadable } from '@/lib/uploads/client'
 import {
   refsToText,
   typeOfKind,
+  QUIZ_SIZE,
+  blankQuestions,
+  blankIntro,
   type CourseRow,
   type EditorCourse,
   type EditorLesson,
@@ -37,7 +40,23 @@ type Sel = { m: number; l: number } | null
 const LV: Record<string, string> = { Beginner: 'bdg b-beg', Intermediate: 'bdg b-int', Advanced: 'bdg b-adv' }
 const ICON: Record<LessonType, string> = { Slide: String.fromCharCode(9636), Video: '▶', Reading: '≡', Document: String.fromCharCode(9638), Quiz: '?' }
 const IC: Record<LessonType, string> = { Slide: 'cb-ti', Video: 'cb-ti v', Reading: 'cb-ti r', Document: 'cb-ti d', Quiz: 'cb-ti q' }
-const TUTORIAL_ACCEPT = '.pdf,.doc,.docx,.odt,.rtf,.txt,.ppt,.pptx,.xls,.xlsx,.csv'
+const PLAY_ICON = <svg width="44" height="44" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
+const ytId = (v: string) => v.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/)?.[1] ?? (/^[\w-]{11}$/.test(v.trim()) ? v.trim() : null)
+
+/** Learner-preview video: plays the uploaded file, else the YouTube link (click to load), else a placeholder. Mirrors the course player's order. */
+function PreviewVideo({ file, link, title }: { file: string | null; link: string; title: string }) {
+  const [playing, setPlaying] = useState(false)
+  const yt = ytId(link || '')
+  if (file) return <video className="cb-vid" src={file} controls preload="metadata" playsInline style={{ width: '100%', background: '#0E1F22' }} />
+  if (yt)
+    return playing ? (
+      <iframe className="cb-vid" style={{ width: '100%', border: 0 }} src={`https://www.youtube-nocookie.com/embed/${yt}?autoplay=1&rel=0`} title={`${title} (YouTube video)`} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen></iframe>
+    ) : (
+      <button type="button" className="cb-vid" style={{ width: '100%', border: 0, cursor: 'pointer', backgroundImage: `linear-gradient(rgba(14,31,34,.35),rgba(14,31,34,.35)),url(https://i.ytimg.com/vi/${yt}/hqdefault.jpg)`, backgroundSize: 'cover', backgroundPosition: 'center' }} onClick={() => setPlaying(true)} aria-label={`Play video: ${title}`}>{PLAY_ICON}</button>
+    )
+  return <div className="cb-vid" style={{ flexDirection: 'column', gap: '8px' }}>{PLAY_ICON}<span className="small" style={{ color: '#BFE6F3' }}>Add a YouTube link or upload a video</span></div>
+}
+const TUTORIAL_ACCEPT ='.pdf,.doc,.docx,.odt,.rtf,.txt,.ppt,.pptx,.xls,.xlsx,.csv'
 const PASS: [number, string][] = [
   [60, '3 of 5'],
   [80, '4 of 5'],
@@ -56,7 +75,7 @@ const Tick = ({ color = '#0B6B3A', size = 20 }: { color?: string; size?: number 
 
 const blankLesson = (type: LessonType): EditorLesson =>
   type === 'Quiz'
-    ? { kind: 'quiz', title: 'New quiz', body: '', video: '', refs: [], qs: [{ q: '', o: ['', '', '', ''], a: 0 }] }
+    ? { kind: 'quiz', title: 'Module quiz', body: '', video: '', refs: [], qs: blankQuestions() }
     : {
         kind: type === 'Video' ? 'video' : type === 'Reading' ? 'references' : type === 'Document' ? 'document' : 'text',
         title: 'New ' + (type === 'Document' ? 'tutorial' : type.toLowerCase()),
@@ -92,7 +111,10 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
   const mods = f.modules
   const lessonTotal = mods.reduce((a, m) => a + m.lessons.length, 0)
   const pubCount = rows.filter((r) => r.published).length
-  const L = selL ? mods[selL.m]?.lessons[selL.l] ?? null : null
+  // selL.m === -1 is the course introduction (the step before Module 1).
+  const intro = f.intro ?? blankIntro()
+  const isIntro = selL?.m === -1
+  const L = selL ? (isIntro ? intro : mods[selL.m]?.lessons[selL.l] ?? null) : null
   const LT = L ? typeOfKind(L.kind) : null
 
   const change = (patch: Partial<EditorCourse>) => {
@@ -108,6 +130,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
   const clone = () => mods.map((m) => ({ ...m, lessons: m.lessons.slice() }))
   const updL = (patch: Partial<EditorLesson>) => {
     if (!selL || !L) return
+    if (selL.m === -1) return change({ intro: { ...L, ...patch } })
     const m = clone()
     m[selL.m]!.lessons[selL.l] = { ...L, ...patch }
     setMods(m)
@@ -258,7 +281,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
     m.push({
       title,
       status: 'Available',
-      lessons: [{ kind: 'document', title, body: '', video: '', refs: [], qs: [], file: r.file }],
+      lessons: [{ kind: 'document', title, body: '', video: '', refs: [], qs: [], file: r.file }, blankLesson('Quiz')],
     })
     setMods(m, { m: m.length - 1, l: 0 })
     setOpen((o) => ({ ...o, [m.length - 1]: true }))
@@ -288,6 +311,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
         })
       }
       setBusy('')
+      lessons.push(blankLesson('Quiz'))
       const m = clone()
       m.push({ title: res.fileName.replace(/\.pptx$/i, ''), status: 'Coming soon', lessons })
       setMods(m, { m: m.length - 1, l: 0 })
@@ -298,8 +322,9 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
 
   const addModule = () => {
     const m = clone()
-    m.push({ title: `Module ${m.length + 1} title`, status: 'Coming soon', lessons: [] })
-    setMods(m)
+    // Every module: a video lesson (YouTube link or uploaded file), then a 5-question quiz.
+    m.push({ title: `Module ${m.length + 1} title`, status: 'Coming soon', lessons: [blankLesson('Video'), blankLesson('Quiz')] })
+    setMods(m, { m: m.length - 1, l: 0 })
     setOpen((o) => ({ ...o, [m.length - 1]: true }))
   }
   const addL = (i: number, type: LessonType) => () => {
@@ -310,7 +335,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
   }
   const pickType = (t: LessonType) => {
     if (!L || t === LT) return
-    if (t === 'Quiz') updL({ kind: 'quiz', qs: L.qs.length ? L.qs : [{ q: '', o: ['', '', '', ''], a: 0 }] })
+    if (t === 'Quiz') updL({ kind: 'quiz', qs: L.qs.length ? L.qs : blankQuestions() })
     else if (t === 'Video') updL({ kind: 'video' })
     else if (t === 'Reading') updL({ kind: 'references' })
     else if (t === 'Document') updL({ kind: 'document' })
@@ -585,11 +610,23 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                       {(importing.diagramSlides.length > 0 || importing.referenceSlides.length > 0) && (
                         <li><Tick />{[importing.diagramSlides.length ? `Diagram on ${listText(importing.diagramSlides)}` : '', importing.referenceSlides.length ? `References on ${listText(importing.referenceSlides)}` : ''].filter(Boolean).join(' · ')}</li>
                       )}
-                      <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8A5A00" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>Quiz not in the file: add the questions after import</li>
+                      <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8A5A00" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>A 5-question quiz is added at the end: write the questions after import</li>
                     </ul>
                     <div className="row g12"><button className="btn btn-p btn-sm" onClick={doImport} disabled={pending}>Add as Module {mods.length + 1}</button><button className="btn btn-t btn-sm" onClick={() => setImporting(null)}>Cancel</button></div>
                   </div>
                 )}
+                <div className="cb-mod">
+                  <div className="cb-mod-h">
+                    <span className="cb-n">0</span>
+                    <span className="stack grow"><strong>Course introduction</strong><span className="small muted">First step, before Module 1: a brief overview of the course</span></span>
+                  </div>
+                  <ol className="cb-rows">
+                    <li className={isIntro ? 'cb-row sel' : 'cb-row'}>
+                      <button className="cb-pick" onClick={() => { setSelL({ m: -1, l: 0 }); setSaved('') }} aria-pressed={isIntro}><span className={IC.Video} aria-hidden="true">{ICON.Video}</span><span className="t">{intro.title || 'Course introduction'}</span></button>{' '}
+                      <span className="cb-type">{intro.file || intro.video ? 'Video' : intro.body.trim() ? 'Text' : 'Empty'}</span>
+                    </li>
+                  </ol>
+                </div>
                 {mods.map((m, i) => (
                   <div key={m.id ?? `new-${i}`} className="cb-mod">
                     <div className="cb-mod-h">
@@ -639,12 +676,12 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                 {L && LT && selL && (
                   <>
                     <div className="card pad stack g16">
-                      <div className="stack g4"><span className="over">{'Module ' + (selL.m + 1) + ' · Lesson ' + (selL.l + 1) + ' · ' + LT}</span><h3 className="h4" id="le" style={{ margin: 0 }}>Edit lesson</h3></div>
-                      <div className="fld"><span className="lbl" id="lt-l">Lesson type</span>
+                      <div className="stack g4"><span className="over">{isIntro ? 'Course introduction · before Module 1' : 'Module ' + (selL.m + 1) + ' · Lesson ' + (selL.l + 1) + ' · ' + LT}</span><h3 className="h4" id="le" style={{ margin: 0 }}>{isIntro ? 'Edit introduction' : 'Edit lesson'}</h3></div>
+                      {!isIntro && <div className="fld"><span className="lbl" id="lt-l">Lesson type</span>
                         <div className="seg" role="group" aria-labelledby="lt-l" style={{ maxWidth: '100%', overflowX: 'auto' }}>
                           {(['Slide', 'Video', 'Reading', 'Document', 'Quiz'] as LessonType[]).map((t) => <button key={t} className={LT === t ? 'on' : ''} aria-pressed={LT === t} onClick={() => pickType(t)}>{t === 'Document' ? 'Tutorial' : t}</button>)}
                         </div>
-                      </div>
+                      </div>}
                       <div className="fld"><label className="lbl" htmlFor="l-t">Lesson title</label><input className="inp" id="l-t" value={L.title} onChange={(e) => updL({ title: e.target.value })} /></div>
                       {LT === 'Document' && (
                         <div className="stack g8">
@@ -663,7 +700,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                         <div className="fld"><label className="lbl" htmlFor="l-b">Reading text or references</label><textarea className="inp" id="l-b" value={readingText} onChange={(e) => updL({ readingText: e.target.value })} style={{ minHeight: '150px' }}></textarea><span className="hint">One reference per line. A link at the end of a line becomes its web address.</span></div>
                       )}
                       {(LT === 'Slide' || LT === 'Video') && (
-                        <div className="fld"><label className="lbl" htmlFor="l-b">{LT === 'Video' ? 'Text shown above the video' : 'Slide text'}</label><textarea className="inp" id="l-b" value={L.body} onChange={(e) => updL({ body: e.target.value })} style={{ minHeight: '150px' }}></textarea></div>
+                        <div className="fld"><label className="lbl" htmlFor="l-b">{isIntro ? 'About this course (shown above the video)' : LT === 'Video' ? 'Text shown above the video' : 'Slide text'}</label><textarea className="inp" id="l-b" value={L.body} onChange={(e) => updL({ body: e.target.value })} style={{ minHeight: '150px' }}></textarea></div>
                       )}
                       {LT === 'Video' && (
                         <div className="fld"><label className="lbl" htmlFor="l-v">YouTube link</label><input className="inp" id="l-v" type="url" value={L.video} onChange={(e) => updL({ video: e.target.value })} placeholder="https://www.youtube.com/watch?v=" /><span className="hint">Learners watch it inside the lesson. Or upload a video file below.</span></div>
@@ -713,7 +750,8 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                               ))}
                             </div>
                           ))}
-                          <button className="btn btn-g btn-sm self-start" onClick={() => setQs([...qs, { q: '', o: ['', '', '', ''], a: 0 }])}>+ Add question</button>
+                          <span className={qs.length === QUIZ_SIZE ? 'small muted' : 'small strong'} style={qs.length === QUIZ_SIZE ? undefined : { color: '#8A5A00' }}>{qs.length} of {QUIZ_SIZE} questions. Every module quiz has {QUIZ_SIZE}.</span>
+                          {qs.length < QUIZ_SIZE && <button className="btn btn-g btn-sm self-start" onClick={() => setQs([...qs, { q: '', o: ['', '', '', ''], a: 0 }])}>+ Add question</button>}
                         </div>
                       )}
                       <div className="row g12"><button className="btn btn-p" onClick={() => save('lesson')} disabled={pending}>Save lesson</button><span className="small muted">{saved === 'lesson' ? 'Saved' : ''}</span></div>
@@ -727,7 +765,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                           {(LT === 'Slide' || LT === 'Video') && <p>{previewBody}</p>}
                           {LT === 'Reading' && <p>{readingText ? (readingText.length > 220 ? readingText.slice(0, 220) + '…' : readingText) : 'Lesson text appears here.'}</p>}
                           {LT === 'Document' && <p>{L.file ? L.file.name : 'A Word document, PDF, or similar file appears here.'}</p>}
-                          {LT === 'Video' && <div className="cb-vid"><svg width="44" height="44" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg></div>}
+                          {LT === 'Video' && <PreviewVideo key={(L.file?.url ?? '') + '|' + L.video} file={L.file?.url ?? null} link={L.video} title={L.title} />}
                           {LT === 'Slide' && L.image && <img src={L.image.url} alt="" style={{ width: '160px', alignSelf: 'center' }} />}
                           {LT === 'Quiz' && <p className="muted">{qs.length} questions · pass mark {passLabel}</p>}
                         </div>

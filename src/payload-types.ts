@@ -214,6 +214,21 @@ export interface Course {
    * The first paragraph is shown larger. Separate paragraphs with a blank line.
    */
   about?: string | null;
+  /**
+   * The first step of the course, before Module 1: a short overview of the course. Add text, a video, or both.
+   */
+  intro?: {
+    /**
+     * Default: "Course introduction"
+     */
+    title?: string | null;
+    body?: string | null;
+    video?: (number | null) | Media;
+    /**
+     * Used when no video file is uploaded.
+     */
+    youtubeId?: string | null;
+  };
   modules?:
     | {
         title: string;
@@ -903,6 +918,14 @@ export interface CoursesSelect<T extends boolean = true> {
         id?: T;
       };
   about?: T;
+  intro?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        video?: T;
+        youtubeId?: T;
+      };
   modules?:
     | T
     | {

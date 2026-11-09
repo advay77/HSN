@@ -129,6 +129,18 @@ export const Courses: CollectionConfig = {
           label: 'Modules & lessons',
           fields: [
             {
+              name: 'intro',
+              label: 'Course introduction',
+              type: 'group',
+              admin: { description: 'The first step of the course, before Module 1: a short overview of the course. Add text, a video, or both.' },
+              fields: [
+                { name: 'title', type: 'text', admin: { description: 'Default: "Course introduction"' } },
+                { name: 'body', label: 'Text', type: 'textarea' },
+                { name: 'video', label: 'Video file (MP4)', type: 'upload', relationTo: 'media' },
+                { name: 'youtubeId', label: 'YouTube video ID or link', type: 'text', admin: { description: 'Used when no video file is uploaded.' } },
+              ],
+            },
+            {
               name: 'modules',
               type: 'array',
               admin: { initCollapsed: true },

@@ -72,6 +72,8 @@ export type EditorCourse = {
   featured: boolean
   visibility: 'Everyone' | 'Members only'
   slug: string
+  /** Course introduction: the first step, before Module 1 (text plus a video file or YouTube link). */
+  intro: EditorLesson
   modules: EditorModule[]
 }
 
@@ -110,6 +112,11 @@ export const CERT_DEFAULTS = {
   issuer: 'Healthcare Sustainability Network',
 }
 
+/** Every module ends with a quiz of this many questions. */
+export const QUIZ_SIZE = 5
+export const blankQuestions = (): EditorQuestion[] => Array.from({ length: QUIZ_SIZE }, () => ({ q: '', o: ['', '', '', ''], a: 0 }))
+export const blankIntro = (): EditorLesson => ({ kind: 'video', title: 'Course introduction', body: '', video: '', refs: [], qs: [], file: null })
+
 export const blankCourse = (): EditorCourse => ({
   id: null,
   title: '',
@@ -144,5 +151,6 @@ export const blankCourse = (): EditorCourse => ({
   featured: false,
   visibility: 'Everyone',
   slug: '',
+  intro: blankIntro(),
   modules: [],
 })

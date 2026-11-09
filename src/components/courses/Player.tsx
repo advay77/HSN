@@ -33,7 +33,7 @@ export type PlayerModule = {
 }
 
 type Props = {
-  course: { id: number; slug: string; title: string; retakes: boolean; maxAttempts: number; certificate: boolean }
+  course: { id: number; slug: string; title: string; retakes: boolean; maxAttempts: number; certificate: boolean; feedbackSent: boolean; finished: boolean }
   modules: PlayerModule[]
   initialCompleted: string[]
   initialResults: Record<string, QuizResult>
@@ -123,7 +123,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
   const { l: s, m: mod } = list[Math.min(idx, total - 1)]!
   const pctNum = allPlayable.length ? Math.round((allPlayable.filter((l) => done.has(l.id)).length / allPlayable.length) * 100) : 0
   const modLessons = mod.lessons.filter((l) => l.type !== 'quiz')
-  const crumb = s.type === 'quiz' ? `Module ${mod.n} · Quiz` : `Module ${mod.n} · Lesson ${modLessons.indexOf(s) + 1} of ${modLessons.length}`
+  const crumb = mod.n === 0 ? 'Course introduction' : s.type === 'quiz' ? `Module ${mod.n} · Quiz` : `Module ${mod.n} · Lesson ${modLessons.indexOf(s) + 1} of ${modLessons.length}`
   const nextItem = list[idx + 1]
   const nextModule = modules.find((m) => m.n > mod.n)
 
@@ -202,6 +202,12 @@ export function Player({ course, modules, initialCompleted, initialResults, star
   const nextLong = s.type === 'quiz' ? 'Next module' : nextItem?.l.type === 'quiz' ? 'Go to quiz' : nextItem?.l.type === 'summary' ? 'Mark complete & finish' : 'Mark complete & next'
   const nextShort = nextItem?.l.type === 'quiz' ? 'Quiz' : 'Next'
 
+  // After the last module: course feedback is required, then the certificate opens.
+  const courseDone = pctNum === 100 || course.finished
+  const isLast = idx === total - 1 && !nextModule
+  const feedbackHref = `/courses/${course.slug}/feedback`
+  const certHref = `/courses/${course.slug}/certificate`
+
   return (
     <>
       <TopBar title={course.title} pct={pctNum} slug={course.slug} outlineOpen={outlineOpen} onOutline={() => setOutlineOpen(!outlineOpen)} onA11y={() => setA11yOpen(true)} a11yOpen={a11yOpen} />
@@ -212,7 +218,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
             const offset = list.findIndex((x) => x.m === m)
             return (
               <React.Fragment key={m.n}>
-                <div className="pl-mh"><span className="over">Module {m.n}</span><b>{m.title}</b><span className="small muted">{m.lessons.filter((l) => done.has(l.id)).length} of {m.lessons.length} complete</span></div>
+                <div className="pl-mh"><span className="over">{m.n === 0 ? 'Start here' : `Module ${m.n}`}</span><b>{m.title}</b><span className="small muted">{m.lessons.filter((l) => done.has(l.id)).length} of {m.lessons.length} complete</span></div>
                 <ol className="pl-list">
                   {m.lessons.map((l, j) => {
                     const i = offset + j
@@ -312,14 +318,10 @@ export function Player({ course, modules, initialCompleted, initialResults, star
                 <Paras text={s.body} />
                 <div className="row g12 mstack">
                   {nextItem && <button className="btn btn-lg btn-light" onClick={next}>{nextItem.l.type === 'quiz' ? `Start ${nextItem.l.title}` : 'Continue'}</button>}
-                  {!nextItem && !nextModule && course.certificate && (
-                    pctNum === 100
-                      ? <a className="btn btn-lg btn-light" href={`/courses/${course.slug}/certificate`}>Get your certificate</a>
-                      : !done.has(s.id) && <button className="btn btn-lg btn-light" onClick={() => markDone(s.id)}>Finish course</button>
-                  )}
-                  {!nextItem && !nextModule && pctNum === 100 && (
-                    <a className="btn btn-lg btn-light" href={`/courses/${course.slug}/feedback`}>Share feedback</a>
-                  )}
+                  {isLast && !courseDone && !done.has(s.id) && <button className="btn btn-lg btn-light" onClick={() => markDone(s.id)}>Finish course</button>}
+                  {isLast && courseDone && (course.feedbackSent
+                    ? course.certificate && <a className="btn btn-lg btn-light" href={certHref}>Get your certificate</a>
+                    : <a className="btn btn-lg btn-light" href={feedbackHref}>Give feedback to get your certificate</a>)}
                   {nextModule && <span className="small" style={{ color: '#BFE6F3' }}>Next module: {nextModule.title}</span>}
                 </div>
               </div>
@@ -346,13 +348,29 @@ export function Player({ course, modules, initialCompleted, initialResults, star
                       <strong>{passed ? (nextModule && nextModule.status === 'available' ? `Passed. Module ${nextModule.n} is unlocked.` : 'Passed. Well done.') : !outOfTries ? 'Not quite. Review the lessons and try again.' : 'Not quite.'}</strong>
                       <span className="muted">{passed ? (corr ? 'Correct answers are marked in green.' : 'You have passed this quiz.') : `You need ${s.need} out of ${n} to pass. Correct answers are marked in green.`}</span>
                     </span>
-                    {passed && <a className="btn btn-p" href={`/courses/${course.slug}`}>Back to course</a>}
+                    {passed && !(isLast && courseDone) && <a className="btn btn-p" href={`/courses/${course.slug}`}>Back to course</a>}
                     {!passed && !outOfTries && <button className="btn btn-s" onClick={retry}>Try again</button>}
                   </div>
                 )}
               </div>
             )}
           </section>
+          {isLast && courseDone && s.type !== 'summary' && (
+            <div className="card pad stack g12" role="status" style={{ background: '#E3F1E4' }}>
+              {course.feedbackSent ? (
+                <>
+                  <strong style={{ fontSize: '18px' }}>Course complete. Your certificate is ready.</strong>
+                  {course.certificate && <a className="btn btn-p self-start" href={certHref}>Get your certificate</a>}
+                </>
+              ) : (
+                <>
+                  <strong style={{ fontSize: '18px' }}>Course complete. One last step.</strong>
+                  <span>Share your feedback on this course. It is required, and your certificate opens as soon as you send it.</span>
+                  <a className="btn btn-p self-start" href={feedbackHref}>Give feedback</a>
+                </>
+              )}
+            </div>
+          )}
           <div className="pl-nav">
             <button className="btn btn-s" onClick={() => go(Math.max(0, idx - 1))} disabled={idx === 0}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="m11 6-6 6 6 6"></path></svg>Previous</button>
             <span className="pl-count">{idx + 1} / {total}</span>

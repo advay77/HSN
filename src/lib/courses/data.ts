@@ -41,8 +41,29 @@ export const isQuiz = (l: Lesson) => l.type === 'quiz'
 export const visibleModules = (c: Course) => (c.modules ?? []).filter((m) => m.status !== 'hidden')
 export const availableModules = (c: Course) => (c.modules ?? []).filter((m) => m.status === 'available')
 
-/** Every lesson a learner can open, in order, across available modules. */
-export const playableLessons = (c: Course) => availableModules(c).flatMap((m) => m.lessons ?? [])
+/** Lesson id used for the course introduction in progress records. */
+export const INTRO_ID = 'intro'
+
+/** The course introduction as a lesson (video when it has one, otherwise text), or null when it is empty. */
+export function introLesson(c: Course): Lesson | null {
+  const i = c.intro
+  const hasVideo = !!i?.video || !!i?.youtubeId?.trim()
+  if (!hasVideo && !i?.body?.trim()) return null
+  return {
+    id: INTRO_ID,
+    title: i?.title?.trim() || 'Course introduction',
+    type: hasVideo ? 'video' : 'text',
+    body: i?.body ?? '',
+    file: i?.video ?? null,
+    youtubeId: i?.youtubeId ?? null,
+  }
+}
+
+/** Every lesson a learner can open, in order: the introduction, then lessons across available modules. */
+export const playableLessons = (c: Course): Lesson[] => {
+  const intro = introLesson(c)
+  return [...(intro ? [intro] : []), ...availableModules(c).flatMap((m) => m.lessons ?? [])]
+}
 
 export const hasVideo = (c: Course) => playableLessons(c).some((l) => l.type === 'video')
 
@@ -133,6 +154,8 @@ export const quizResults = (e: Enrollment | null): Record<string, QuizResult> =>
     : {}
 
 export const progressOf = (c: Course, e: Enrollment | null) => {
+  // A finished course stays finished (and keeps its certificate) when lessons are added later.
+  if (e?.completedAt) return 100
   const all = playableLessons(c)
   if (!all.length) return 0
   const done = new Set(completedIds(e))

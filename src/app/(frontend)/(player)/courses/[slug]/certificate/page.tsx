@@ -10,6 +10,7 @@ import { CertificateActions } from '@/components/courses/CertificateActions'
 import { requireMember } from '@/lib/auth/guard'
 import { certificateId, certificateQr, formatIssued } from '@/lib/courses/certificate'
 import { getCourseBySlug, getEnrollment, progressOf } from '@/lib/courses/data'
+import { getPayloadClient } from '@/lib/payload'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Certificate', robots: { index: false } }
@@ -47,6 +48,29 @@ export default async function CertificatePage({ params }: Props) {
     )
   }
 
+  // Course feedback is required before the certificate is shown.
+  const payload = await getPayloadClient()
+  const feedback = await payload.find({
+    collection: 'course-feedback',
+    where: { and: [{ member: { equals: member.id } }, { course: { equals: course.id } }] },
+    limit: 1,
+    depth: 0,
+  })
+  if (!feedback.docs.length) {
+    return (
+      <main className="cert-wrap">
+        <div className="cert-note card pad stack g16">
+          <h1 className="h3">One last step: share your feedback</h1>
+          <p>You have finished <b>{course.title}</b>. Well done. Please fill in the short course feedback form. It is required, and your certificate opens as soon as you send it.</p>
+          <div className="row g12" style={{ flexWrap: 'wrap' }}>
+            <a className="btn btn-p" href={`/courses/${slug}/feedback`}>Give feedback</a>
+            <a className="btn btn-s" href="/my">Back to My HSN</a>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
   const id = certificateId(enrollment.id)
   const issued = enrollment.completedAt || enrollment.updatedAt
   const site = (process.env.SITE_URL || 'https://healthcaresustainabilitynetwork.com').replace(/\/$/, '')
@@ -67,7 +91,7 @@ export default async function CertificatePage({ params }: Props) {
 
   return (
     <main className="cert-wrap">
-      <CertificateActions linkedIn={linkedIn} feedbackHref={`/courses/${slug}/feedback`} />
+      <CertificateActions linkedIn={linkedIn} />
       <article className="cert" aria-label="Certificate of completion">
         <div className="cert-in">
           <img src="/images/hsn-logo.jpg" alt="Healthcare Sustainability Network" className="cert-logo" />

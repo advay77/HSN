@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 
-import type { EditorCourse } from '@/components/admin/courseTypes'
+import { QUIZ_SIZE, type EditorCourse } from '@/components/admin/courseTypes'
 import { requireAdmin } from '@/lib/admin/auth'
 import { PURPOSE_LIMITS, readUpload } from '@/lib/uploads/server'
 import { fromEditor, getCourseForEditor, updatedLabel } from '@/lib/admin/courses'
@@ -25,6 +25,19 @@ export async function saveCourseAction(input: EditorCourse): Promise<SaveResult>
   const data = fromEditor(input)
   if (!data.title) return { ok: false, error: 'Add a course title (Basics tab).' }
   if (!data.description) return { ok: false, error: 'Add a short description (Basics tab).' }
+  // A published course needs a 5-question quiz, with every question answered, in each available module.
+  if (data.published) {
+    for (const [i, m] of data.modules.entries()) {
+      if (m.status !== 'available') continue
+      const quizzes = m.lessons.filter((l) => l.type === 'quiz')
+      const where = `Module ${i + 1} “${m.title}”`
+      if (!quizzes.length) return { ok: false, error: `${where} needs a quiz with ${QUIZ_SIZE} questions before the course can be published (Modules & lessons tab).` }
+      for (const q of quizzes) {
+        const ready = q.questions.filter((x) => x.options.length >= 2).length
+        if (ready !== QUIZ_SIZE) return { ok: false, error: `${where}: the quiz needs ${QUIZ_SIZE} questions, each with at least 2 answers (it has ${ready}). Fix it in the Modules & lessons tab, or turn off Published.` }
+      }
+    }
+  }
 
   const payload = await getPayloadClient()
   const slug = toSlug(data.slug || data.title)

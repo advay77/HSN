@@ -7,6 +7,7 @@ import * as migration_20261106_010000_course_access_documents from './20261106_0
 import * as migration_20261109_120000_feedback_publish from './20261109_120000_feedback_publish';
 import * as migration_20261109_130000_site_feedback from './20261109_130000_site_feedback';
 import * as migration_20261109_150000_site_feedback_details from './20261109_150000_site_feedback_details';
+import * as migration_20261109_180000_course_intro from './20261109_180000_course_intro';
 
 export const migrations = [
   {
@@ -53,5 +54,10 @@ export const migrations = [
     up: migration_20261109_150000_site_feedback_details.up,
     down: migration_20261109_150000_site_feedback_details.down,
     name: '20261109_150000_site_feedback_details',
+  },
+  {
+    up: migration_20261109_180000_course_intro.up,
+    down: migration_20261109_180000_course_intro.down,
+    name: '20261109_180000_course_intro',
   },
 ];

@@ -105,6 +105,15 @@ export function toEditor(c: Course): EditorCourse {
     featured: !!c.featured,
     visibility: c.audience === 'members' ? 'Members only' : 'Everyone',
     slug: c.slug || '',
+    intro: {
+      kind: 'video',
+      title: c.intro?.title || 'Course introduction',
+      body: c.intro?.body || '',
+      video: c.intro?.youtubeId || '',
+      file: mediaRef(c.intro?.video),
+      refs: [],
+      qs: [],
+    },
     modules: (c.modules ?? []).map(
       (m): EditorModule => ({
         id: m.id,
@@ -177,6 +186,12 @@ export function fromEditor(e: EditorCourse) {
     published: e.published,
     featured: e.featured,
     audience: e.visibility === 'Members only' ? ('members' as const) : ('everyone' as const),
+    intro: {
+      title: trim(e.intro?.title),
+      body: e.intro?.body ?? '',
+      video: e.intro?.file?.id ?? null,
+      youtubeId: trim(e.intro?.video),
+    },
     modules: e.modules.map((m) => ({
       ...(m.id ? { id: m.id } : {}),
       title: trim(m.title) || 'Untitled module',

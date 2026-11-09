@@ -9,14 +9,18 @@ import {
   completedIds,
   getCourseBySlug,
   getOrCreateEnrollment,
+  introLesson,
   isQuiz,
+  type Lesson,
   media,
   passNeeded,
   playerKind,
+  progressOf,
   quizResults,
   visibleModules,
   youtubeId,
 } from '@/lib/courses/data'
+import { getPayloadClient } from '@/lib/payload'
 import { SOCIAL } from '@/lib/site'
 
 export const dynamic = 'force-dynamic'
@@ -40,6 +44,32 @@ export default async function LearnPage({ params, searchParams }: Props) {
   const enrollment = await getOrCreateEnrollment(member.id, course.id)
   const results = quizResults(enrollment)
 
+  const toPlayer = (l: Lesson): PlayerLesson => {
+    const img = media(l.image)
+    const file = media(l.file)
+    const passedBefore = isQuiz(l) && !!results[l.id!]?.passed
+    return {
+      id: l.id!,
+      type: l.type,
+      title: l.title,
+      kind: playerKind(l),
+      body: l.body ?? '',
+      extra: l.extra ?? '',
+      image: img?.url ? { url: img.url, alt: img.alt || '' } : null,
+      file: file?.url ? { url: file.url, name: file.filename || 'Tutorial', pdf: file.mimeType === 'application/pdf' || /\.pdf$/i.test(file.filename || ''), video: !!file.mimeType?.startsWith('video/') } : null,
+      youtube: youtubeId(l.youtubeId),
+      references: (l.references ?? []).map((r) => ({ text: r.text, url: r.url ?? '', linkText: r.linkText ?? '' })),
+      draft: !!l.draftQuestions,
+      // Correct answers are only sent for quizzes the member has already passed.
+      questions: (l.questions ?? []).map((q) => ({
+        q: q.question,
+        o: (q.options ?? []).map((o) => o.text),
+        a: passedBefore ? Math.max(0, (q.options ?? []).findIndex((o) => o.correct)) : null,
+      })),
+      need: isQuiz(l) ? passNeeded(course, l.questions?.length ?? 0) : 0,
+    }
+  }
+
   const modules: PlayerModule[] = visibleModules(course).map((m, i) => ({
     n: i + 1,
     title: m.title,
@@ -51,39 +81,25 @@ export default async function LearnPage({ params, searchParams }: Props) {
       const size = f.filesize ? ` · ${(f.filesize / 1024 / 1024).toFixed(1)} MB` : ''
       return { url: f.url, label: `${ext}${size}` }
     })(),
-    lessons:
-      m.status === 'available'
-        ? (m.lessons ?? []).map((l): PlayerLesson => {
-            const img = media(l.image)
-            const file = media(l.file)
-            const passedBefore = isQuiz(l) && !!results[l.id!]?.passed
-            return {
-              id: l.id!,
-              type: l.type,
-              title: l.title,
-              kind: playerKind(l),
-              body: l.body ?? '',
-              extra: l.extra ?? '',
-              image: img?.url ? { url: img.url, alt: img.alt || '' } : null,
-              file: file?.url ? { url: file.url, name: file.filename || 'Tutorial', pdf: file.mimeType === 'application/pdf' || /\.pdf$/i.test(file.filename || ''), video: !!file.mimeType?.startsWith('video/') } : null,
-              youtube: youtubeId(l.youtubeId),
-              references: (l.references ?? []).map((r) => ({ text: r.text, url: r.url ?? '', linkText: r.linkText ?? '' })),
-              draft: !!l.draftQuestions,
-              // Correct answers are only sent for quizzes the member has already passed.
-              questions: (l.questions ?? []).map((q) => ({
-                q: q.question,
-                o: (q.options ?? []).map((o) => o.text),
-                a: passedBefore ? Math.max(0, (q.options ?? []).findIndex((o) => o.correct)) : null,
-              })),
-              need: isQuiz(l) ? passNeeded(course, l.questions?.length ?? 0) : 0,
-            }
-          })
-        : [],
+    lessons: m.status === 'available' ? (m.lessons ?? []).map(toPlayer) : [],
   }))
+
+  // The course introduction comes first, before Module 1 (shown as step 0 in the outline).
+  const intro = introLesson(course)
+  if (intro) modules.unshift({ n: 0, title: intro.title, status: 'available', slides: null, lessons: [{ ...toPlayer(intro), kind: intro.type === 'video' ? 'Introduction · Video' : 'Introduction' }] })
+
+  // The certificate opens only after the member has sent the course feedback.
+  const payload = await getPayloadClient()
+  const feedback = await payload.find({
+    collection: 'course-feedback',
+    where: { and: [{ member: { equals: member.id } }, { course: { equals: course.id } }] },
+    limit: 1,
+    depth: 0,
+  })
 
   return (
     <Player
-      course={{ id: course.id, slug: course.slug!, title: course.title, retakes: course.certificate?.retakes !== false, maxAttempts: course.certificate?.maxAttempts ?? 0, certificate: course.certificate?.enabled !== false }}
+      course={{ id: course.id, slug: course.slug!, title: course.title, retakes: course.certificate?.retakes !== false, maxAttempts: course.certificate?.maxAttempts ?? 0, certificate: course.certificate?.enabled !== false, feedbackSent: feedback.docs.length > 0, finished: progressOf(course, enrollment) === 100 }}
       modules={modules}
       initialCompleted={completedIds(enrollment)}
       initialResults={results}
