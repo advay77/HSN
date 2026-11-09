@@ -2,8 +2,9 @@
 
 import React, { useEffect, useRef } from 'react'
 
-// Cloudflare Turnstile widget (see src/lib/turnstile.ts). Usually invisible: it only shows a check when
-// Cloudflare is unsure. Renders nothing when NEXT_PUBLIC_TURNSTILE_SITE_KEY isn't set.
+// Cloudflare Turnstile widget (see src/lib/turnstile.ts). Always visible, so visitors see the forms are
+// protected; most people pass automatically and only see a tick. Renders nothing when
+// NEXT_PUBLIC_TURNSTILE_SITE_KEY isn't set.
 // Inside a <form> it also adds the hidden "cf-turnstile-response" field. Change `resetKey` after each
 // submit: a token works only once.
 
@@ -54,7 +55,7 @@ export function Turnstile({ onToken, resetKey = 0 }: { onToken: (token: string) 
         if (cancelled || !box.current || !window.turnstile) return
         id.current = window.turnstile.render(box.current, {
           sitekey: SITE_KEY,
-          appearance: 'interaction-only',
+          appearance: 'always',
           size: 'flexible',
           callback: (t: string) => cb.current(t),
           'expired-callback': () => cb.current(''),
