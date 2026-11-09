@@ -13,6 +13,7 @@ import {
   uploadImageAction,
   uploadImportedImageAction,
   uploadTutorialAction,
+  uploadVideoAction,
 } from '@/app/(frontend)/admin/courses/actions'
 import type { ImportResult } from '@/lib/admin/pptx'
 import { CourseTagRow, OpenAccessIcon, PaidAccessIcon, RegistrationIcon } from '@/components/courses/CourseTags'
@@ -86,6 +87,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
   const pptxInput = useRef<HTMLInputElement>(null)
   const tutorialInput = useRef<HTMLInputElement>(null)
   const lessonFileInput = useRef<HTMLInputElement>(null)
+  const videoInput = useRef<HTMLInputElement>(null)
 
   const mods = f.modules
   const lessonTotal = mods.reduce((a, m) => a + m.lessons.length, 0)
@@ -203,6 +205,25 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
     setBusy('')
     if (!r.ok) setImportError(r.error)
     else setImporting(r.result)
+  }
+
+  const attachVideo = async (file: File | undefined | null) => {
+    if (!file) return
+    setError('')
+    const fd = new FormData()
+    setBusy('Uploading the video… this can take a minute')
+    try {
+      fd.set('file', await toUploadable(file, 'admin-video'))
+    } catch (err) {
+      setBusy('')
+      setError(err instanceof Error ? err.message : 'The video could not be uploaded.')
+      return
+    }
+    fd.set('alt', file.name.replace(/\.[^.]+$/, '') || 'Video')
+    const r = await uploadVideoAction(fd)
+    setBusy('')
+    if (!r.ok) return setError(r.error)
+    updL({ kind: 'video', file: r.file })
   }
 
   const attachTutorial = async (file: File | undefined | null, into: 'module' | 'lesson') => {
@@ -645,7 +666,19 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                         <div className="fld"><label className="lbl" htmlFor="l-b">{LT === 'Video' ? 'Text shown above the video' : 'Slide text'}</label><textarea className="inp" id="l-b" value={L.body} onChange={(e) => updL({ body: e.target.value })} style={{ minHeight: '150px' }}></textarea></div>
                       )}
                       {LT === 'Video' && (
-                        <div className="fld"><label className="lbl" htmlFor="l-v">YouTube link</label><input className="inp" id="l-v" type="url" value={L.video} onChange={(e) => updL({ video: e.target.value })} placeholder="https://www.youtube.com/watch?v=" /><span className="hint">Learners watch it inside the lesson.</span></div>
+                        <div className="fld"><label className="lbl" htmlFor="l-v">YouTube link</label><input className="inp" id="l-v" type="url" value={L.video} onChange={(e) => updL({ video: e.target.value })} placeholder="https://www.youtube.com/watch?v=" /><span className="hint">Learners watch it inside the lesson. Or upload a video file below.</span></div>
+                      )}
+                      {LT === 'Video' && (
+                        <div className="stack g8">
+                          <span className="lbl">Video file (optional)</span>
+                          {L.file ? (
+                            <div className="res"><span className="grow small strong">{L.file.name}</span><button type="button" className="btn btn-t btn-sm" onClick={() => videoInput.current?.click()} disabled={!!busy}>Replace</button><button className="cb-mini" aria-label="Remove video" onClick={() => updL({ file: null })}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+                          ) : (
+                            <button type="button" className="btn btn-s btn-sm self-start" onClick={() => videoInput.current?.click()} disabled={!!busy}>Upload a video</button>
+                          )}
+                          <input ref={videoInput} type="file" accept=".mp4,.m4v,.webm,.mov,video/mp4,video/webm,video/quicktime" className="sr" tabIndex={-1} aria-hidden="true" onChange={(e) => { attachVideo(e.target.files?.[0]); e.target.value = '' }} />
+                          <span className="hint">MP4, up to 50 MB. An uploaded video plays instead of the YouTube link. For long videos, YouTube (Unlisted) is faster for learners and uses less storage.</span>
+                        </div>
                       )}
                       {LT === 'Slide' && (
                         <div className="stack g8"><span className="lbl">Image or diagram (optional)</span>

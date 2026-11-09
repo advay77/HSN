@@ -79,7 +79,7 @@ export default async function CoursesPage() {
               <div className="pad-l stack g16" style={{ flex: '2 1 480px' }}>
                 <CourseTagRow access={featured.access} registration={featured.registration}>
                   <span className={LEVEL_CLS[featured.level] ?? 'bdg b-beg'}>{featured.level}</span>
-                  <span className="bdg b-reg">{featured.modules} {featured.modules === 1 ? 'module' : 'modules'}</span>
+                  <span className="bdg b-reg">{featured.modules} {featured.modules === 1 ? 'Module' : 'Modules'}</span>
                   {featured.video && <span className="bdg b-reg">Contains video</span>}
                 </CourseTagRow>
                 <h2 className="h2" id="ft">{featured.title}</h2>

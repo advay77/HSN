@@ -25,6 +25,7 @@ export const Media: CollectionConfig = {
   upload: {
     mimeTypes: [
       'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+      'video/mp4', 'video/webm', 'video/quicktime',
       'application/pdf',
       'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       'application/vnd.oasis.opendocument.text', 'application/rtf', 'text/rtf', 'text/plain',

@@ -193,7 +193,7 @@ export function fromEditor(e: EditorCourse) {
           body: l.body ?? '',
           extra: l.extra ?? null,
           image: slideLike ? l.image?.id ?? null : null,
-          file: kind === 'document' ? l.file?.id ?? null : null,
+          file: kind === 'document' || kind === 'video' ? l.file?.id ?? null : null,
           youtubeId: kind === 'video' ? trim(l.video) : null,
           references:
             kind === 'references'

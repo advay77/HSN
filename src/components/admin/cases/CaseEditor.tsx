@@ -165,7 +165,7 @@ export function CaseEditor({
             </div>
             <div className="fld"><label className="lbl" htmlFor="cs-s">Summary <span className="req">*</span></label><textarea className={errors.summary ? 'inp err' : 'inp'} id="cs-s" value={f.summary} onChange={val((v) => set('summary', v))} style={{ minHeight: '110px' }}></textarea><span className="hint">Shown when the row is opened on the Case Studies page.</span><ErrorText>{errors.summary}</ErrorText></div>
             <div className="fld"><span className="lbl" id="cs-col">Colour in the list</span>
-              <div className="seg self-start" role="group" aria-labelledby="cs-col">
+              <div className="seg self-start" role="group" aria-labelledby="cs-col" style={{ flexWrap: 'wrap', maxWidth: '100%' }}>
                 {COLORS.map(([c, label]) => (
                   <button key={c} type="button" className={f.color === c ? 'on' : ''} aria-pressed={f.color === c} onClick={() => set('color', c)}><span aria-hidden="true" style={{ width: '14px', height: '14px', borderRadius: '4px', background: c, marginInlineEnd: '8px' }}></span>{label}</button>
                 ))}

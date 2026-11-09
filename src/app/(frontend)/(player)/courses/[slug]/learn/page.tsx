@@ -65,7 +65,7 @@ export default async function LearnPage({ params, searchParams }: Props) {
               body: l.body ?? '',
               extra: l.extra ?? '',
               image: img?.url ? { url: img.url, alt: img.alt || '' } : null,
-              file: file?.url ? { url: file.url, name: file.filename || 'Tutorial', pdf: file.mimeType === 'application/pdf' || /\.pdf$/i.test(file.filename || '') } : null,
+              file: file?.url ? { url: file.url, name: file.filename || 'Tutorial', pdf: file.mimeType === 'application/pdf' || /\.pdf$/i.test(file.filename || ''), video: !!file.mimeType?.startsWith('video/') } : null,
               youtube: youtubeId(l.youtubeId),
               references: (l.references ?? []).map((r) => ({ text: r.text, url: r.url ?? '', linkText: r.linkText ?? '' })),
               draft: !!l.draftQuestions,

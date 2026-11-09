@@ -16,7 +16,7 @@ export type PlayerLesson = {
   body: string
   extra: string
   image: { url: string; alt: string } | null
-  file: { url: string; name: string; pdf: boolean } | null
+  file: { url: string; name: string; pdf: boolean; video?: boolean } | null
   youtube: string | null
   references: { text: string; url: string; linkText: string }[]
   draft: boolean
@@ -252,7 +252,13 @@ export function Player({ course, modules, initialCompleted, initialResults, star
             {s.type === 'video' && (
               <div className="pl-slide" style={{ justifyContent: 'flex-start' }}>
                 <Paras text={s.body} />
-                {s.youtube ? (
+                {s.file?.video ? (
+                  <div className="pl-video">
+                    <video src={s.file.url} controls preload="metadata" playsInline style={{ width: '100%', height: '100%', background: '#0E1F22' }}>
+                      Your browser cannot play this video. <a href={s.file.url}>Download it</a>.
+                    </video>
+                  </div>
+                ) : s.youtube ? (
                   <>
                     <div className="pl-video">
                       {playing ? (

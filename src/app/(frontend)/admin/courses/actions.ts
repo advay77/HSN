@@ -129,6 +129,34 @@ export async function uploadTutorialAction(form: FormData) {
   }
 }
 
+const VIDEO_MIME: Record<string, string> = { mp4: 'video/mp4', m4v: 'video/mp4', webm: 'video/webm', mov: 'video/quicktime' }
+
+/** A video file for a video lesson (MP4, WebM or MOV, up to 50 MB). */
+export async function uploadVideoAction(form: FormData) {
+  await requireAdmin('/admin/courses')
+  let file
+  try {
+    file = await readUpload(form.get('file'), PURPOSE_LIMITS['admin-video'])
+  } catch (e) {
+    return { ok: false as const, error: e instanceof Error ? e.message : 'The video could not be uploaded.' }
+  }
+  if (!file) return { ok: false as const, error: 'Choose a video file.' }
+  const mime = VIDEO_MIME[file.name.split('.').pop()?.toLowerCase() || '']
+  if (!mime) return { ok: false as const, error: 'Use an MP4 video (WebM and MOV also work).' }
+  const payload = await getPayloadClient()
+  try {
+    const doc = await payload.create({
+      collection: 'media',
+      data: { alt: String(form.get('alt') || file.name) },
+      file: { data: file.data, mimetype: mime, name: file.name, size: file.size },
+    })
+    return { ok: true as const, file: { id: doc.id, url: doc.url || '', name: doc.filename || file.name } }
+  } catch (err) {
+    payload.logger.error({ err }, 'Could not store video file')
+    return { ok: false as const, error: 'The video could not be saved. Try an MP4 file.' }
+  }
+}
+
 /** Cover image or slide image chosen in the editor. */
 export async function uploadImageAction(form: FormData) {
   await requireAdmin('/admin/courses')

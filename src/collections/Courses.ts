@@ -189,10 +189,10 @@ export const Courses: CollectionConfig = {
                     },
                     {
                       name: 'file',
-                      label: 'Tutorial file (Word, PDF, and similar)',
+                      label: 'File (tutorial: Word, PDF and similar; video lesson: MP4 video)',
                       type: 'upload',
                       relationTo: 'media',
-                      admin: { condition: (_, s) => s?.type === 'document' },
+                      admin: { condition: (_, s) => s?.type === 'document' || s?.type === 'video' },
                     },
                     {
                       name: 'youtubeId',

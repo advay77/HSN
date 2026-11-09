@@ -12,8 +12,8 @@ const PUBLIC_TYPES = ['application/pdf', 'image/jpeg', 'image/png']
 // Called by the browser before sending a file. Returns where to send it (see ./server.ts).
 export async function startUpload(input: { name: string; type: string; size: number; purpose: UploadPurpose }): Promise<StartUpload> {
   if (!directUploadsEnabled()) return { mode: 'form' }
-  const purpose: UploadPurpose = input.purpose === 'admin' ? 'admin' : 'case-attachment'
-  if (purpose === 'admin') {
+  const purpose: UploadPurpose = input.purpose === 'admin' || input.purpose === 'admin-video' ? input.purpose : 'case-attachment'
+  if (purpose !== 'case-attachment') {
     if (!(await getAdmin())) return { mode: 'error', error: 'Please log in to the admin panel again.' }
   } else {
     if (!(await rateLimit('upload-public', 20, 60 * 60))) return { mode: 'error', error: TOO_MANY }

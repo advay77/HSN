@@ -9,10 +9,11 @@ import crypto from 'node:crypto'
 // Without the Supabase settings (local development) files travel inside the form as before.
 
 export const INCOMING = 'incoming:'
-export type UploadPurpose = 'case-attachment' | 'admin'
+export type UploadPurpose = 'case-attachment' | 'admin' | 'admin-video'
 export const PURPOSE_LIMITS: Record<UploadPurpose, number> = {
   'case-attachment': 10 * 1024 * 1024,
   admin: 30 * 1024 * 1024,
+  'admin-video': 50 * 1024 * 1024,
 }
 
 export const directUploadsEnabled = () =>

@@ -2,7 +2,7 @@
 
 import { startUpload } from './actions'
 
-type Purpose = 'case-attachment' | 'admin'
+type Purpose = 'case-attachment' | 'admin' | 'admin-video'
 
 /**
  * Prepares a file for a server action. In production it is uploaded straight to storage and this returns

@@ -37,7 +37,7 @@ export function RegistrationIcon({ size = 14 }: { size?: number }) {
   )
 }
 
-/** Badges visitors see above a course title. Access is always first. */
+/** Badges visitors see above a course title: level and course details first, then access and registration. */
 export function CourseTagRow({
   access,
   registration,
@@ -49,6 +49,7 @@ export function CourseTagRow({
 }) {
   return (
     <div className="row g8">
+      {children}
       {access === 'paid' ? (
         <span className="bdg b-ex"><PaidAccessIcon />Paid access</span>
       ) : (
@@ -57,7 +58,6 @@ export function CourseTagRow({
       {registration && (
         <span className="bdg b-info"><RegistrationIcon />Registration</span>
       )}
-      {children}
     </div>
   )
 }
