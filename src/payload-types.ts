@@ -567,7 +567,30 @@ export interface SiteFeedback {
   name?: string | null;
   email?: string | null;
   rating?: ('5' | '4' | '3' | '2' | '1') | null;
+  aspects?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  nps?: number | null;
+  liked?: string | null;
   message: string;
+  wants?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  role?: string | null;
+  source?: string | null;
+  contactOk?: boolean | null;
   page?: string | null;
   member?: (number | null) | Member;
   read?: boolean | null;
@@ -1146,7 +1169,14 @@ export interface SiteFeedbackSelect<T extends boolean = true> {
   name?: T;
   email?: T;
   rating?: T;
+  aspects?: T;
+  nps?: T;
+  liked?: T;
   message?: T;
+  wants?: T;
+  role?: T;
+  source?: T;
+  contactOk?: T;
   page?: T;
   member?: T;
   read?: T;

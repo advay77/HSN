@@ -1,20 +1,38 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { FeedbackSection } from '@/components/site/FeedbackSection'
+import '@/app/(frontend)/styles/pages/site-feedback.css'
 
-export const metadata: Metadata = { title: 'Feedback', description: 'Share your feedback with the Healthcare Sustainability Network.' }
+import { SiteFeedbackForm } from '@/components/site/SiteFeedbackForm'
+
+export const metadata: Metadata = { title: 'Give Your Feedback', description: 'Tell the Healthcare Sustainability Network what works for you and what we can do better.' }
+
+const Tick = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7BD389" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
 
 export default function FeedbackPage() {
   return (
     <main>
-      <section className="sec" style={{ paddingBottom: 0 }}>
-        <div className="wrap stack g12">
-          <h1 className="sec-title">Feedback</h1>
-          <p className="lead measure">We would love to hear from you about the website, our courses and resources, or anything else.</p>
+      <section className="sec" style={{ paddingBottom: '24px' }}>
+        <div className="wrap">
+          <div className="sfb-hero">
+            <span className="over" style={{ color: '#BFE6F3' }}>Feedback</span>
+            <h1 className="sec-title hero-title" style={{ textTransform: 'none', letterSpacing: 0 }}>Help us improve HSN</h1>
+            <p>Your feedback shapes what we build next: new courses, case studies and resources for healthcare teams. It takes about 3 minutes.</p>
+            <ul>
+              <li><Tick />8 short questions</li>
+              <li><Tick />Name and email are optional</li>
+              <li><Tick />Read by the HSN team</li>
+            </ul>
+          </div>
         </div>
       </section>
-      <FeedbackSection page="/feedback" title="Your Feedback" />
+      <section className="sec" style={{ paddingTop: 0 }}>
+        <div className="wrap" style={{ maxWidth: '920px' }}>
+          <div className="sfb-card">
+            <SiteFeedbackForm page="/feedback" />
+          </div>
+        </div>
+      </section>
     </main>
   )
 }

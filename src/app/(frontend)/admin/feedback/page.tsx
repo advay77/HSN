@@ -9,7 +9,9 @@ import { getPayloadClient } from '@/lib/payload'
 
 import { updateSiteFeedback } from './actions'
 
-const SITE_RATING: Record<string, string> = { '5': 'Excellent', '4': 'Good', '3': 'Okay', '2': 'Poor', '1': 'Very poor' }
+import { ASPECTS, OVERALL_LABELS as SITE_RATING } from '@/lib/siteFeedback'
+
+const stars = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n)
 
 export const metadata = { title: 'Feedback' }
 export const dynamic = 'force-dynamic'
@@ -46,7 +48,21 @@ export default async function AdminFeedbackPage() {
                     </span>
                     <span className="small muted">{fmtWhen(row.createdAt)}{row.page ? ` · from ${row.page}` : ''}</span>
                   </div>
-                  <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{row.message}</p>
+                  {row.rating && <span className="small" style={{ color: '#B7791F', fontSize: '18px', letterSpacing: '2px' }} aria-label={`Overall ${row.rating} of 5`}>{stars(Number(row.rating))}</span>}
+                  <div className="stack g4"><span className="small muted">What we should improve</span><p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{row.message}</p></div>
+                  {row.liked && <div className="stack g4"><span className="small muted">What they liked most</span><p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{row.liked}</p></div>}
+                  {row.aspects && typeof row.aspects === 'object' && Object.keys(row.aspects).length > 0 && (
+                    <div className="row g8" style={{ flexWrap: 'wrap' }}>
+                      {ASPECTS.filter((x) => (row.aspects as Record<string, number>)[x.key]).map((x) => <span key={x.key} className="bdg b-reg">{x.label}: {(row.aspects as Record<string, number>)[x.key]}/5</span>)}
+                    </div>
+                  )}
+                  <div className="row g16 small" style={{ flexWrap: 'wrap' }}>
+                    {typeof row.nps === 'number' && <span><span className="muted">Recommend:</span> <b>{row.nps}/10</b></span>}
+                    {row.role && <span><span className="muted">Role:</span> {row.role}</span>}
+                    {row.source && <span><span className="muted">Found HSN via:</span> {row.source}</span>}
+                    {row.contactOk && <span className="bdg b-ok">Happy to be contacted</span>}
+                  </div>
+                  {Array.isArray(row.wants) && row.wants.length > 0 && <div className="row g8" style={{ flexWrap: 'wrap', alignItems: 'center' }}><span className="small muted">Wants next:</span>{(row.wants as string[]).map((w) => <span key={w} className="bdg b-info">{w}</span>)}</div>}
                   <div className="row g8">
                     <form action={updateSiteFeedback}><input type="hidden" name="id" value={row.id} /><input type="hidden" name="op" value={row.read ? 'unread' : 'read'} /><button className="btn btn-s btn-sm" type="submit">{row.read ? 'Mark as new' : 'Mark as read'}</button></form>
                     <form action={updateSiteFeedback}><input type="hidden" name="id" value={row.id} /><input type="hidden" name="op" value="delete" /><button className="btn btn-t btn-sm" type="submit" aria-label={`Delete feedback from ${row.name || 'anonymous'}`}>Delete</button></form>

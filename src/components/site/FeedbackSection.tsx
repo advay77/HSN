@@ -1,20 +1,21 @@
 import React from 'react'
 
-import { SiteFeedbackForm } from './SiteFeedbackForm'
+import '@/app/(frontend)/styles/pages/site-feedback.css'
 
-/** "Share Your Feedback" block placed at the end of public pages. */
-export function FeedbackSection({ page, title = 'Share Your Feedback' }: { page: string; title?: string }) {
+/** "Give your feedback" banner at the end of Home and About; the full form is on /feedback. */
+export function FeedbackSection({ title = 'Help Us Improve HSN' }: { page?: string; title?: string }) {
   return (
     <section className="sec" aria-labelledby="sfb-h" id="feedback">
       <div className="wrap">
-        <div className="card pad-l grid c2 t1 g32" style={{ alignItems: 'start' }}>
-          <div className="stack g12">
-            <h2 className="sec-title" id="sfb-h">{title}</h2>
-            <p className="muted" style={{ fontSize: '17px', lineHeight: '28px', margin: 0 }}>
-              Tell us what works for you and what we can do better. Your ideas help us shape HSN&apos;s courses, case studies and resources for healthcare teams.
-            </p>
+        <div className="sfb-band">
+          <div>
+            <h2 className="h2" id="sfb-h">{title}</h2>
+            <p>Tell us what works for you and what we can do better. 8 short questions, about 3 minutes.</p>
           </div>
-          <SiteFeedbackForm page={page} />
+          <a className="btn btn-p btn-lg" href="/feedback">
+            Give your feedback{' '}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+          </a>
         </div>
       </div>
     </section>

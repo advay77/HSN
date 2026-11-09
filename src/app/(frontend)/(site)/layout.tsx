@@ -4,6 +4,7 @@ import '@/app/(frontend)/styles/site.css'
 
 import { A11yEffects } from '@/components/site/A11yEffects'
 import { PageTracker } from '@/components/site/PageTracker'
+import { FeedbackTab } from '@/components/site/FeedbackTab'
 import { Footer } from '@/components/site/Footer'
 import { Header } from '@/components/site/Header'
 import { getCurrentMember } from '@/lib/auth/session'
@@ -16,6 +17,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <Header member={member ? { name: member.name, initials: member.initials, membershipType: member.membershipType } : null} />
       {children}
       <Footer />
+      <FeedbackTab />
       <A11yEffects />
       <PageTracker />
     </div>
