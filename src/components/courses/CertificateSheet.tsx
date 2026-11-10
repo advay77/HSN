@@ -65,7 +65,7 @@ export function CertificateSheet({ name, course, issued, id, verifyUrl, qr, issu
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" precedence="default" />
       <div className="cert-sheet">
         <aside className="cert-side">
-          <span className="cert-ribbon" aria-hidden="true" />
+          <img className="cert-tree" src="/images/certificate/hsn-tree.png" alt="" aria-hidden="true" />
           <Seal issuer={issuer} />
           <span className="cert-date">
             <b>{issued}</b>

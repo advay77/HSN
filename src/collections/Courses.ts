@@ -97,7 +97,9 @@ export const Courses: CollectionConfig = {
                   fields: [
                     { name: 'duration', type: 'text', admin: { description: 'e.g. "About 2 hours"' } },
                     { name: 'language', type: 'text', defaultValue: 'English' },
-                    { name: 'languageNote', type: 'text', defaultValue: 'Hindi and Arabic coming soon' },
+                    // No longer shown on the site (removed at HSN's request); kept so existing values aren't lost.
+                    { name: 'languageNote', type: 'text', defaultValue: 'Hindi and Arabic coming soon', admin: { hidden: true } },
+                    { name: 'modules', type: 'number', min: 1, max: 50, admin: { description: 'Number of modules shown on the course page. Leave empty to count automatically.' } },
                   ],
                 },
               ],

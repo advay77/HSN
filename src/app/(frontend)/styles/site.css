@@ -23,10 +23,13 @@ html,body{margin:0;background:#F5F1E6}
 .pg .box-text{font-family:var(--hf);font-weight:600;font-size:24px;line-height:36px;color:#FFFFFF;margin:0;max-width:1000px}
 .pg,.pg *,.cq,.cq *{-webkit-hyphens:none!important;hyphens:none!important}
 .pg main p,.pg main li{text-align:start;-webkit-hyphens:none;hyphens:none;word-spacing:normal}
-/* Header fits all nine links: slightly tighter spacing on wide screens, tighter still on 1366–1439px laptops. */
-@container (min-width:1361px){.pg .hdr .nav{padding:0 6px;font-size:14px}.pg .hdr .nav.cur::after{inset-inline:6px}.pg .hdr .nav-l{gap:0}.pg .hdr-in{gap:10px}.pg .hdr .lang{padding:0 6px}}
-@container (min-width:1361px) and (max-width:1439px){.pg .hdr .nav{padding:0 5px;font-size:13.5px}.pg .hdr .nav.cur::after{inset-inline:5px}.pg .hdr-in{gap:8px;padding-inline:12px}.pg .hdr .lang{padding:0 4px}}
-@container (max-width:1360px){.pg .lap{display:none !important}.pg .nolap{display:flex !important}}
+/* English header: five menu items (About Us and Resources open a menu), shown in full from 1200px; the menu button below.
+   The Arabic header still lists every page, so it keeps the tighter spacing and the 1360px switch. */
+.pg .hdr button.nav-btn{border:0;background:none;font-family:inherit;cursor:pointer}
+@container (min-width:1361px){.pg.ar-pg .hdr .nav{padding:0 6px;font-size:14px}.pg.ar-pg .hdr .nav.cur::after{inset-inline:6px}.pg.ar-pg .hdr .nav-l{gap:0}.pg.ar-pg .hdr-in{gap:10px}.pg.ar-pg .hdr .lang{padding:0 6px}}
+@container (min-width:1361px) and (max-width:1439px){.pg.ar-pg .hdr .nav{padding:0 5px;font-size:13.5px}.pg.ar-pg .hdr .nav.cur::after{inset-inline:5px}.pg.ar-pg .hdr-in{gap:8px;padding-inline:12px}.pg.ar-pg .hdr .lang{padding:0 4px}}
+@container (max-width:1360px){.pg.ar-pg .lap{display:none !important}.pg.ar-pg .nolap{display:flex !important}}
+@container (max-width:1199px){.pg .lap{display:none !important}.pg .nolap{display:flex !important}}
 .pg main .lead,.pg main .box-text,.pg main .box-body,.pg main .card p,.pg main .grid p,.pg main article p{text-align:justify;text-justify:inter-word;text-align-last:start}
 .pg main .grid.c3 p,.pg main .grid.c4 p,.pg main .grid.c3 .lead,.pg main .grid.c4 .lead,.pg main .cs-head p{text-align:start}
 @container (max-width:1100px){.pg main .grid p,.pg main .grid .lead{text-align:start}}

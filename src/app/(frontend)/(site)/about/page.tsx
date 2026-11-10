@@ -1,7 +1,6 @@
 // Ported from About.dc.html.
 import Link from 'next/link'
 import React from 'react'
-import { FeedbackSection } from '@/components/site/FeedbackSection'
 
 import '../../styles/pages/about.css'
 
@@ -86,7 +85,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-      <FeedbackSection page="/about" />
     </main>
   )
 }

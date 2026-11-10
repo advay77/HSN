@@ -53,14 +53,10 @@ export default async function CoursePage({ params }: Props) {
   // Facts strip
   const firstAvail = avail[0]
   const availLessons = avail.flatMap((m) => m.lessons ?? [])
-  const lessonCount = availLessons.filter((l) => !isQuiz(l)).length
-  const quizCount = availLessons.filter(isQuiz).length
-  const lessonSub =
-    avail.length === 1
-      ? `in Module ${mods.indexOf(firstAvail!) + 1}${quizCount ? (quizCount === 1 ? ', plus a quiz' : ', plus quizzes') : ''}`
-      : `across ${plural(avail.length, 'module')}${quizCount ? ', plus quizzes' : ''}`
+  // Modules number: the admin's own number (e.g. 4, 5 or 6), else the modules added.
+  const modulesShown = course.facts?.modules && course.facts.modules >= 1 ? Math.floor(course.facts.modules) : mods.length
   const modulesSub =
-    avail.length === mods.length
+    avail.length > 0 && avail.length >= modulesShown
       ? 'All available now'
       : avail.length === 1
         ? `Module ${mods.indexOf(firstAvail!) + 1} available now`
@@ -94,7 +90,6 @@ export default async function CoursePage({ params }: Props) {
   const quizStep = qn
     ? `Get at least ${passNeeded(course, qn)} of ${qn} answers right.${course.certificate?.retakes !== false ? ' You can retake it.' : ''}`
     : `Score at least ${course.certificate?.passMark ?? 80}%.${course.certificate?.retakes !== false ? ' You can retake it.' : ''}`
-  const aboutParas = (course.about || '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
   const issuer = course.certificate?.issuer || 'Healthcare Sustainability Network'
   // Example certificate: its QR opens the public verify page.
   const sampleVerify = `${(process.env.SITE_URL || 'https://healthcaresustainabilitynetwork.com').replace(/\/$/, '')}/verify/EXAMPLE`
@@ -129,16 +124,15 @@ export default async function CoursePage({ params }: Props) {
             </div>
           </div>
           <div className="cr-stats" role="list" aria-label="Course facts">
-            <div className="cr-stat" role="listitem"><b>{plural(mods.length, 'module')}</b><span>{modulesSub}</span></div>
-            <div className="cr-stat" role="listitem"><b>{plural(lessonCount, 'lesson')}</b><span>{lessonSub}</span></div>
+            <div className="cr-stat" role="listitem"><b>{plural(modulesShown, 'module')}</b><span>{modulesSub}</span></div>
             <div className="cr-stat" role="listitem">{course.facts?.duration ? (<><b>{course.facts.duration}</b><span>Average time to finish</span></>) : (<><b>Self-paced</b><span>Learn at your own pace</span></>)}</div>
-            <div className="cr-stat" role="listitem"><b>{course.facts?.language || 'English'}</b><span>{course.facts?.languageNote || 'More languages coming soon'}</span></div>
+            <div className="cr-stat" role="listitem"><b>{course.facts?.language || 'English'}</b><span>Course language</span></div>
             <div className="cr-stat" role="listitem"><b>Certificate</b><span>{certOn ? 'On completion' : 'Not included'}</span></div>
           </div>
         </div>
       </section>
       {/* Learning outcomes */}
-      {((course.outcomes?.length ?? 0) > 0 || (course.skills?.length ?? 0) > 0) && (
+      {(course.outcomes?.length ?? 0) > 0 && (
         <section className="sec bg-surface" aria-labelledby="lo">
           <div className="wrap stack g32">
             <div className="stack g12">
@@ -152,23 +146,6 @@ export default async function CoursePage({ params }: Props) {
                 ))}
               </ul>
             )}
-            {(course.skills?.length ?? 0) > 0 && (
-              <div className="stack g12">
-                <span className="h5">Skills you will build</span>
-                <div className="row g8">{course.skills!.map((s) => <span key={s.id} className="cr-skill">{s.label}</span>)}</div>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-      {/* About */}
-      {aboutParas.length > 0 && (
-        <section className="sec" aria-labelledby="ab">
-          <div className="wrap">
-            <div className="stack g20">
-              <h2 className="sec-title" id="ab">About This Course</h2>
-              {aboutParas.map((p, i) => <p key={i} className={i === 0 ? 'lead' : 'muted'}>{p}</p>)}
-            </div>
           </div>
         </section>
       )}

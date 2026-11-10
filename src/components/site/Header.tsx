@@ -11,23 +11,47 @@ import { SOCIAL } from '@/lib/site'
 
 export type HeaderMember = { name: string; initials: string; membershipType?: string | null }
 
-const NAV: [string, string, string][] = [
-  ['home', 'Home', '/'],
-  ['about', 'About Us', '/about'],
-  ['advisory', 'Advisory Board', '/advisory'],
-  ['services', 'Services', '/services'],
-  ['courses', 'Courses', '/courses'],
-  ['cases', 'Case Studies', '/case-studies'],
-  ['library', 'Library', '/library'],
-  ['involved', 'Get Involved', '/get-involved'],
-  ['membership', 'Membership', '/membership'],
+// Five top items; About Us and Resources open a small menu. Get Involved and Membership sit in the
+// Join HSN menu and the footer.
+type NavLink = { id: string; label: string; href: string; sub?: string }
+type NavItem = NavLink | { id: string; label: string; items: NavLink[] }
+const MENU: NavItem[] = [
+  { id: 'home', label: 'Home', href: '/' },
+  {
+    id: 'about-menu',
+    label: 'About Us',
+    items: [
+      { id: 'about', label: 'About Us', href: '/about', sub: 'Mission, story, team and partners' },
+      { id: 'advisory', label: 'Advisory Board', href: '/advisory', sub: 'The experts guiding HSN' },
+    ],
+  },
+  { id: 'services', label: 'Services', href: '/services' },
+  { id: 'courses', label: 'Courses', href: '/courses' },
+  {
+    id: 'resources',
+    label: 'Resources',
+    items: [
+      { id: 'cases', label: 'Case Studies', href: '/case-studies', sub: 'Real projects from hospitals' },
+      { id: 'library', label: 'Library', href: '/library', sub: 'Toolkits, guides and documents' },
+    ],
+  },
+]
+const LINKS: NavLink[] = [
+  ...MENU.flatMap((m) => ('items' in m ? m.items : [m])),
+  { id: 'involved', label: 'Get Involved', href: '/get-involved' },
+  { id: 'membership', label: 'Membership', href: '/membership' },
 ]
 
 function currentFromPath(pathname: string) {
   if (pathname === '/') return 'home'
-  const hit = NAV.find(([, , href]) => href !== '/' && (pathname === href || pathname.startsWith(href + '/')))
-  return hit ? hit[0] : 'none'
+  const hit = LINKS.find(({ href }) => href !== '/' && (pathname === href || pathname.startsWith(href + '/')))
+  return hit ? hit.id : 'none'
 }
+
+const Chevron = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true" style={{ marginInlineStart: '4px' }}><path d="m6 9 6 6 6-6"></path></svg>
+)
+const MENU_BOX: React.CSSProperties = { position: 'absolute', top: '50px', left: '0', zIndex: 30, width: '280px', padding: '6px', borderRadius: '12px', background: '#FFFDF8', border: '1px solid #D9D2C1', boxShadow: '0 8px 24px rgba(19,78,94,.14)' }
 
 export function Header({ member = null }: { member?: HeaderMember | null }) {
   const pathname = usePathname() || '/'
@@ -35,6 +59,7 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
   const [open, setOpen] = useState(false)
   const [langOpen, setLangOpen] = useState(false)
   const [joinOpen, setJoinOpen] = useState(false)
+  const [navOpen, setNavOpen] = useState<string | null>(null)
   const [a11yOpen, setA11yOpen] = useState(false)
 
   // Close menus when the route changes.
@@ -42,7 +67,18 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
     setOpen(false)
     setLangOpen(false)
     setJoinOpen(false)
+    setNavOpen(null)
   }, [pathname])
+
+  // A click anywhere outside an open About Us / Resources menu closes it.
+  useEffect(() => {
+    if (!navOpen) return
+    const onDown = (e: MouseEvent) => {
+      if (!(e.target as Element).closest?.('[data-navmenu]')) setNavOpen(null)
+    }
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
+  }, [navOpen])
 
   // Alt + A opens the accessibility panel (shown in the button title in the design).
   useEffect(() => {
@@ -54,6 +90,7 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
       if (e.key === 'Escape') {
         setLangOpen(false)
         setJoinOpen(false)
+        setNavOpen(null)
         setA11yOpen(false)
       }
     }
@@ -66,21 +103,22 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
     }
   }, [])
 
-  const nav = NAV.map(([id, label, href]) => ({
-    label,
-    href,
-    cls: id === cur ? 'nav cur' : 'nav',
-    mcls: id === cur ? 'mrow cur' : 'mrow',
-    ac: id === cur ? ('page' as const) : undefined,
-  }))
+  const isCur = (m: NavItem) => ('items' in m ? m.items.some((i) => i.id === cur) : m.id === cur)
   const guest = !member
   const toggleLang = () => {
     setLangOpen(!langOpen)
     setJoinOpen(false)
+    setNavOpen(null)
   }
   const toggleJoin = () => {
     setJoinOpen(!joinOpen)
     setLangOpen(false)
+    setNavOpen(null)
+  }
+  const toggleNav = (id: string) => {
+    setNavOpen(navOpen === id ? null : id)
+    setLangOpen(false)
+    setJoinOpen(false)
   }
   const openA11y = () => {
     setA11yOpen(true)
@@ -102,11 +140,29 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
             </span>
           </Link>
           <nav className="nav-l lap" aria-label="Main">
-            {nav.map((item) => (
-              <Link key={item.href} className={item.cls} href={item.href} aria-current={item.ac}>
-                {item.label}
-              </Link>
-            ))}
+            {MENU.map((m) =>
+              'items' in m ? (
+                <span key={m.id} data-navmenu style={{ position: 'relative' }}>
+                  <button type="button" className={isCur(m) ? 'nav nav-btn cur' : 'nav nav-btn'} aria-haspopup="menu" aria-expanded={navOpen === m.id} onClick={() => toggleNav(m.id)}>
+                    {m.label}
+                    <Chevron />
+                  </button>
+                  {navOpen === m.id && (
+                    <div role="menu" aria-label={m.label} style={MENU_BOX}>
+                      {m.items.map((i) => (
+                        <Link key={i.href} role="menuitem" className="join-item" href={i.href} aria-current={i.id === cur ? 'page' : undefined} style={i.id === cur ? { background: '#E3F1E4', color: '#0B6B3A' } : undefined}>
+                          <span className="stack"><span>{i.label}</span>{i.sub && <span className="join-sub">{i.sub}</span>}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </span>
+              ) : (
+                <Link key={m.href} className={m.id === cur ? 'nav cur' : 'nav'} href={m.href} aria-current={m.id === cur ? 'page' : undefined}>
+                  {m.label}
+                </Link>
+              ),
+            )}
           </nav>
           <div className="row nowrap g8">
             <span className="tabup" style={{ position: 'relative' }}>
@@ -141,6 +197,14 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
                         <span className="join-ic" style={{ background: '#DDF0F6', color: '#1C6E8A' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M8 10.5V17M8 7.5v.01M12 17v-6.5M12 13.5c0-1.7 1-3 2.5-3S17 11.5 17 13v4"></path></svg></span>
                         <span className="stack"><span>Follow on LinkedIn</span><span className="join-sub">Opens LinkedIn</span></span>
                       </a>
+                      <Link role="menuitem" className="join-item" href="/membership">
+                        <span className="join-ic" style={{ background: '#EDE7D8', color: '#134E5E' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4l-5.2 2.7 1-5.8L3.5 9.2l5.9-.9z"></path></svg></span>
+                        <span className="stack"><span>Membership</span><span className="join-sub">Plans and how to join</span></span>
+                      </Link>
+                      <Link role="menuitem" className="join-item" href="/get-involved">
+                        <span className="join-ic" style={{ background: '#E3F1E4', color: '#0B6B3A' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path><circle cx="10" cy="7" r="4"></circle><path d="M21 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"></path></svg></span>
+                        <span className="stack"><span>Get Involved</span><span className="join-sub">Ways to take part</span></span>
+                      </Link>
                     </div>
                   )}
                 </span>
@@ -162,9 +226,24 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
         {open && (
           <div className="msheet nolap">
             <nav aria-label="Main" className="stack g4" style={{ maxWidth: '560px', marginInline: 'auto' }}>
-              {nav.map((item) => (
-                <Link key={item.href} className={item.mcls} href={item.href} aria-current={item.ac}><span>{item.label}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5F63" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></Link>
-              ))}
+              {MENU.map((m) =>
+                'items' in m ? (
+                  <div key={m.id} className="stack g4">
+                    <span className="small muted strong" style={{ padding: '12px 16px 2px' }}>{m.label === 'About Us' ? 'About' : m.label}</span>
+                    {m.items.map((i) => (
+                      <Link key={i.href} className={i.id === cur ? 'mrow cur' : 'mrow'} href={i.href} aria-current={i.id === cur ? 'page' : undefined}><span>{i.label}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5F63" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></Link>
+                    ))}
+                  </div>
+                ) : (
+                  <Link key={m.href} className={m.id === cur ? 'mrow cur' : 'mrow'} href={m.href} aria-current={m.id === cur ? 'page' : undefined}><span>{m.label}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5F63" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></Link>
+                ),
+              )}
+              <div className="stack g4">
+                <span className="small muted strong" style={{ padding: '12px 16px 2px' }}>Join</span>
+                {LINKS.filter((l) => l.id === 'membership' || l.id === 'involved').map((i) => (
+                  <Link key={i.href} className={i.id === cur ? 'mrow cur' : 'mrow'} href={i.href} aria-current={i.id === cur ? 'page' : undefined}><span>{i.label}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5F63" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></Link>
+                ))}
+              </div>
               {guest && (
                 <div className="stack g12" style={{ padding: '20px 16px 8px', borderTop: '1px solid #D9D2C1', marginTop: '12px' }}>
                   <span className="small muted strong">Join HSN</span>

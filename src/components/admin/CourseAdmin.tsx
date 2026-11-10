@@ -104,7 +104,6 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
     if (tab !== 'cert' || sampleQr) return
     QRCode.toString(SAMPLE_VERIFY, { type: 'svg', margin: 1, errorCorrectionLevel: 'M', color: { dark: '#17323A', light: '#00000000' } }).then((svg) => setSampleQr(svg.replace(/<\?xml[^>]*>/, ''))).catch(() => {})
   }, [tab, sampleQr])
-  const [newSkill, setNewSkill] = useState('')
   const [dirty, setDirty] = useState(false)
   const [saved, setSaved] = useState<'' | 'course' | 'lesson'>('')
   const [error, setError] = useState('')
@@ -121,6 +120,8 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
 
   const mods = f.modules
   const lessonTotal = mods.reduce((a, m) => a + m.lessons.length, 0)
+  // Modules number on the course page: the admin's own number, else the modules added.
+  const modulesShownN = Number(f.modulesShown) >= 1 ? Math.floor(Number(f.modulesShown)) : mods.length
   const pubCount = rows.filter((r) => r.published).length
   // selL.m === -1 is the course introduction (the step before Module 1).
   const intro = f.intro ?? blankIntro()
@@ -362,7 +363,6 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
     ['Top of page', 'basics', !!(f.title && f.desc)],
     ['Course facts', 'basics', !!f.duration],
     ['What you will learn', 'learn', !!f.outcomes.trim()],
-    ['About', 'learn', !!f.aboutLead.trim()],
     ['Modules', 'build', lessonTotal > 0],
     ['Certificate', 'cert', f.certOn],
     ['Publishing', 'publish', f.published],
@@ -460,12 +460,11 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                 </fieldset>
                 <fieldset className="cb-fs">
                   <legend>Course facts strip</legend>
-                  <div className="row g12 small"><span className="cb-auto"><b>{mods.length} modules</b>{' '}· counted automatically</span><span className="cb-auto"><b>{lessonTotal} lessons</b>{' '}· counted automatically</span></div>
                   <div className="grid c2" style={{ gap: '20px' }}>
+                    <div className="fld"><label className="lbl" htmlFor="c-mn">Number of modules</label><input className="inp" id="c-mn" type="number" inputMode="numeric" min={1} max={50} value={f.modulesShown} onChange={upd('modulesShown')} placeholder={String(mods.length)} /><span className="hint">Shown on the course page, e.g. 4, 5 or 6. Leave empty to use the modules you have added ({mods.length}).</span></div>
                     <div className="fld"><label className="lbl" htmlFor="c-du">Average duration</label><input className="inp" id="c-du" value={f.duration} onChange={upd('duration')} placeholder="e.g. 3 hours" /></div>
                     <div className="fld"><label className="lbl" htmlFor="c-la">Language</label><input className="inp" id="c-la" value={f.language} onChange={upd('language')} /></div>
                   </div>
-                  <div className="fld"><label className="lbl" htmlFor="c-ln">Language note</label><input className="inp" id="c-ln" value={f.languageNote} onChange={upd('languageNote')} placeholder="e.g. Hindi and Arabic coming soon" /></div>
                 </fieldset>
               </div>
               <aside className="stack g12 sticky" aria-labelledby="pv">
@@ -480,7 +479,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                     </CourseTagRow>
                     <h4 className="h4" style={{ margin: 0 }}>{f.title || 'Course title'}</h4>
                     <p className="small muted" style={{ margin: 0 }}>{f.desc ? (f.desc.length > 140 ? f.desc.slice(0, 140) + '…' : f.desc) : 'A short description appears here.'}</p>
-                    <span className="small muted strong">{mods.length} modules · {lessonTotal} lessons · {f.duration || 'Duration'}</span>
+                    <span className="small muted strong">{modulesShownN} modules · {f.duration || 'Duration'}</span>
                     <span className="btn btn-p btn-sm" style={{ alignSelf: 'flex-start' }}>Start course</span>
                   </div>
                 </article>
@@ -496,32 +495,6 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                   <legend>What you will learn</legend>
                   <div className="fld"><label className="lbl" htmlFor="c-li">Intro sentence</label><textarea className="inp" id="c-li" value={f.learnIntro} onChange={upd('learnIntro')} style={{ minHeight: '80px' }}></textarea></div>
                   <div className="fld"><label className="lbl" htmlFor="c-o">Learning outcomes</label><textarea className="inp" id="c-o" value={f.outcomes} onChange={upd('outcomes')} style={{ minHeight: '170px' }}></textarea><span className="hint">One outcome per line. Each line becomes a ticked item.</span></div>
-                  <div className="stack g8"><label className="lbl" htmlFor="c-sk">Skills you will build</label>
-                    <div className="row g8">{f.skills.map((s, i) => <span key={i} className="cb-chip">{s}<button className="cb-chip-x" aria-label={'Remove skill ' + s} onClick={() => change({ skills: f.skills.filter((_, j) => j !== i) })}>×</button></span>)}</div>
-                    <div className="row g8">
-                      <input
-                        className="inp grow"
-                        id="c-sk"
-                        value={newSkill}
-                        onChange={(e) => setNewSkill(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault()
-                            if (newSkill.trim()) change({ skills: [...f.skills, newSkill.trim()] })
-                            setNewSkill('')
-                          }
-                        }}
-                        placeholder="Add a skill"
-                        style={{ minWidth: 0 }}
-                      />
-                      <button className="btn btn-g btn-sm" onClick={() => { if (newSkill.trim()) change({ skills: [...f.skills, newSkill.trim()] }); setNewSkill('') }}>Add</button>
-                    </div>
-                  </div>
-                </fieldset>
-                <fieldset className="cb-fs">
-                  <legend>About this course</legend>
-                  <div className="fld"><label className="lbl" htmlFor="c-al">Opening paragraph</label><textarea className="inp" id="c-al" value={f.aboutLead} onChange={upd('aboutLead')} style={{ minHeight: '90px' }}></textarea><span className="hint">Shown in larger text.</span></div>
-                  <div className="fld"><label className="lbl" htmlFor="c-ab">More detail</label><textarea className="inp" id="c-ab" value={f.aboutBody} onChange={upd('aboutBody')} style={{ minHeight: '120px' }}></textarea></div>
                 </fieldset>
               </div>
               <aside className="stack g12 sticky">
@@ -530,7 +503,6 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                   <span className="cb-ph">What you will learn</span>
                   <p className="small muted" style={{ margin: 0 }}>{f.learnIntro}</p>
                   <ul className="ticks" style={{ margin: 0 }}>{outcomeList.map((o, i) => <li key={i} className="small"><Tick size={18} />{o}</li>)}</ul>
-                  <div className="row g8">{f.skills.map((s, i) => <span key={i} className="cb-chip" style={{ paddingInlineEnd: '12px' }}>{s}</span>)}</div>
                 </div>
               </aside>
             </div>

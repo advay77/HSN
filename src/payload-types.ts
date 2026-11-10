@@ -184,6 +184,10 @@ export interface Course {
     duration?: string | null;
     language?: string | null;
     languageNote?: string | null;
+    /**
+     * Number of modules shown on the course page. Leave empty to count automatically.
+     */
+    modules?: number | null;
   };
   /**
    * Optional. Shown as choices on the course registration form.
@@ -897,6 +901,7 @@ export interface CoursesSelect<T extends boolean = true> {
         duration?: T;
         language?: T;
         languageNote?: T;
+        modules?: T;
       };
   sessions?:
     | T

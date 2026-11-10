@@ -53,6 +53,8 @@ export type EditorCourse = {
   coverBadge: string
   duration: string
   language: string
+  /** Modules number shown on the course page; '' = count the modules automatically. */
+  modulesShown: string
   languageNote: string
   learnIntro: string
   outcomes: string
@@ -132,6 +134,7 @@ export const blankCourse = (): EditorCourse => ({
   coverBadge: '',
   duration: '',
   language: 'English',
+  modulesShown: '',
   languageNote: '',
   learnIntro: '',
   outcomes: '',

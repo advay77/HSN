@@ -86,6 +86,7 @@ export function toEditor(c: Course): EditorCourse {
     coverBadge: c.coverBadge ?? (c.audience === 'members' ? 'Free for members' : 'Free course'),
     duration: c.facts?.duration || '',
     language: c.facts?.language || '',
+    modulesShown: c.facts?.modules ? String(c.facts.modules) : '',
     languageNote: c.facts?.languageNote || '',
     learnIntro: c.learnIntro || '',
     outcomes: (c.outcomes ?? []).map((o) => o.text).join('\n'),
@@ -144,6 +145,11 @@ export function toEditor(c: Course): EditorCourse {
 }
 
 const trim = (s: string | null | undefined) => (s ?? '').trim()
+// The admin's modules number for the course page: a whole number 1–50, or null to count automatically.
+const modulesShown = (s: string) => {
+  const n = Number(trim(s))
+  return Number.isInteger(n) && n >= 1 && n <= 50 ? n : null
+}
 
 /** Editor state → `courses` data. Drops empty rows so required fields never fail on half-filled lines. */
 export function fromEditor(e: EditorCourse) {
@@ -162,7 +168,7 @@ export function fromEditor(e: EditorCourse) {
     tagVideo: e.tagVideo,
     cover: e.cover?.id ?? null,
     coverBadge: trim(e.coverBadge),
-    facts: { duration: trim(e.duration), language: trim(e.language), languageNote: trim(e.languageNote) },
+    facts: { duration: trim(e.duration), language: trim(e.language), languageNote: trim(e.languageNote), modules: modulesShown(e.modulesShown) },
     learnIntro: trim(e.learnIntro),
     outcomes: e.outcomes
       .split('\n')

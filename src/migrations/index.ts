@@ -8,6 +8,7 @@ import * as migration_20261109_120000_feedback_publish from './20261109_120000_f
 import * as migration_20261109_130000_site_feedback from './20261109_130000_site_feedback';
 import * as migration_20261109_150000_site_feedback_details from './20261109_150000_site_feedback_details';
 import * as migration_20261109_180000_course_intro from './20261109_180000_course_intro';
+import * as migration_20261111_100000_course_modules_shown from './20261111_100000_course_modules_shown';
 
 export const migrations = [
   {
@@ -59,5 +60,10 @@ export const migrations = [
     up: migration_20261109_180000_course_intro.up,
     down: migration_20261109_180000_course_intro.down,
     name: '20261109_180000_course_intro',
+  },
+  {
+    up: migration_20261111_100000_course_modules_shown.up,
+    down: migration_20261111_100000_course_modules_shown.down,
+    name: '20261111_100000_course_modules_shown',
   },
 ];

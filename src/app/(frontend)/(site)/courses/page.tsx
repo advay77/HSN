@@ -46,7 +46,8 @@ export default async function CoursesPage() {
         title: f.title,
         description: f.description,
         level: f.level,
-        modules: visibleModules(f).length,
+        // The admin's modules number when set, else the modules added.
+        modules: f.facts?.modules && f.facts.modules >= 1 ? Math.floor(f.facts.modules) : visibleModules(f).length,
         video: hasVideo(f),
         access: f.access === 'paid' ? ('paid' as const) : ('open' as const),
         registration: f.tagRegistration !== false,
