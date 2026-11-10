@@ -9,6 +9,7 @@ import * as migration_20261109_130000_site_feedback from './20261109_130000_site
 import * as migration_20261109_150000_site_feedback_details from './20261109_150000_site_feedback_details';
 import * as migration_20261109_180000_course_intro from './20261109_180000_course_intro';
 import * as migration_20261111_100000_course_modules_shown from './20261111_100000_course_modules_shown';
+import * as migration_20261111_120000_course_target_audience from './20261111_120000_course_target_audience';
 
 export const migrations = [
   {
@@ -65,5 +66,10 @@ export const migrations = [
     up: migration_20261111_100000_course_modules_shown.up,
     down: migration_20261111_100000_course_modules_shown.down,
     name: '20261111_100000_course_modules_shown',
+  },
+  {
+    up: migration_20261111_120000_course_target_audience.up,
+    down: migration_20261111_120000_course_target_audience.down,
+    name: '20261111_120000_course_target_audience',
   },
 ];

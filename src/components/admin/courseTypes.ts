@@ -58,6 +58,7 @@ export type EditorCourse = {
   languageNote: string
   learnIntro: string
   outcomes: string
+  targetAudience: string
   skills: string[]
   aboutLead: string
   aboutBody: string
@@ -138,6 +139,7 @@ export const blankCourse = (): EditorCourse => ({
   languageNote: '',
   learnIntro: '',
   outcomes: '',
+  targetAudience: '',
   skills: [],
   aboutLead: '',
   aboutBody: '',

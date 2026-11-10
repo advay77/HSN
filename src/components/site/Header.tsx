@@ -21,18 +21,18 @@ const MENU: NavItem[] = [
     id: 'about-menu',
     label: 'About Us',
     items: [
-      { id: 'about', label: 'About Us', href: '/about', sub: 'Mission, story, team and partners' },
-      { id: 'advisory', label: 'Advisory Board', href: '/advisory', sub: 'The experts guiding HSN' },
+      { id: 'about', label: 'About Us', href: '/about', sub: 'Our Mission, Story, Team & Partners' },
+      { id: 'advisory', label: 'Advisory Board', href: '/advisory', sub: 'Visionary Healthcare Leaders' },
     ],
   },
-  { id: 'services', label: 'Services', href: '/services' },
   { id: 'courses', label: 'Courses', href: '/courses' },
+  { id: 'services', label: 'Services', href: '/services' },
   {
     id: 'resources',
     label: 'Resources',
     items: [
-      { id: 'cases', label: 'Case Studies', href: '/case-studies', sub: 'Real projects from hospitals' },
-      { id: 'library', label: 'Library', href: '/library', sub: 'Toolkits, guides and documents' },
+      { id: 'cases', label: 'Case Studies', href: '/case-studies', sub: 'Real Projects from Hospitals' },
+      { id: 'library', label: 'Library', href: '/library', sub: 'Downloadable Toolkits, Guides and Documents' },
     ],
   },
 ]
@@ -51,7 +51,7 @@ function currentFromPath(pathname: string) {
 const Chevron = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true" style={{ marginInlineStart: '4px' }}><path d="m6 9 6 6 6-6"></path></svg>
 )
-const MENU_BOX: React.CSSProperties = { position: 'absolute', top: '50px', left: '0', zIndex: 30, width: '280px', padding: '6px', borderRadius: '12px', background: '#FFFDF8', border: '1px solid #D9D2C1', boxShadow: '0 8px 24px rgba(19,78,94,.14)' }
+const MENU_BOX: React.CSSProperties = { position: 'absolute', top: '50px', left: '0', zIndex: 30, width: '330px', padding: '6px', borderRadius: '12px', background: '#FFFDF8', border: '1px solid #D9D2C1', boxShadow: '0 8px 24px rgba(19,78,94,.14)' }
 
 export function Header({ member = null }: { member?: HeaderMember | null }) {
   const pathname = usePathname() || '/'
@@ -191,7 +191,7 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
                     <div role="menu" aria-label="Join HSN" style={{ position: 'absolute', top: '50px', right: '0', zIndex: 30, width: '270px', padding: '6px', borderRadius: '12px', background: '#FFFDF8', border: '1px solid #D9D2C1', boxShadow: '0 8px 24px rgba(19,78,94,.14)' }}>
                       <a role="menuitem" className="join-item" href={SOCIAL.whatsapp} target="_blank" rel="noopener">
                         <span className="join-ic" style={{ background: '#E3F1E4', color: '#0B6B3A' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3.5 20.5 5 16a8.5 8.5 0 1 1 3.2 3.1z"></path><path d="M9 9.5c.3 2.3 2.2 4.2 4.5 4.5l1-1.2 2 1-.4 1.5c-3.6.3-7.2-3.3-6.9-6.9l1.5-.4 1 2z"></path></svg></span>
-                        <span className="stack"><span>Join WhatsApp group</span><span className="join-sub">Opens WhatsApp</span></span>
+                        <span className="stack"><span>Join WhatsApp Group</span><span className="join-sub">Opens WhatsApp</span></span>
                       </a>
                       <a role="menuitem" className="join-item" href={SOCIAL.linkedin} target="_blank" rel="noopener">
                         <span className="join-ic" style={{ background: '#DDF0F6', color: '#1C6E8A' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M8 10.5V17M8 7.5v.01M12 17v-6.5M12 13.5c0-1.7 1-3 2.5-3S17 11.5 17 13v4"></path></svg></span>
@@ -199,11 +199,11 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
                       </a>
                       <Link role="menuitem" className="join-item" href="/membership">
                         <span className="join-ic" style={{ background: '#EDE7D8', color: '#134E5E' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4l-5.2 2.7 1-5.8L3.5 9.2l5.9-.9z"></path></svg></span>
-                        <span className="stack"><span>Membership</span><span className="join-sub">Plans and how to join</span></span>
+                        <span className="stack"><span>Membership</span><span className="join-sub">Plans and How to Join</span></span>
                       </Link>
                       <Link role="menuitem" className="join-item" href="/get-involved">
                         <span className="join-ic" style={{ background: '#E3F1E4', color: '#0B6B3A' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path><circle cx="10" cy="7" r="4"></circle><path d="M21 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"></path></svg></span>
-                        <span className="stack"><span>Get Involved</span><span className="join-sub">Ways to take part</span></span>
+                        <span className="stack"><span>Get Involved</span><span className="join-sub">Ways to Take Part</span></span>
                       </Link>
                     </div>
                   )}
@@ -247,7 +247,7 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
               {guest && (
                 <div className="stack g12" style={{ padding: '20px 16px 8px', borderTop: '1px solid #D9D2C1', marginTop: '12px' }}>
                   <span className="small muted strong">Join HSN</span>
-                  <a className="btn btn-p btn-lg" href={SOCIAL.whatsapp} target="_blank" rel="noopener">Join WhatsApp group</a>
+                  <a className="btn btn-p btn-lg" href={SOCIAL.whatsapp} target="_blank" rel="noopener">Join WhatsApp Group</a>
                   <a className="btn btn-s btn-lg" href={SOCIAL.linkedin} target="_blank" rel="noopener">Follow on LinkedIn</a>
                   <Link className="btn btn-t btn-lg" href="/login">Log in</Link>
                 </div>

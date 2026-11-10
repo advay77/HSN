@@ -1,5 +1,4 @@
 // Ported from About.dc.html.
-import Link from 'next/link'
 import React from 'react'
 
 import '../../styles/pages/about.css'
@@ -48,14 +47,6 @@ export default function AboutPage() {
             <h2 className="sec-title" id="team">Our Team</h2>
             <p className="lead muted">Our network is driven by experienced healthcare quality leaders, clinical governance specialists, environmental health advisors, and sustainability champions with deep expertise across healthcare systems.</p>
           </div>
-          <article className="card pad-l row g24 top" style={{ background: '#134E5E', borderColor: '#134E5E', color: '#F5F1E6' }}>
-            <span className="ic" style={{ background: '#5BC0E3', color: '#0E1F22' }}><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
-            <div className="stack g8 grow" style={{ minWidth: '260px' }}>
-              <h3 className="h3" style={{ color: '#FFFFFF' }}>Core Advisory &amp; Leadership</h3>
-              <p className="lead" style={{ color: '#DCE6E2', maxWidth: 'none', margin: '0' }}>Healthcare leaders with extensive backgrounds in hospital accreditation, clinical audit, risk management, and Sustainable Quality Improvement (SusQI).</p>
-              <Link className="btn btn-light" href="/advisory" style={{ alignSelf: 'flex-start' }}>Meet the Advisory Board</Link>
-            </div>
-          </article>
         </div>
       </section>
 

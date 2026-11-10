@@ -89,6 +89,7 @@ export function toEditor(c: Course): EditorCourse {
     modulesShown: c.facts?.modules ? String(c.facts.modules) : '',
     languageNote: c.facts?.languageNote || '',
     learnIntro: c.learnIntro || '',
+    targetAudience: c.targetAudience || '',
     outcomes: (c.outcomes ?? []).map((o) => o.text).join('\n'),
     skills: (c.skills ?? []).map((s) => s.label),
     aboutLead: (about[0] || '').trim(),
@@ -170,6 +171,7 @@ export function fromEditor(e: EditorCourse) {
     coverBadge: trim(e.coverBadge),
     facts: { duration: trim(e.duration), language: trim(e.language), languageNote: trim(e.languageNote), modules: modulesShown(e.modulesShown) },
     learnIntro: trim(e.learnIntro),
+    targetAudience: trim(e.targetAudience),
     outcomes: e.outcomes
       .split('\n')
       .map((t) => t.trim())

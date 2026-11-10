@@ -118,6 +118,12 @@ export const Courses: CollectionConfig = {
           fields: [
             { name: 'learnIntro', label: 'Intro line', type: 'textarea' },
             { name: 'outcomes', type: 'array', fields: [{ name: 'text', type: 'text', required: true }] },
+            {
+              name: 'targetAudience',
+              label: 'Target audience',
+              type: 'textarea',
+              admin: { description: 'Who the course is for. Shown under the learning outcomes. Separate paragraphs with a blank line.' },
+            },
             { name: 'skills', type: 'array', fields: [{ name: 'label', type: 'text', required: true }] },
             {
               name: 'about',

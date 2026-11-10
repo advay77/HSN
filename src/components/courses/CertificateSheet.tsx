@@ -37,26 +37,6 @@ function Guilloche() {
   )
 }
 
-// Round seal with the HSN mark in the middle and the network name around the edge.
-function Seal({ issuer }: { issuer: string }) {
-  const ring = `${issuer.toUpperCase()} • CERTIFIED • `
-  return (
-    <svg className="cert-seal" viewBox="0 0 200 200" aria-hidden="true">
-      <defs>
-        <path id="cert-ring" d="M100 100 m-74 0 a74 74 0 1 1 148 0 a74 74 0 1 1 -148 0" />
-      </defs>
-      <circle cx="100" cy="100" r="97" fill="#FFFFFF" />
-      <circle cx="100" cy="100" r="92" fill="none" stroke="#0B6B3A" strokeWidth="4" />
-      <circle cx="100" cy="100" r="86" fill="none" stroke="#4FAE4E" strokeWidth="1" strokeDasharray="2 3" />
-      <circle cx="100" cy="100" r="60" fill="none" stroke="#B9D8C4" strokeWidth="1.2" />
-      <text className="cert-seal-t">
-        <textPath href="#cert-ring" textLength="462" lengthAdjust="spacingAndGlyphs">{ring}</textPath>
-      </text>
-      <image href="/images/certificate/hsn-mark.png" x="58" y="58" width="84" height="84" />
-    </svg>
-  )
-}
-
 export function CertificateSheet({ name, course, issued, id, verifyUrl, qr, issuer }: Props) {
   const shortUrl = verifyUrl.replace(/^https?:\/\//, '')
   return (
@@ -66,7 +46,6 @@ export function CertificateSheet({ name, course, issued, id, verifyUrl, qr, issu
       <div className="cert-sheet">
         <aside className="cert-side">
           <img className="cert-tree" src="/images/certificate/hsn-tree.png" alt="" aria-hidden="true" />
-          <Seal issuer={issuer} />
           <span className="cert-date">
             <b>{issued}</b>
             <span>Date of award</span>

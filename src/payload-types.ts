@@ -208,6 +208,10 @@ export interface Course {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Who the course is for. Shown under the learning outcomes. Separate paragraphs with a blank line.
+   */
+  targetAudience?: string | null;
   skills?:
     | {
         label: string;
@@ -910,6 +914,7 @@ export interface CoursesSelect<T extends boolean = true> {
         id?: T;
       };
   learnIntro?: T;
+  targetAudience?: T;
   outcomes?:
     | T
     | {

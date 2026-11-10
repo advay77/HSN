@@ -496,6 +496,10 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                   <div className="fld"><label className="lbl" htmlFor="c-li">Intro sentence</label><textarea className="inp" id="c-li" value={f.learnIntro} onChange={upd('learnIntro')} style={{ minHeight: '80px' }}></textarea></div>
                   <div className="fld"><label className="lbl" htmlFor="c-o">Learning outcomes</label><textarea className="inp" id="c-o" value={f.outcomes} onChange={upd('outcomes')} style={{ minHeight: '170px' }}></textarea><span className="hint">One outcome per line. Each line becomes a ticked item.</span></div>
                 </fieldset>
+                <fieldset className="cb-fs">
+                  <legend>Target audience</legend>
+                  <div className="fld"><label className="lbl" htmlFor="c-ta">Who is this course for?</label><textarea className="inp" id="c-ta" value={f.targetAudience} onChange={upd('targetAudience')} style={{ minHeight: '140px' }} placeholder="e.g. All healthcare staff: clinical, operational, administrative and leadership."></textarea><span className="hint">Shown on the course page under the learning outcomes. Leave a blank line between paragraphs.</span></div>
+                </fieldset>
               </div>
               <aside className="stack g12 sticky">
                 <h3 className="h5" style={{ margin: 0 }}>Preview</h3>
@@ -503,6 +507,12 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                   <span className="cb-ph">What you will learn</span>
                   <p className="small muted" style={{ margin: 0 }}>{f.learnIntro}</p>
                   <ul className="ticks" style={{ margin: 0 }}>{outcomeList.map((o, i) => <li key={i} className="small"><Tick size={18} />{o}</li>)}</ul>
+                  {f.targetAudience.trim() && (
+                    <>
+                      <span className="cb-ph">Target audience</span>
+                      {f.targetAudience.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean).map((p, i) => <p key={i} className="small muted" style={{ margin: 0, whiteSpace: 'pre-line' }}>{p}</p>)}
+                    </>
+                  )}
                 </div>
               </aside>
             </div>

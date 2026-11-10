@@ -91,6 +91,7 @@ export default async function CoursePage({ params }: Props) {
     ? `Get at least ${passNeeded(course, qn)} of ${qn} answers right.${course.certificate?.retakes !== false ? ' You can retake it.' : ''}`
     : `Score at least ${course.certificate?.passMark ?? 80}%.${course.certificate?.retakes !== false ? ' You can retake it.' : ''}`
   const issuer = course.certificate?.issuer || 'Healthcare Sustainability Network'
+  const audienceParas = (course.targetAudience || '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
   // Example certificate: its QR opens the public verify page.
   const sampleVerify = `${(process.env.SITE_URL || 'https://healthcaresustainabilitynetwork.com').replace(/\/$/, '')}/verify/EXAMPLE`
   const sampleQr = certOn ? await certificateQr(sampleVerify) : ''
@@ -132,7 +133,7 @@ export default async function CoursePage({ params }: Props) {
         </div>
       </section>
       {/* Learning outcomes */}
-      {(course.outcomes?.length ?? 0) > 0 && (
+      {((course.outcomes?.length ?? 0) > 0 || audienceParas.length > 0) && (
         <section className="sec bg-surface" aria-labelledby="lo">
           <div className="wrap stack g32">
             <div className="stack g12">
@@ -145,6 +146,12 @@ export default async function CoursePage({ params }: Props) {
                   <li key={o.id}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6B3A" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg><span>{o.text}</span></li>
                 ))}
               </ul>
+            )}
+            {audienceParas.length > 0 && (
+              <div className="stack g12">
+                <h3 className="h3" style={{ margin: 0 }}>Target Audience</h3>
+                {audienceParas.map((p, i) => <p key={i} className="lead" style={{ margin: 0, whiteSpace: 'pre-line' }}>{p}</p>)}
+              </div>
             )}
           </div>
         </section>

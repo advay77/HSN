@@ -15,11 +15,9 @@
 .cert-sheet::before{inset:calc(var(--u)*14);border:calc(var(--u)*3) solid #0B6B3A}
 .cert-sheet::after{inset:calc(var(--u)*22);border:calc(var(--u)*1) solid #9CC9AE}
 
-/* Left band: healthcare tree, seal, date */
+/* Left band: the healthcare tree in the middle, date of award at the foot */
 .cert-side{position:relative;background:linear-gradient(180deg,#F4F1E7,#ECE7D9);display:flex;flex-direction:column;align-items:center;border-right:calc(var(--u)*1) solid #DCD5C2}
-.cert-tree{position:absolute;top:calc(var(--u)*40);left:50%;transform:translateX(-50%);width:calc(var(--u)*246);height:auto;display:block}
-.cert-seal{position:relative;z-index:1;width:calc(var(--u)*176);height:calc(var(--u)*176);margin-top:calc(var(--u)*232);filter:drop-shadow(0 calc(var(--u)*3) calc(var(--u)*6) rgba(10,60,35,.28))}
-.cert-seal-t{font-family:Montserrat,Inter,sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.06em;fill:#0B6B3A}
+.cert-tree{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(var(--u)*258);height:auto;display:block}
 .cert-date{position:relative;z-index:1;margin-top:auto;margin-bottom:calc(var(--u)*62);display:flex;flex-direction:column;align-items:center;text-align:center;width:calc(var(--u)*200)}
 .cert-date b{font-size:calc(var(--u)*17);font-weight:700;color:#17323A;padding-bottom:calc(var(--u)*8);border-bottom:calc(var(--u)*1.5) solid #8A948F;width:100%}
 .cert-date span{font-size:calc(var(--u)*12.5);color:#5D6B67;margin-top:calc(var(--u)*7);letter-spacing:.04em}
