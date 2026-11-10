@@ -31,7 +31,7 @@ const MENU: NavItem[] = [
     id: 'resources',
     label: 'Resources',
     items: [
-      { id: 'cases', label: 'Case Studies', href: '/case-studies', sub: 'Real Projects from Hospitals' },
+      { id: 'cases', label: 'Case Studies', href: '/case-studies', sub: 'Real Hospital Projects' },
       { id: 'library', label: 'Library', href: '/library', sub: 'Downloadable Toolkits, Guides and Documents' },
     ],
   },
