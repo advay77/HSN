@@ -41,7 +41,9 @@
 .cert-ver-t b{color:#17323A;font-weight:600;letter-spacing:.03em}
 .cert-ver-t a{color:#1C6E8A;font-weight:600;text-decoration:none;font-size:calc(var(--u)*11);white-space:nowrap}
 .cert-sign{flex:none;width:calc(var(--u)*232);display:flex;flex-direction:column;align-items:center;text-align:center}
-.cert-sig{font-family:'Great Vibes','Brush Script MT',cursive;font-size:calc(var(--u)*38);line-height:1;color:#134E5E;padding:0 calc(var(--u)*10) calc(var(--u)*6);border-bottom:calc(var(--u)*1.5) solid #8A948F;width:100%;white-space:nowrap}
+/* Dr. Nishant Jaiswal's signature (scanned), standing on the signature line */
+.cert-sig{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(var(--u)*4);border-bottom:calc(var(--u)*1.5) solid #8A948F;width:100%;height:calc(var(--u)*104)}
+.cert-sig img{display:block;height:100%;width:auto}
 .cert-sign b{margin-top:calc(var(--u)*8);font-size:calc(var(--u)*14.5);color:#17323A}
 .cert-sign>span:last-child{margin-top:calc(var(--u)*3);font-size:calc(var(--u)*12);color:#5D6B67}
 

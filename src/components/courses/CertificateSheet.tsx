@@ -41,8 +41,6 @@ export function CertificateSheet({ name, course, issued, id, verifyUrl, qr, issu
   const shortUrl = verifyUrl.replace(/^https?:\/\//, '')
   return (
     <CertificateFit label={`Certificate of completion: ${course}, awarded to ${name}`}>
-      {/* Script font for the signature line (React loads it once, wherever the certificate appears). */}
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" precedence="default" />
       <div className="cert-sheet">
         <aside className="cert-side">
           <img className="cert-tree" src="/images/certificate/hsn-tree.png" alt="" aria-hidden="true" />
@@ -69,7 +67,7 @@ export function CertificateSheet({ name, course, issued, id, verifyUrl, qr, issu
               </span>
             </div>
             <div className="cert-sign">
-              <span className="cert-sig" aria-hidden="true">Nishant Jaiswal</span>
+              <span className="cert-sig"><img src="/images/certificate/signature-nishant.png" alt="Signature of Dr. Nishant Jaiswal" /></span>
               <b>Dr. Nishant Jaiswal, PhD</b>
               <span>Founder<br />{issuer}</span>
             </div>
