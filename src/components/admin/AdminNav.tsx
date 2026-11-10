@@ -9,6 +9,7 @@ const NAV: [string, string][] = [
   ['/admin', 'Overview'],
   ['/admin/members', 'Members'],
   ['/admin/courses', 'Courses'],
+  ['/admin/quizzes', 'Quiz results'],
   ['/admin/certificates', 'Certificates'],
   ['/admin/registrations', 'Course registrations'],
   ['/admin/feedback', 'Feedback'],

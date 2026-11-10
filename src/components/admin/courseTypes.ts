@@ -3,7 +3,7 @@
 
 /** Stored lesson kinds. The editor groups the slide-like ones under "Slide". */
 export type LessonKind = 'cover' | 'text' | 'reflection' | 'diagram' | 'video' | 'references' | 'document' | 'summary' | 'quiz'
-export type LessonType = 'Slide' | 'Video' | 'Reading' | 'Document' | 'Quiz'
+export type LessonType = 'Slide' | 'Video' | 'YouTube' | 'Reading' | 'Document' | 'Quiz'
 export type CourseAccess = 'open' | 'paid'
 
 export type EditorQuestion = { q: string; o: string[]; a: number }
@@ -105,6 +105,12 @@ export const textToRefs = (text: string, old: EditorRef[] = []): EditorRef[] =>
 
 export const typeOfKind = (k: LessonKind): LessonType =>
   k === 'video' ? 'Video' : k === 'references' ? 'Reading' : k === 'document' ? 'Document' : k === 'quiz' ? 'Quiz' : 'Slide'
+
+/** Video lessons are split in the editor: "YouTube" (a link, marked extra = 'youtube') and "Video" (an uploaded file).
+ *  An older video lesson with only a link and no file also counts as YouTube. */
+export const YOUTUBE_MARK = 'youtube'
+export const lessonTypeOf = (l: Pick<EditorLesson, 'kind' | 'extra' | 'file' | 'video'>): LessonType =>
+  l.kind === 'video' && (l.extra === YOUTUBE_MARK || (!l.file && !!l.video.trim())) ? 'YouTube' : typeOfKind(l.kind)
 
 export const CERT_DEFAULTS = {
   title: 'Earn Your HSN Certificate',

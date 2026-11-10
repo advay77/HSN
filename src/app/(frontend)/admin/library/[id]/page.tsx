@@ -36,7 +36,7 @@ export default async function EditLibraryPage({ params, searchParams }: { params
             title: r.title,
             type: r.type,
             access: r.access === 'members' ? 'members' : 'free',
-            description: r.description,
+            description: r.description || '',
             format: r.format || '',
             size: r.size || '',
             fileId,

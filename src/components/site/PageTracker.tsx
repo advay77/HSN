@@ -32,7 +32,8 @@ export function PageTracker() {
   const pathname = usePathname()
 
   useEffect(() => {
-    if (!pathname) return
+    // Admin course previews are not visitor traffic.
+    if (!pathname || pathname.startsWith('/admin-preview')) return
     if (pathname !== currentPath) {
       currentReferrer = externalReferrer()
       currentFrom = currentPath

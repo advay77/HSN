@@ -36,18 +36,13 @@ export default async function CaseStudyPage({ params, searchParams }: Props) {
   const sections = (cs.sections ?? []).map((s) => ({ ...s, anchor: toSlug(s.heading) || `section-${s.id}` }))
   const lessons = cs.lessons ?? []
   const toc = [...sections.map((s) => ({ href: `#${s.anchor}`, label: s.heading })), ...(lessons.length ? [{ href: '#lessons', label: 'Lessons for Other Hospitals' }] : [])]
-  const image = mediaOf(cs.image)
   const pdf = mediaOf(cs.pdf)
   const published = cs.publishedAt ? new Date(cs.publishedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : null
   const author = [cs.submittedBy?.name, cs.submittedBy?.role].filter(Boolean).join(', ')
   const gridCls = (n: number) => `wrap grid c${Math.min(Math.max(n, 2), 4)}`
 
-  const imageBlock = image?.url ? (
-    <figure className="stack g8" style={{ margin: 0 }}>
-      <img src={image.url} alt={image.alt || ''} style={{ display: 'block', width: '100%', borderRadius: '20px' }} />
-      {cs.imageCaption && <figcaption className="small muted">{cs.imageCaption}</figcaption>}
-    </figure>
-  ) : null
+  // Case study images were removed at HSN's request (Nov 2026); an older uploaded image is no longer shown.
+  const imageBlock = null
 
   return (
     <main>

@@ -173,7 +173,6 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
               {langOpen && (
                 <div role="menu" aria-label="Language" style={{ position: 'absolute', top: '50px', right: '0', zIndex: 30, width: '230px', padding: '6px', borderRadius: '12px', background: '#FFFDF8', border: '1px solid #D9D2C1', boxShadow: '0 8px 24px rgba(19,78,94,.14)' }}>
                   <Link role="menuitemradio" aria-checked="true" href="/" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '48px', padding: '0 12px', borderRadius: '8px', background: '#E3F1E4', color: '#0B6B3A', fontWeight: 600, textDecoration: 'none' }}>English<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></Link>
-                  <span role="menuitemradio" aria-checked="false" aria-disabled="true" lang="hi" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '52px', padding: '0 12px', color: '#17323A' }}><span style={{ fontFamily: "'Noto Sans Devanagari', sans-serif", fontSize: '17px' }}>हिन्दी</span><span style={{ fontSize: '13px', color: '#4A5F63' }} lang="en">Hindi · translation coming soon</span></span>
                   <Link role="menuitemradio" aria-checked="false" href="/ar" lang="ar" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '52px', padding: '0 12px', borderRadius: '8px', color: '#17323A', textDecoration: 'none' }}><span style={{ fontFamily: "'Noto Sans Arabic', sans-serif", fontSize: '18px' }}>العربية</span><span style={{ fontSize: '13px', color: '#4A5F63' }} lang="en">Arabic · right-to-left</span></Link>
                 </div>
               )}
@@ -263,7 +262,6 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
                 <span className="small muted strong">Language</span>
                 <div className="seg" role="group" aria-label="Language">
                   <button className="on" aria-pressed="true" style={{ flex: 1 }}>English</button>
-                  <button aria-pressed="false" lang="hi" disabled title="Hindi translation coming soon" style={{ flex: 1, fontFamily: "'Noto Sans Devanagari', sans-serif" }}>हिन्दी</button>
                   <Link href="/ar" lang="ar" style={{ flex: 1, fontFamily: "'Noto Sans Arabic', sans-serif" }}>العربية</Link>
                 </div>
               </div>

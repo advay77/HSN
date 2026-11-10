@@ -39,6 +39,10 @@ type Props = {
   initialResults: Record<string, QuizResult>
   startAt: string | null
   whatsapp: string
+  /** Admin preview: the whole course as a learner sees it; nothing is saved and quizzes are scored in the browser. */
+  preview?: boolean
+  /** Where Exit goes (the admin panel in a preview). */
+  exitHref?: string
 }
 
 // Lesson text: a blank line starts a new paragraph, a single line break stays a line break.
@@ -55,7 +59,7 @@ function Paras({ text }: { text?: string | null }) {
 
 const shortUrl = (u: string) => u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
 
-export function Player({ course, modules, initialCompleted, initialResults, startAt, whatsapp }: Props) {
+export function Player({ course, modules, initialCompleted, initialResults, startAt, whatsapp, preview = false, exitHref }: Props) {
   const [completed, setCompleted] = useState<string[]>(initialCompleted)
   const [results, setResults] = useState<Record<string, QuizResult>>(initialResults)
   const [corrections, setCorrections] = useState<Record<string, number[]>>({})
@@ -74,7 +78,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
   for (const m of avail) {
     unlocked.push(m)
     const quizzes = m.lessons.filter((l) => l.type === 'quiz')
-    if (quizzes.some((q) => !results[q.id]?.passed)) break
+    if (!preview && quizzes.some((q) => !results[q.id]?.passed)) break
   }
   const lockedRows = modules
     .filter((m) => !unlocked.includes(m))
@@ -92,6 +96,8 @@ export function Player({ course, modules, initialCompleted, initialResults, star
 
   // Lessons open in order: everything up to the first unfinished one.
   const reachOf = (d: Set<string>) => {
+    // Admin preview: every lesson can be opened in any order.
+    if (preview) return total - 1
     const i = list.findIndex((x) => !d.has(x.l.id))
     return i < 0 ? total - 1 : i
   }
@@ -143,6 +149,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
   const markDone = (lessonId: string) => {
     if (done.has(lessonId)) return
     setCompleted((c) => [...c, lessonId])
+    if (preview) return
     start(async () => {
       try {
         const r = await completeLesson(course.id, lessonId)
@@ -172,6 +179,18 @@ export function Player({ course, modules, initialCompleted, initialResults, star
   const answered = Object.keys(ans).length
   const submit = () => {
     const arr = s.questions.map((_, i) => (ans[i] ?? -1))
+    if (preview) {
+      // Preview: score in the browser with the answers the admin page sent; nothing is saved.
+      const right = s.questions.map((q) => q.a ?? -1)
+      const sc = arr.filter((v, i) => v === right[i]).length
+      const ok = sc >= s.need
+      const attempts = (results[s.id]?.attempts ?? 0) + 1
+      setResults((x) => ({ ...x, [s.id]: { score: sc, total: n, passed: ok, at: new Date().toISOString(), attempts } }))
+      setCorrections((x) => ({ ...x, [s.id]: right }))
+      if (ok) setCompleted((c) => Array.from(new Set([...c, s.id])))
+      setSubmittedNow((x) => ({ ...x, [s.id]: true }))
+      return
+    }
     start(async () => {
       try {
         const r = await submitQuiz(course.id, s.id, arr)
@@ -210,7 +229,8 @@ export function Player({ course, modules, initialCompleted, initialResults, star
 
   return (
     <>
-      <TopBar title={course.title} pct={pctNum} slug={course.slug} outlineOpen={outlineOpen} onOutline={() => setOutlineOpen(!outlineOpen)} onA11y={() => setA11yOpen(true)} a11yOpen={a11yOpen} />
+      {preview && <div role="status" style={{ background: '#FDF3DD', color: '#5C3D00', borderBottom: '1px solid #E8C877', padding: '8px 16px', fontSize: '14px', textAlign: 'center' }}><strong>Admin preview.</strong> You see the course as a learner does. Nothing you do here is saved.</div>}
+      <TopBar title={course.title} pct={pctNum} slug={course.slug} exitHref={exitHref} outlineOpen={outlineOpen} onOutline={() => setOutlineOpen(!outlineOpen)} onA11y={() => setA11yOpen(true)} a11yOpen={a11yOpen} />
       <div className="pl-body">
         {/* Outline */}
         <nav className={outlineOpen ? 'pl-side open' : 'pl-side'} aria-label="Course outline">
@@ -319,7 +339,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
                 <div className="row g12 mstack">
                   {nextItem && <button className="btn btn-lg btn-light" onClick={next}>{nextItem.l.type === 'quiz' ? `Start ${nextItem.l.title}` : 'Continue'}</button>}
                   {isLast && !courseDone && !done.has(s.id) && <button className="btn btn-lg btn-light" onClick={() => markDone(s.id)}>Finish course</button>}
-                  {isLast && courseDone && (course.feedbackSent
+                  {isLast && courseDone && !preview && (course.feedbackSent
                     ? course.certificate && <a className="btn btn-lg btn-light" href={certHref}>Get your certificate</a>
                     : <a className="btn btn-lg btn-light" href={feedbackHref}>Give feedback to get your certificate</a>)}
                   {nextModule && <span className="small" style={{ color: '#BFE6F3' }}>Next module: {nextModule.title}</span>}
@@ -348,7 +368,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
                       <strong>{passed ? (nextModule && nextModule.status === 'available' ? `Passed. Module ${nextModule.n} is unlocked.` : 'Passed. Well done.') : !outOfTries ? 'Not quite. Review the lessons and try again.' : 'Not quite.'}</strong>
                       <span className="muted">{passed ? (corr ? 'Correct answers are marked in green.' : 'You have passed this quiz.') : `You need ${s.need} out of ${n} to pass. Correct answers are marked in green.`}</span>
                     </span>
-                    {passed && !(isLast && courseDone) && <a className="btn btn-p" href={`/courses/${course.slug}`}>Back to course</a>}
+                    {passed && !(isLast && courseDone) && <a className="btn btn-p" href={exitHref ?? `/courses/${course.slug}`}>{preview ? 'Back to admin' : 'Back to course'}</a>}
                     {!passed && !outOfTries && <button className="btn btn-s" onClick={retry}>Try again</button>}
                   </div>
                 )}
@@ -357,7 +377,13 @@ export function Player({ course, modules, initialCompleted, initialResults, star
           </section>
           {isLast && courseDone && s.type !== 'summary' && (
             <div className="card pad stack g12" role="status" style={{ background: '#E3F1E4' }}>
-              {course.feedbackSent ? (
+              {preview ? (
+                <>
+                  <strong style={{ fontSize: '18px' }}>End of the course preview.</strong>
+                  <span>Here learners fill in the course feedback form, then download their certificate.</span>
+                  {exitHref && <a className="btn btn-p self-start" href={exitHref}>Back to admin</a>}
+                </>
+              ) : course.feedbackSent ? (
                 <>
                   <strong style={{ fontSize: '18px' }}>Course complete. Your certificate is ready.</strong>
                   {course.certificate && <a className="btn btn-p self-start" href={certHref}>Get your certificate</a>}
@@ -394,7 +420,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
   )
 }
 
-function TopBar({ title, pct, slug, outlineOpen, onOutline, onA11y, a11yOpen }: { title: string; pct: number; slug: string; outlineOpen: boolean; onOutline: () => void; onA11y: () => void; a11yOpen: boolean }) {
+function TopBar({ title, pct, slug, exitHref, outlineOpen, onOutline, onA11y, a11yOpen }: { title: string; pct: number; slug: string; exitHref?: string; outlineOpen: boolean; onOutline: () => void; onA11y: () => void; a11yOpen: boolean }) {
   return (
     <header className="pl-top">
       <a className="logo-m" href="/" aria-label="HSN home"><img src="/images/hsn-logo.jpg" alt="" /></a>
@@ -404,7 +430,7 @@ function TopBar({ title, pct, slug, outlineOpen, onOutline, onA11y, a11yOpen }: 
       </div>
       <button className="btn btn-s btn-sm pl-outl" aria-expanded={outlineOpen} onClick={onOutline}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"></path></svg>Outline</button>
       <button className="a11y" aria-label="Accessibility options" aria-haspopup="dialog" aria-expanded={a11yOpen} onClick={onA11y}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="4" r="1.8"></circle><path d="M11 7.5v6h5.5l2.5 5.5"></path><path d="M11 10.5h5"></path><path d="M8 10.8a6 6 0 1 0 8.3 7.2"></path></svg></button>
-      <a className="btn btn-g btn-sm" href={`/courses/${slug}`} aria-label="Exit course" style={{ color: '#17323A' }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg><span className="tabup">Exit</span></a>
+      <a className="btn btn-g btn-sm" href={exitHref ?? `/courses/${slug}`} aria-label="Exit course" style={{ color: '#17323A' }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg><span className="tabup">Exit</span></a>
     </header>
   )
 }

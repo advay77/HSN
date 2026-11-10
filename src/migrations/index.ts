@@ -10,6 +10,8 @@ import * as migration_20261109_150000_site_feedback_details from './20261109_150
 import * as migration_20261109_180000_course_intro from './20261109_180000_course_intro';
 import * as migration_20261111_100000_course_modules_shown from './20261111_100000_course_modules_shown';
 import * as migration_20261111_120000_course_target_audience from './20261111_120000_course_target_audience';
+import * as migration_20261111_140000_open_course_modules from './20261111_140000_open_course_modules';
+import * as migration_20261111_160000_library_description_optional from './20261111_160000_library_description_optional';
 
 export const migrations = [
   {
@@ -71,5 +73,15 @@ export const migrations = [
     up: migration_20261111_120000_course_target_audience.up,
     down: migration_20261111_120000_course_target_audience.down,
     name: '20261111_120000_course_target_audience',
+  },
+  {
+    up: migration_20261111_140000_open_course_modules.up,
+    down: migration_20261111_140000_open_course_modules.down,
+    name: '20261111_140000_open_course_modules',
+  },
+  {
+    up: migration_20261111_160000_library_description_optional.up,
+    down: migration_20261111_160000_library_description_optional.down,
+    name: '20261111_160000_library_description_optional',
   },
 ];

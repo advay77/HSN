@@ -24,7 +24,7 @@ export default async function LibraryPage() {
       id: String(d.id),
       type: d.type,
       title: d.title,
-      desc: d.description,
+      desc: d.description || '',
       format: d.format || '',
       pages: d.size || '',
       access: d.access === 'members' ? 'Members' : 'Free',

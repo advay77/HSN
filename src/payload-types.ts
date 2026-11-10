@@ -451,7 +451,7 @@ export interface LibraryResource {
   title: string;
   type: 'Guide' | 'Toolkit' | 'Report' | 'Template';
   access: 'free' | 'members';
-  description: string;
+  description?: string | null;
   /**
    * e.g. "PDF", "PDF + Excel"
    */
@@ -914,13 +914,13 @@ export interface CoursesSelect<T extends boolean = true> {
         id?: T;
       };
   learnIntro?: T;
-  targetAudience?: T;
   outcomes?:
     | T
     | {
         text?: T;
         id?: T;
       };
+  targetAudience?: T;
   skills?:
     | T
     | {

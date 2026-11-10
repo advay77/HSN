@@ -222,7 +222,7 @@ export function A11yPanel({ onClose }: { onClose: () => void }) {
                   <div className="stack g8">
                     <span className="tool-s" id="ra-vo">Voice language</span>
                     <div className="ap-seg" role="radiogroup" aria-labelledby="ra-vo" style={{ alignSelf: 'flex-start' }}>
-                      {([['en', 'English'], ['hi', 'हिन्दी'], ['ar', 'العربية']] as const).map(([c, l]) => (
+                      {([['en', 'English'], ['ar', 'العربية']] as const).map(([c, l]) => (
                         <button key={c} className={voice === c ? 'on' : ''} role="radio" aria-checked={voice === c} lang={c} onClick={() => { updateSaved({ voice: c }); setReaderOptions(readOpts(speed, c)) }}>{l}</button>
                       ))}
                     </div>
@@ -306,7 +306,6 @@ export function A11yPanel({ onClose }: { onClose: () => void }) {
           <div role="radiogroup" aria-label="Website language" className="stack">
             {([
               ['en', 'English', 'English', undefined],
-              ['hi', 'हिन्दी', 'Hindi · translation coming soon', { fontFamily: "'Noto Sans Devanagari', sans-serif", fontSize: '17px' }],
               ['ar', 'العربية', 'Arabic · right-to-left', { fontFamily: "'Noto Sans Arabic', sans-serif", fontSize: '18px' }],
             ] as const).map(([code, native, en, font]) => {
               const on = lang === code
@@ -316,10 +315,9 @@ export function A11yPanel({ onClose }: { onClose: () => void }) {
                   className={on ? 'lang-row on' : 'lang-row'}
                   role="radio"
                   aria-checked={on}
-                  aria-disabled={code === 'hi' || undefined}
                   lang={code}
                   onClick={() => {
-                    if (code === 'hi' || on) return
+                    if (on) return
                     setLang(code)
                     onClose()
                     router.push(code === 'ar' ? '/ar' : '/')

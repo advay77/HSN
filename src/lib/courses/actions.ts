@@ -91,7 +91,8 @@ export async function submitQuiz(courseId: number, lessonId: string, answers: nu
   const passed = score >= passNeeded(course, qs.length)
   const attempts = used + 1
   const canRetake = !passed && (maxAttempts === 0 || attempts < maxAttempts)
-  const result: QuizResult = { score, total: qs.length, passed, at: new Date().toISOString(), attempts }
+  const picked = qs.map((q, i) => (Number.isInteger(answers[i]) && answers[i]! >= 0 && answers[i]! < (q.options ?? []).length ? answers[i]! : -1))
+  const result: QuizResult = { score, total: qs.length, passed, at: new Date().toISOString(), attempts, answers: picked }
   let completed = completedIds(e)
   if (passed) completed = Array.from(new Set([...completed, lessonId]))
   const progress = progressOf(course, { ...e, completedLessons: completed })

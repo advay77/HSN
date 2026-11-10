@@ -42,7 +42,6 @@ export async function saveLibraryResource(id: number | null, formData: FormData)
   const errors: Record<string, string> = {}
   if (!clean(f.title)) errors.title = 'Enter a title.'
   if (!LIBRARY_TYPES.includes(f.type as LibType)) errors.type = 'Choose a type.'
-  if (!clean(f.description)) errors.description = 'Enter a short description.'
   if (url && !/^https?:\/\/\S+$/i.test(url)) errors.externalUrl = 'Enter a full link starting with https://'
   if (f.published && !hasNewFile && !f.fileId && !url) errors.file = 'Add a file or a link before publishing.'
   if (Object.keys(errors).length) return { ok: false, errors }

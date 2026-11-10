@@ -155,7 +155,6 @@ export function SubmitCaseForm() {
           )}
         </div>
         <div className="fld"><label className="lbl" htmlFor="s-sum">Project summary</label><textarea className={inp('summary')} id="s-sum" aria-describedby={described('summary', 's-sum-h')} aria-invalid={!!e.summary} placeholder="Describe the baseline, the change you made and how you measured the impact." value={f.summary} onChange={(x) => set('summary', x.target.value)}></textarea><span className="hint" id="s-sum-h">Up to 1,000 characters{f.summary.length > 0 ? ` · ${f.summary.length} used` : ''}</span>{msg('summary')}</div>
-        <div className="fld"><label className="lbl" htmlFor="s-safe">Patient safety{' '}<span className="opt-t">(optional)</span></label><textarea className="inp" id="s-safe" style={{ minHeight: '100px' }} placeholder="How did you make sure patient safety and clinical outcomes were protected?" value={f.patientSafety} onChange={(x) => set('patientSafety', x.target.value)}></textarea></div>
         <div className="stack g8">
           <span className="lbl">Attachments{' '}<span className="opt-t">(optional)</span></span>
           <div

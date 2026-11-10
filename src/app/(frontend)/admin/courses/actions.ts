@@ -12,7 +12,7 @@ import { toSlug } from '@/collections/fields/slug'
 
 type Fail = { ok: false; error: string }
 
-export type SaveResult = { ok: true; course: EditorCourse; updated: string } | Fail
+export type SaveResult = { ok: true; course: EditorCourse; updated: string; warning?: string } | Fail
 
 const refresh = (slug?: string | null) => {
   revalidatePath('/admin/courses')
@@ -25,19 +25,20 @@ export async function saveCourseAction(input: EditorCourse): Promise<SaveResult>
   const data = fromEditor(input)
   if (!data.title) return { ok: false, error: 'Add a course title (Basics tab).' }
   if (!data.description) return { ok: false, error: 'Add a short description (Basics tab).' }
-  // A published course needs a 5-question quiz, with every question answered, in each available module.
+  // Each available module should end with a full 5-question quiz. Saving still works without one (HSN can open a
+  // course before every quiz is written); the editor then says which modules still need their quiz.
+  const missing: string[] = []
   if (data.published) {
     for (const [i, m] of data.modules.entries()) {
       if (m.status !== 'available') continue
       const quizzes = m.lessons.filter((l) => l.type === 'quiz')
-      const where = `Module ${i + 1} “${m.title}”`
-      if (!quizzes.length) return { ok: false, error: `${where} needs a quiz with ${QUIZ_SIZE} questions before the course can be published (Modules & lessons tab).` }
-      for (const q of quizzes) {
-        const ready = q.questions.filter((x) => x.options.length >= 2).length
-        if (ready !== QUIZ_SIZE) return { ok: false, error: `${where}: the quiz needs ${QUIZ_SIZE} questions, each with at least 2 answers (it has ${ready}). Fix it in the Modules & lessons tab, or turn off Published.` }
-      }
+      const ready = quizzes.length ? Math.min(...quizzes.map((q) => q.questions.filter((x) => x.options.length >= 2).length)) : 0
+      if (ready < QUIZ_SIZE) missing.push(`Module ${i + 1}`)
     }
   }
+  const warning = missing.length
+    ? `${missing.join(', ')} ${missing.length === 1 ? 'does' : 'do'} not have a full ${QUIZ_SIZE}-question quiz yet, so learners can move on there without a quiz. Add the questions in Modules & lessons when they are ready.`
+    : undefined
 
   const payload = await getPayloadClient()
   const slug = toSlug(data.slug || data.title)
@@ -57,7 +58,7 @@ export async function saveCourseAction(input: EditorCourse): Promise<SaveResult>
     refresh(saved.slug)
     const course = await getCourseForEditor(saved.id)
     if (!course) return { ok: false, error: 'The course was saved but could not be reloaded. Refresh the page.' }
-    return { ok: true, course, updated: updatedLabel(saved.updatedAt) }
+    return { ok: true, course, updated: updatedLabel(saved.updatedAt), warning }
   } catch (err) {
     payload.logger.error({ err }, 'Could not save course')
     return { ok: false, error: 'The course could not be saved. Check the required fields and try again.' }

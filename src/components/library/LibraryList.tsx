@@ -66,19 +66,22 @@ export function LibraryList({ rows, signedIn }: { rows: LibraryRow[]; signedIn: 
                 <span className="ic" style={ICON[r.type]}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"></path><path d="M14 3v5h5"></path><path d="M10 13h6"></path><path d="M10 17h6"></path></svg></span>
                 <div className="row g8"><span className="bdg b-cat">{r.type}</span></div>
               </div>
-              <h3 className="h4">{r.title}</h3>
-              <p className="muted" style={{ margin: '0' }}>{r.desc}</p>
-              <div className="lib-meta">{r.format && <span>{r.format}</span>}{r.pages && <span>{r.pages}</span>}<span>{r.access}</span></div>
-              {r.href ? (
-                r.locked ? (
-                  <Link className="btn btn-s btn-sm self-start" style={{ marginTop: 'auto' }} href={r.href} aria-label={`${r.title}: ${signedIn ? 'members only, see membership' : 'members only, log in to view'}`}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
-                    {signedIn ? 'Members only' : 'Log in to view'}
-                  </Link>
-                ) : (
-                  <a className="btn btn-s btn-sm self-start" style={{ marginTop: 'auto' }} href={r.href} target="_blank" rel="noopener">View resource</a>
-                )
-              ) : null}
+              {/* Title with its button beside it, then who can open it; format and length are not shown (HSN request). */}
+              <div className="lib-head">
+                <h3 className="h4">{r.title}</h3>
+                {r.href ? (
+                  r.locked ? (
+                    <Link className="btn btn-s btn-sm" href={r.href} aria-label={`${r.title}: ${signedIn ? 'members only, see membership' : 'members only, log in to view'}`}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+                      {signedIn ? 'Members only' : 'Log in to view'}
+                    </Link>
+                  ) : (
+                    <a className="btn btn-s btn-sm" href={r.href} target="_blank" rel="noopener">View resource</a>
+                  )
+                ) : null}
+              </div>
+              <span className={r.access === 'Members' ? 'bdg b-reg self-start' : 'bdg b-ok self-start'}>{r.access === 'Members' ? 'Member Access' : 'Open Access'}</span>
+              {r.desc && <p className="muted" style={{ margin: '0' }}>{r.desc}</p>}
             </article>
           ))}
         </div>

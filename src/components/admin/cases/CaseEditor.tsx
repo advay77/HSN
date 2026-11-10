@@ -247,17 +247,8 @@ export function CaseEditor({
               ))}
               <button type="button" className="btn btn-s btn-sm self-start" onClick={() => set('lessons', [...f.lessons, { title: '', text: '' }])}>{addIcon}Add a lesson</button>
             </fieldset>
-            <fieldset className="cb-fs">
-              <legend>Patient safety</legend>
-              <div className="fld"><label className="lbl" htmlFor="cs-ps">How patient safety was protected <span className="opt-t">(optional)</span></label><textarea className="inp" id="cs-ps" value={f.patientSafety} onChange={val((v) => set('patientSafety', v))} style={{ minHeight: '110px' }}></textarea></div>
-            </fieldset>
           </div>
           <div className="stack g24">
-            <fieldset className="cb-fs">
-              <legend>Image</legend>
-              <FilePicker label="Photo or diagram" hint="Shown after the first section. JPG or PNG." accept="image/*" chooseText="Choose an image" current={img} chosen={image} onChoose={(file) => { setImage(file); setDirty(true) }} onRemove={() => { setImage(null); setImg(null); setDirty(true) }} />
-              <div className="fld"><label className="lbl" htmlFor="cs-ic">Caption <span className="opt-t">(optional)</span></label><input className="inp" id="cs-ic" value={f.imageCaption} onChange={val((v) => set('imageCaption', v))} /></div>
-            </fieldset>
             <fieldset className="cb-fs">
               <legend>Downloadable PDF</legend>
               <FilePicker label="Full case study as a PDF" hint="Visitors get a “Download PDF” button." accept="application/pdf" current={doc} chosen={pdf} onChoose={(file) => { setPdf(file); setDirty(true) }} onRemove={() => { setPdf(null); setDoc(null); setDirty(true) }} />

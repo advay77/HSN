@@ -83,8 +83,9 @@ export function LibraryEditor({ id, initial, currentFile, saved }: { id: number 
               <div className="seg self-start" role="group" aria-labelledby="lr-ty" style={{ flexWrap: 'wrap' }}>{TYPES.map((t) => <button key={t} type="button" className={f.type === t ? 'on' : ''} aria-pressed={f.type === t} onClick={() => set('type', t)}>{t}</button>)}</div>
               <ErrorText>{errors.type}</ErrorText>
             </div>
-            <div className="fld"><label className="lbl" htmlFor="lr-d">Description <span className="req">*</span></label><textarea className={errors.description ? 'inp err' : 'inp'} id="lr-d" value={f.description} onChange={val('description')} style={{ minHeight: '110px' }}></textarea><span className="hint">One or two sentences on the card.</span><ErrorText>{errors.description}</ErrorText></div>
-            <div className="grid c2" style={{ gap: '20px' }}>
+            <div className="fld"><label className="lbl" htmlFor="lr-d">Description <span className="opt-t">(optional)</span></label><textarea className={errors.description ? 'inp err' : 'inp'} id="lr-d" value={f.description} onChange={val('description')} style={{ minHeight: '110px' }}></textarea><span className="hint">One or two sentences on the card.</span><ErrorText>{errors.description}</ErrorText></div>
+            <div className="grid c2" style={{ gap: '20px', display: 'none' }}>
+              {/* Format and length are no longer shown on the Library card (HSN request); kept hidden so old values survive. */}
               <div className="fld"><label className="lbl" htmlFor="lr-f">Format <span className="opt-t">(optional)</span></label><input className="inp" id="lr-f" value={f.format} placeholder="e.g. PDF + Excel" onChange={val('format')} /></div>
               <div className="fld"><label className="lbl" htmlFor="lr-s">Length <span className="opt-t">(optional)</span></label><input className="inp" id="lr-s" value={f.size} placeholder="e.g. 24 pages, 6 files" onChange={val('size')} /></div>
             </div>

@@ -80,7 +80,6 @@ export function ArHeader({ member = null }: { member?: { name: string; initials:
                 {langOpen && (
                   <span role="menu" aria-label="اللغة" style={{ position: 'absolute', top: '30px', left: 0, zIndex: 30, width: '230px', padding: '6px', borderRadius: '12px', background: '#FFFDF8', border: '1px solid #D9D2C1', boxShadow: '0 8px 24px rgba(19,78,94,.14)', display: 'flex', flexDirection: 'column' }}>
                     <Link role="menuitemradio" aria-checked="false" href={englishFor(pathname)} lang="en" dir="ltr" style={{ display: 'flex', alignItems: 'center', minHeight: '48px', padding: '0 12px', borderRadius: '8px', color: '#17323A', textDecoration: 'none', fontFamily: 'Inter, sans-serif', fontWeight: 600 }}>English</Link>
-                    <span role="menuitemradio" aria-checked="false" aria-disabled="true" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '52px', padding: '0 12px', color: '#17323A' }}><span lang="hi" style={{ fontFamily: "'Noto Sans Devanagari', sans-serif", fontSize: '17px' }}>हिन्दी</span><span style={{ fontSize: '13px', color: '#4A5F63' }}>الترجمة قريبًا</span></span>
                     <span role="menuitemradio" aria-checked="true" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '48px', padding: '0 12px', borderRadius: '8px', background: '#E3F1E4', color: '#0B6B3A', fontWeight: 600 }}>العربية<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
                   </span>
                 )}
@@ -138,7 +137,6 @@ export function ArHeader({ member = null }: { member?: { name: string; initials:
                 <div className="stack g8" style={{ padding: '12px 16px 0' }}>
                   <div className="seg" role="group" aria-label="اللغة">
                     <Link href={englishFor(pathname)} lang="en" dir="ltr" style={{ flex: 1, fontFamily: 'Inter, sans-serif' }}>English</Link>
-                    <button aria-pressed="false" lang="hi" disabled style={{ flex: 1, fontFamily: "'Noto Sans Devanagari', sans-serif" }}>हिन्दी</button>
                     <button className="on" aria-pressed="true" style={{ flex: 1 }}>العربية</button>
                   </div>
                 </div>

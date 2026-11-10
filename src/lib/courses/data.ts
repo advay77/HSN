@@ -144,7 +144,8 @@ export async function getOrCreateEnrollment(memberId: string | number, courseId:
   })
 }
 
-export type QuizResult = { score: number; total: number; passed: boolean; at: string; attempts?: number }
+/** answers = the option picked for each question in the latest attempt (-1 = none); saved from 11 Nov 2026 for the admin quiz results. */
+export type QuizResult = { score: number; total: number; passed: boolean; at: string; attempts?: number; answers?: number[] }
 
 export const completedIds = (e: Enrollment | null): string[] =>
   Array.isArray(e?.completedLessons) ? (e!.completedLessons as string[]) : []

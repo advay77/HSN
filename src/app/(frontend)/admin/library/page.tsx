@@ -20,7 +20,7 @@ export default async function AdminLibraryPage() {
     return {
       id: Number(r.id),
       title: r.title,
-      description: r.description,
+      description: r.description || '',
       type: r.type,
       access: r.access === 'members' ? 'Members' : 'Free',
       source: file?.url ? { label: file.filename || 'File', url: `/admin/files/${file.id}` } : r.externalUrl ? { label: 'Link', url: r.externalUrl } : null,

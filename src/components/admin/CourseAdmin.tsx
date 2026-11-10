@@ -25,7 +25,8 @@ import { AdminTopbar } from './AdminTopbar'
 import { toUploadable } from '@/lib/uploads/client'
 import {
   refsToText,
-  typeOfKind,
+  lessonTypeOf,
+  YOUTUBE_MARK,
   QUIZ_SIZE,
   blankQuestions,
   blankIntro,
@@ -42,8 +43,9 @@ type Tab = 'basics' | 'learn' | 'build' | 'cert' | 'publish'
 type Sel = { m: number; l: number } | null
 
 const LV: Record<string, string> = { Beginner: 'bdg b-beg', Intermediate: 'bdg b-int', Advanced: 'bdg b-adv' }
-const ICON: Record<LessonType, string> = { Slide: String.fromCharCode(9636), Video: '▶', Reading: '≡', Document: String.fromCharCode(9638), Quiz: '?' }
-const IC: Record<LessonType, string> = { Slide: 'cb-ti', Video: 'cb-ti v', Reading: 'cb-ti r', Document: 'cb-ti d', Quiz: 'cb-ti q' }
+const ICON: Record<LessonType, string> = { Slide: String.fromCharCode(9636), Video: '▶', YouTube: '▶', Reading: '≡', Document: String.fromCharCode(9638), Quiz: '?' }
+const IC: Record<LessonType, string> = { Slide: 'cb-ti', Video: 'cb-ti v', YouTube: 'cb-ti v', Reading: 'cb-ti r', Document: 'cb-ti d', Quiz: 'cb-ti q' }
+const TYPE_LABEL: Record<LessonType, string> = { Slide: 'Slide', Video: 'Video file', YouTube: 'YouTube link', Reading: 'Reading', Document: 'Tutorial', Quiz: 'Quiz' }
 const SAMPLE_VERIFY = 'https://healthcaresustainabilitynetwork.com/verify/EXAMPLE'
 const PLAY_ICON =<svg width="44" height="44" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
 const ytId = (v: string) => v.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/)?.[1] ?? (/^[\w-]{11}$/.test(v.trim()) ? v.trim() : null)
@@ -82,13 +84,17 @@ const blankLesson = (type: LessonType): EditorLesson =>
   type === 'Quiz'
     ? { kind: 'quiz', title: 'Module quiz', body: '', video: '', refs: [], qs: blankQuestions() }
     : {
-        kind: type === 'Video' ? 'video' : type === 'Reading' ? 'references' : type === 'Document' ? 'document' : 'text',
-        title: 'New ' + (type === 'Document' ? 'tutorial' : type.toLowerCase()),
+        kind: type === 'Video' || type === 'YouTube' ? 'video' : type === 'Reading' ? 'references' : type === 'Document' ? 'document' : 'text',
+        extra: type === 'YouTube' ? YOUTUBE_MARK : null,
+        title: type === 'Document' ? 'New tutorial' : type === 'YouTube' ? 'New YouTube video' : type === 'Video' ? 'New video' : 'New ' + type.toLowerCase(),
         body: '',
         video: '',
         refs: [],
         qs: [],
       }
+// Every new module: a tutorial file, a YouTube video, then the 5-question quiz.
+const moduleTemplate = (): EditorLesson[] => [blankLesson('Document'), blankLesson('YouTube'), blankLesson('Quiz')]
+const STATUSES: ModuleStatus[] = ['Available', 'Coming soon', 'Hidden']
 
 const listText = (ns: number[]) => (ns.length > 1 ? `slides ${ns.slice(0, -1).join(', ')} and ${ns[ns.length - 1]}` : `slide ${ns[0]}`)
 
@@ -107,6 +113,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
   const [dirty, setDirty] = useState(false)
   const [saved, setSaved] = useState<'' | 'course' | 'lesson'>('')
   const [error, setError] = useState('')
+  const [warning, setWarning] = useState('')
   const [importing, setImporting] = useState<ImportResult | null>(null)
   const [importError, setImportError] = useState('')
   const [busy, setBusy] = useState('')
@@ -120,6 +127,8 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
 
   const mods = f.modules
   const lessonTotal = mods.reduce((a, m) => a + m.lessons.length, 0)
+  // One status for the whole course: setting it updates every module at once.
+  const courseStatus: ModuleStatus | 'Mixed' = mods.length && mods.every((m) => m.status === mods[0]!.status) ? mods[0]!.status : mods.length ? 'Mixed' : 'Available'
   // Modules number on the course page: the admin's own number, else the modules added.
   const modulesShownN = Number(f.modulesShown) >= 1 ? Math.floor(Number(f.modulesShown)) : mods.length
   const pubCount = rows.filter((r) => r.published).length
@@ -127,7 +136,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
   const intro = f.intro ?? blankIntro()
   const isIntro = selL?.m === -1
   const L = selL ? (isIntro ? intro : mods[selL.m]?.lessons[selL.l] ?? null) : null
-  const LT = L ? typeOfKind(L.kind) : null
+  const LT = L ? lessonTypeOf(L) : null
 
   const change = (patch: Partial<EditorCourse>) => {
     setF((x) => ({ ...x, ...patch }))
@@ -161,6 +170,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
         setError(r.error)
         return
       }
+      setWarning(r.warning ?? '')
       setDirty(false)
       setSaved(which)
       if (!f.id) {
@@ -292,8 +302,8 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
     const m = clone()
     m.push({
       title,
-      status: 'Available',
-      lessons: [{ kind: 'document', title, body: '', video: '', refs: [], qs: [], file: r.file }, blankLesson('Quiz')],
+      status: courseStatus === 'Mixed' ? 'Available' : courseStatus,
+      lessons: [{ kind: 'document', title, body: '', video: '', refs: [], qs: [], file: r.file }, blankLesson('YouTube'), blankLesson('Quiz')],
     })
     setMods(m, { m: m.length - 1, l: 0 })
     setOpen((o) => ({ ...o, [m.length - 1]: true }))
@@ -325,7 +335,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
       setBusy('')
       lessons.push(blankLesson('Quiz'))
       const m = clone()
-      m.push({ title: res.fileName.replace(/\.pptx$/i, ''), status: 'Coming soon', lessons })
+      m.push({ title: res.fileName.replace(/\.pptx$/i, ''), status: courseStatus === 'Mixed' ? 'Available' : courseStatus, lessons })
       setMods(m, { m: m.length - 1, l: 0 })
       setOpen((o) => ({ ...o, [m.length - 1]: true }))
       setImporting(null)
@@ -334,8 +344,8 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
 
   const addModule = () => {
     const m = clone()
-    // Every module: a video lesson (YouTube link or uploaded file), then a 5-question quiz.
-    m.push({ title: `Module ${m.length + 1} title`, status: 'Coming soon', lessons: [blankLesson('Video'), blankLesson('Quiz')] })
+    // Every module: a tutorial, a YouTube video, then a 5-question quiz; it takes the course status.
+    m.push({ title: `Module ${m.length + 1} title`, status: courseStatus === 'Mixed' ? 'Available' : courseStatus, lessons: moduleTemplate() })
     setMods(m, { m: m.length - 1, l: 0 })
     setOpen((o) => ({ ...o, [m.length - 1]: true }))
   }
@@ -348,7 +358,8 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
   const pickType = (t: LessonType) => {
     if (!L || t === LT) return
     if (t === 'Quiz') updL({ kind: 'quiz', qs: L.qs.length ? L.qs : blankQuestions() })
-    else if (t === 'Video') updL({ kind: 'video' })
+    else if (t === 'Video') updL({ kind: 'video', extra: null })
+    else if (t === 'YouTube') updL({ kind: 'video', extra: YOUTUBE_MARK, file: null })
     else if (t === 'Reading') updL({ kind: 'references' })
     else if (t === 'Document') updL({ kind: 'document' })
     else updL({ kind: L.image ? 'diagram' : 'text' })
@@ -402,7 +413,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                   <td data-l="Status"><span className={c.published ? 'bdg b-ok' : 'bdg b-reg'}>{c.published ? 'Published' : 'Draft'}</span></td>
                   <td data-l="Learners" className="small strong">{c.learners}</td>
                   <td data-l="Updated" className="small">{c.updated}</td>
-                  <td><button className="btn btn-g btn-sm" onClick={() => go(`/admin/courses?edit=${c.id}`)} aria-label={'Edit ' + (c.title || 'untitled course')}>Edit</button></td>
+                  <td><span className="row g8 nowrap"><button className="btn btn-g btn-sm" onClick={() => go(`/admin/courses?edit=${c.id}`)} aria-label={'Edit ' + (c.title || 'untitled course')}>Edit</button><a className="btn btn-g btn-sm" href={`/admin-preview/${c.id}`} target="_blank" rel="noopener" aria-label={'Preview ' + (c.title || 'untitled course') + ' as a learner'}>Preview</a></span></td>
                 </tr>
               ))}
               {!rows.length && (
@@ -424,7 +435,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
           </nav>
           <div className="cb-tabs" role="tablist">
             {TABS.map(([id, label]) => (
-              <button key={id} className={tab === id ? 'cb-tab on' : 'cb-tab'} role="tab" aria-selected={tab === id} onClick={() => setTab(id)}>{label}{id === 'build' && <> <span className="cnt">{lessonTotal}</span></>}</button>
+              <button key={id} className={tab === id ? 'cb-tab on' : 'cb-tab'} role="tab" aria-selected={tab === id} onClick={() => setTab(id)}>{label}</button>
             ))}
           </div>
 
@@ -600,6 +611,11 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                     <div className="row g12"><button className="btn btn-p btn-sm" onClick={doImport} disabled={pending}>Add as Module {mods.length + 1}</button><button className="btn btn-t btn-sm" onClick={() => setImporting(null)}>Cancel</button></div>
                   </div>
                 )}
+                <div className="cb-status-all card pad stack g8">
+                  <label className="lbl" htmlFor="c-st">Course status</label>
+                  <span className="sel" style={{ maxWidth: '320px' }}><select className="inp" id="c-st" value={courseStatus} onChange={(e) => { const v = e.target.value as ModuleStatus; setMods(mods.map((m) => ({ ...m, status: v }))) }}>{courseStatus === 'Mixed' && <option value="Mixed" disabled>Mixed (pick one)</option>}{STATUSES.map((st) => <option key={st}>{st}</option>)}</select><SelArrow /></span>
+                  <span className="hint">One setting for every module and lesson. <strong>Available</strong>: learners can open the course. <strong>Coming soon</strong>: the course page shows it, but it can't be started yet. <strong>Hidden</strong>: not shown. Click Save course to put it live.</span>
+                </div>
                 <div className="cb-mod">
                   <div className="cb-mod-h">
                     <span className="cb-n">0</span>
@@ -618,7 +634,6 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                       <span className="cb-n">{i + 1}</span>
                       <label className="sr" htmlFor={'mt-' + i}>Module {i + 1} title</label>
                       <input className="inp grow" id={'mt-' + i} value={m.title} onChange={(e) => { const c = clone(); c[i] = { ...c[i]!, title: e.target.value }; setMods(c) }} style={{ minWidth: '160px' }} />
-                      <span className="sel cb-status"><select className="inp" aria-label={'Module ' + (i + 1) + ' status'} value={m.status} onChange={(e) => { const c = clone(); c[i] = { ...c[i]!, status: e.target.value as ModuleStatus }; setMods(c) }}><option>Available</option><option>Coming soon</option><option>Hidden</option></select><SelArrow size={18} /></span>
                       <button className="cb-mini" aria-label={(open[i] ? 'Collapse' : 'Expand') + ' module ' + (i + 1)} aria-expanded={!!open[i]} onClick={() => setOpen((o) => ({ ...o, [i]: !o[i] }))}><Chevron cls={open[i] ? 'cr-up' : ''} /></button>
                       <button className="cb-mini" aria-label={'Delete module ' + (i + 1)} onClick={() => { if (!window.confirm(`Delete module ${i + 1} “${m.title}” and its ${m.lessons.length} lessons?`)) return; const c = clone(); c.splice(i, 1); setMods(c, null) }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B3261E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"></path></svg></button>
                     </div>
@@ -627,12 +642,12 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                         <ol className="cb-rows">
                           {m.lessons.map((l, j) => {
                             const on = !!selL && selL.m === i && selL.l === j
-                            const t = typeOfKind(l.kind)
+                            const t = lessonTypeOf(l)
                             const move = (d: number) => () => { const c = clone(); const arr = c[i]!.lessons; const x = arr[j]!; arr[j] = arr[j + d]!; arr[j + d] = x; setMods(c, { m: i, l: j + d }) }
                             return (
                               <li key={l.id ?? `n-${j}`} className={on ? 'cb-row sel' : 'cb-row'}>
                                 <button className="cb-pick" onClick={() => { setSelL({ m: i, l: j }); setSaved('') }} aria-pressed={on}><span className={IC[t]} aria-hidden="true">{ICON[t]}</span><span className="t">{(j + 1) + '. ' + (l.title || 'Untitled')}</span></button>{' '}
-                                <span className="cb-type">{t}</span>{' '}
+                                <span className="cb-type">{TYPE_LABEL[t]}</span>{' '}
                                 <button className="cb-mini" aria-label={'Move ' + l.title + ' up'} onClick={move(-1)} disabled={j === 0}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="m6 15 6-6 6 6"></path></svg></button>{' '}
                                 <button className="cb-mini" aria-label={'Move ' + l.title + ' down'} onClick={move(1)} disabled={j === m.lessons.length - 1}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>{' '}
                                 <button className="cb-mini" aria-label={'Delete ' + l.title} onClick={() => { const c = clone(); c[i]!.lessons.splice(j, 1); setMods(c, null) }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B3261E" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
@@ -641,10 +656,11 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                           })}
                         </ol>
                         <div className="cb-add"><span className="small muted strong" style={{ alignSelf: 'center' }}>Add:</span>
-                          <button className="btn btn-g btn-sm" onClick={addL(i, 'Slide')}>+ Slide</button>
-                          <button className="btn btn-g btn-sm" onClick={addL(i, 'Video')}>+ Video</button>
-                          <button className="btn btn-g btn-sm" onClick={addL(i, 'Reading')}>+ Reading</button>
                           <button className="btn btn-g btn-sm" onClick={addL(i, 'Document')}>+ Tutorial</button>
+                          <button className="btn btn-g btn-sm" onClick={addL(i, 'YouTube')}>+ YouTube link</button>
+                          <button className="btn btn-g btn-sm" onClick={addL(i, 'Video')}>+ Video file</button>
+                          <button className="btn btn-g btn-sm" onClick={addL(i, 'Slide')}>+ Slide</button>
+                          <button className="btn btn-g btn-sm" onClick={addL(i, 'Reading')}>+ Reading</button>
                           <button className="btn btn-g btn-sm" onClick={addL(i, 'Quiz')}>+ Quiz</button>
                         </div>
                       </>
@@ -663,8 +679,8 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                     <div className="card pad stack g16">
                       <div className="stack g4"><span className="over">{isIntro ? 'Course introduction · before Module 1' : 'Module ' + (selL.m + 1) + ' · Lesson ' + (selL.l + 1) + ' · ' + LT}</span><h3 className="h4" id="le" style={{ margin: 0 }}>{isIntro ? 'Edit introduction' : 'Edit lesson'}</h3></div>
                       {!isIntro && <div className="fld"><span className="lbl" id="lt-l">Lesson type</span>
-                        <div className="seg" role="group" aria-labelledby="lt-l" style={{ maxWidth: '100%', overflowX: 'auto' }}>
-                          {(['Slide', 'Video', 'Reading', 'Document', 'Quiz'] as LessonType[]).map((t) => <button key={t} className={LT === t ? 'on' : ''} aria-pressed={LT === t} onClick={() => pickType(t)}>{t === 'Document' ? 'Tutorial' : t}</button>)}
+                        <div className="seg" role="group" aria-labelledby="lt-l" style={{ maxWidth: '100%', flexWrap: 'wrap' }}>
+                          {(['Document', 'YouTube', 'Video', 'Slide', 'Reading', 'Quiz'] as LessonType[]).map((t) => <button key={t} className={LT === t ? 'on' : ''} aria-pressed={LT === t} onClick={() => pickType(t)}>{t === 'YouTube' ? 'YouTube' : TYPE_LABEL[t]}</button>)}
                         </div>
                       </div>}
                       <div className="fld"><label className="lbl" htmlFor="l-t">Lesson title</label><input className="inp" id="l-t" value={L.title} onChange={(e) => updL({ title: e.target.value })} /></div>
@@ -684,22 +700,22 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                       {LT === 'Reading' && (
                         <div className="fld"><label className="lbl" htmlFor="l-b">Reading text or references</label><textarea className="inp" id="l-b" value={readingText} onChange={(e) => updL({ readingText: e.target.value })} style={{ minHeight: '150px' }}></textarea><span className="hint">One reference per line. A link at the end of a line becomes its web address.</span></div>
                       )}
-                      {(LT === 'Slide' || LT === 'Video') && (
-                        <div className="fld"><label className="lbl" htmlFor="l-b">{isIntro ? 'About this course (shown above the video)' : LT === 'Video' ? 'Text shown above the video' : 'Slide text'}</label><textarea className="inp" id="l-b" value={L.body} onChange={(e) => updL({ body: e.target.value })} style={{ minHeight: '150px' }}></textarea></div>
+                      {(LT === 'Slide' || LT === 'Video' || LT === 'YouTube') && (
+                        <div className="fld"><label className="lbl" htmlFor="l-b">{isIntro ? 'About this course (shown above the video)' : LT === 'Slide' ? 'Slide text' : 'Text shown above the video'}</label><textarea className="inp" id="l-b" value={L.body} onChange={(e) => updL({ body: e.target.value })} style={{ minHeight: '150px' }}></textarea></div>
                       )}
-                      {LT === 'Video' && (
-                        <div className="fld"><label className="lbl" htmlFor="l-v">YouTube link</label><input className="inp" id="l-v" type="url" value={L.video} onChange={(e) => updL({ video: e.target.value })} placeholder="https://www.youtube.com/watch?v=" /><span className="hint">Learners watch it inside the lesson. Or upload a video file below.</span></div>
+                      {(LT === 'YouTube' || (isIntro && LT === 'Video')) && (
+                        <div className="fld"><label className="lbl" htmlFor="l-v">YouTube link</label><input className="inp" id="l-v" type="url" value={L.video} onChange={(e) => updL({ video: e.target.value })} placeholder="https://www.youtube.com/watch?v=" /><span className="hint">Paste the link from YouTube (Unlisted videos work too). Learners watch it inside the lesson.</span></div>
                       )}
                       {LT === 'Video' && (
                         <div className="stack g8">
-                          <span className="lbl">Video file (optional)</span>
+                          <span className="lbl">{isIntro ? 'Video file (optional)' : 'Video file'}</span>
                           {L.file ? (
                             <div className="res"><span className="grow small strong">{L.file.name}</span><button type="button" className="btn btn-t btn-sm" onClick={() => videoInput.current?.click()} disabled={!!busy}>Replace</button><button className="cb-mini" aria-label="Remove video" onClick={() => updL({ file: null })}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
                           ) : (
                             <button type="button" className="btn btn-s btn-sm self-start" onClick={() => videoInput.current?.click()} disabled={!!busy}>Upload a video</button>
                           )}
                           <input ref={videoInput} type="file" accept=".mp4,.m4v,.webm,.mov,video/mp4,video/webm,video/quicktime" className="sr" tabIndex={-1} aria-hidden="true" onChange={(e) => { attachVideo(e.target.files?.[0]); e.target.value = '' }} />
-                          <span className="hint">MP4, up to 50 MB. An uploaded video plays instead of the YouTube link. For long videos, YouTube (Unlisted) is faster for learners and uses less storage.</span>
+                          <span className="hint">MP4, up to 50 MB.{isIntro ? ' An uploaded video plays instead of the YouTube link.' : ''} For long videos, use a YouTube link lesson instead: it is faster for learners.</span>
                         </div>
                       )}
                       {LT === 'Slide' && (
@@ -747,10 +763,10 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
                         <div className="cb-prev-b"><img src="/images/hsn-logo.jpg" alt="" style={{ width: '20px', height: '20px', borderRadius: '4px', objectFit: 'cover' }} />Healthcare Sustainability Network</div>
                         <div className="cb-prev-s">
                           <h4>{L.title}</h4>
-                          {(LT === 'Slide' || LT === 'Video') && <p>{previewBody}</p>}
+                          {(LT === 'Slide' || LT === 'Video' || LT === 'YouTube') && <p>{previewBody}</p>}
                           {LT === 'Reading' && <p>{readingText ? (readingText.length > 220 ? readingText.slice(0, 220) + '…' : readingText) : 'Lesson text appears here.'}</p>}
                           {LT === 'Document' && <p>{L.file ? L.file.name : 'A Word document, PDF, or similar file appears here.'}</p>}
-                          {LT === 'Video' && <PreviewVideo key={(L.file?.url ?? '') + '|' + L.video} file={L.file?.url ?? null} link={L.video} title={L.title} />}
+                          {(LT === 'Video' || LT === 'YouTube') && <PreviewVideo key={(L.file?.url ?? '') + '|' + L.video} file={LT === 'Video' ? L.file?.url ?? null : null} link={LT === 'YouTube' || isIntro ? L.video : ''} title={L.title} />}
                           {LT === 'Slide' && L.image && <img src={L.image.url} alt="" style={{ width: '160px', alignSelf: 'center' }} />}
                           {LT === 'Quiz' && <p className="muted">{qs.length} questions · pass mark {passLabel}</p>}
                         </div>
@@ -767,12 +783,33 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
 
           <div className="row g12 mstack" style={{ paddingTop: '8px', borderTop: '1px solid #D9D2C1' }}>
             <button className="btn btn-p" onClick={() => save('course')} disabled={pending}>Save course</button>
-            {liveHref && <a className="btn btn-s" href={liveHref} target="_blank" rel="noopener">Preview course page</a>}
+            {f.id && <a className="btn btn-s" href={`/admin-preview/${f.id}`} target="_blank" rel="noopener">Preview as a learner</a>}
+            {liveHref && <a className="btn btn-t" href={liveHref} target="_blank" rel="noopener">Course page on website</a>}
             <button className="btn btn-dl" onClick={del} disabled={pending} style={{ marginInlineStart: 'auto' }}>{f.id ? 'Delete course' : 'Discard'}</button>
           </div>
           {error && <div className="note note-err" role="alert"><span>{error}</span></div>}
+          {warning && !error && <div className="note note-warn" role="status" style={{ background: '#FDF3DD', border: '1px solid #E8C877', color: '#5C3D00' }}><span><strong>Note:</strong>{' '}{warning}</span></div>}
           {saved === 'course' && !error && <div className="note note-ok" role="status"><span><strong>Saved.</strong>{' '}{f.published ? 'Changes are live on the course page.' : 'Saved as a draft.'}</span></div>}
         </section>
+        {/* See your courses: open any saved course in the real lesson player, as a learner sees it */}
+        {rows.length > 0 && (
+          <section className="card pad-l stack g16" aria-labelledby="see">
+            <div className="stack g4">
+              <h2 className="h3" id="see" style={{ margin: 0 }}>See Your Courses</h2>
+              <p className="small muted" style={{ margin: 0 }}>Open a saved course exactly as a learner sees it: every lesson, video and quiz. Nothing you do in the preview is saved, and it works for drafts too. Save your changes first.</p>
+            </div>
+            <div className="grid c3 g16">
+              {rows.map((c) => (
+                <article key={c.id} className="card pad stack g8">
+                  <strong>{c.title || 'Untitled course'}</strong>
+                  <span className="small muted">{c.modules}</span>
+                  <span className={c.published ? 'bdg b-ok' : 'bdg b-reg'} style={{ alignSelf: 'flex-start' }}>{c.published ? 'Published' : 'Draft'}</span>
+                  <a className="btn btn-p btn-sm self-start" href={`/admin-preview/${c.id}`} target="_blank" rel="noopener">Preview as a learner</a>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
     </>
   )

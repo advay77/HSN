@@ -29,7 +29,7 @@ export const LibraryResources: CollectionConfig = {
         },
       ],
     },
-    { name: 'description', type: 'textarea', required: true },
+    { name: 'description', type: 'textarea' },
     {
       type: 'row',
       fields: [
