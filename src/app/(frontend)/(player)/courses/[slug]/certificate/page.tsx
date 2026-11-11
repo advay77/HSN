@@ -72,8 +72,8 @@ export default async function CertificatePage({ params }: Props) {
     )
   }
 
-  const id = certificateId(enrollment.id)
   const issued = enrollment.completedAt || enrollment.updatedAt
+  const id = certificateId(enrollment.id, issued)
   const site = (process.env.SITE_URL || 'https://healthcaresustainabilitynetwork.com').replace(/\/$/, '')
   const verifyUrl = `${site}/verify/${id}`
   const qr = await certificateQr(verifyUrl)

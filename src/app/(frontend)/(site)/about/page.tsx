@@ -54,7 +54,8 @@ export default function AboutPage() {
       </section>
 
       {/* Partners */}
-      <section className="sec" aria-labelledby="partners">
+      {/* No top padding: the gap above Our Partners matches the gap between the boxes above it (HSN request). */}
+      <section className="sec" aria-labelledby="partners" style={{ paddingTop: '0' }}>
         <div className="wrap stack g48">
           <div className="stack g16 center-head">
             <h2 className="sec-title" id="partners">Our Partners</h2>

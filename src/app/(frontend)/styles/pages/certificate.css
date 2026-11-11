@@ -17,9 +17,9 @@
 
 /* Left band: the healthcare tree in the middle, date of award at the foot */
 .cert-side{position:relative;background:linear-gradient(180deg,#F4F1E7,#ECE7D9);display:flex;flex-direction:column;align-items:center;border-right:calc(var(--u)*1) solid #DCD5C2}
-.cert-tree{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(var(--u)*258);height:auto;display:block}
+.cert-tree{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(var(--u)*206);height:auto;display:block}
 .cert-date{position:relative;z-index:1;margin-top:auto;margin-bottom:calc(var(--u)*62);display:flex;flex-direction:column;align-items:center;text-align:center;width:calc(var(--u)*200)}
-.cert-date b{font-family:'Playfair Display',Georgia,serif;font-size:calc(var(--u)*18);font-weight:600;color:#17323A;padding-bottom:calc(var(--u)*8);border-bottom:calc(var(--u)*1.5) solid #8A948F;width:100%}
+.cert-date b{font-family:Montserrat,Inter,sans-serif;font-size:calc(var(--u)*17);font-weight:600;letter-spacing:.01em;color:#17323A;padding-bottom:calc(var(--u)*8);border-bottom:calc(var(--u)*1.5) solid #8A948F;width:100%}
 .cert-date span{font-size:calc(var(--u)*12.5);color:#5D6B67;margin-top:calc(var(--u)*7);letter-spacing:.04em}
 
 /* Right side: the award */
@@ -28,11 +28,11 @@
 .cert-gl path{fill:none;stroke:#0B6B3A;stroke-width:.6;opacity:.07}
 .cert-main>*:not(.cert-gl){position:relative;z-index:1}
 .cert-logo{height:calc(var(--u)*100);width:auto;display:block;margin-left:calc(var(--u)*-8)}
-.cert-k{margin-top:calc(var(--u)*34);font-family:Cinzel,'Times New Roman',serif;font-weight:700;font-size:calc(var(--u)*22);letter-spacing:.14em;text-transform:uppercase;color:#134E5E}
-.cert-pre{margin-top:calc(var(--u)*20);font-family:'EB Garamond',Georgia,serif;font-style:italic;font-size:calc(var(--u)*18);color:#4A5A57}
+.cert-k{margin-top:calc(var(--u)*34);font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:calc(var(--u)*25);letter-spacing:.05em;text-transform:uppercase;color:#134E5E}
+.cert-pre{margin-top:calc(var(--u)*18);font-family:'EB Garamond',Georgia,serif;font-style:italic;font-size:calc(var(--u)*22);color:#3F504D}
 .cert-name{margin-top:calc(var(--u)*4);font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:calc(var(--u)*48);line-height:1.12;color:#0B6B3A;max-width:100%;overflow-wrap:anywhere}
-.cert-s{margin-top:calc(var(--u)*16);font-family:'EB Garamond',Georgia,serif;font-style:italic;font-size:calc(var(--u)*18);color:#4A5A57}
-.cert-c{margin-top:calc(var(--u)*4);font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:calc(var(--u)*26);line-height:1.28;color:#17323A;max-width:calc(var(--u)*600)}
+.cert-s{margin-top:calc(var(--u)*14);font-family:'EB Garamond',Georgia,serif;font-style:italic;font-size:calc(var(--u)*22);color:#3F504D}
+.cert-c{margin-top:calc(var(--u)*4);font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:calc(var(--u)*26);line-height:1.28;color:#1C6E8A;max-width:calc(var(--u)*600)}
 .cert-foot{margin-top:auto;width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:calc(var(--u)*24)}
 .cert-ver{display:flex;align-items:flex-end;gap:calc(var(--u)*14);min-width:0}
 .cert-qr{flex:none;display:block;width:calc(var(--u)*92);height:calc(var(--u)*92);background:#FFFFFF;padding:calc(var(--u)*4);border:calc(var(--u)*1) solid #DCD5C2}

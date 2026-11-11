@@ -41,7 +41,7 @@ export function CertificateSheet({ name, course, issued, id, qr, issuer }: Props
   return (
     <CertificateFit label={`Certificate of completion: ${course}, awarded to ${name}`}>
       {/* Classic certificate type and the script for the digital signature (React loads it once). */}
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&family=Playfair+Display:wght@600;700&display=swap" precedence="default" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&family=Playfair+Display:wght@600;700&display=swap" precedence="default" />
       <div className="cert-sheet">
         <aside className="cert-side">
           <img className="cert-tree" src="/images/certificate/hsn-tree.png" alt="" aria-hidden="true" />
