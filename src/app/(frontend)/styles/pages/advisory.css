@@ -5,3 +5,12 @@
   .adv-person{flex-direction:column}
   .adv-photo{width:min(100%,280px);height:auto;aspect-ratio:4/5}
 }
+/* Long advisor bios: first paragraph shown, the rest behind "Read more". */
+.adv-more summary{list-style:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer;color:#0B6B3A;font-weight:600;min-height:44px}
+.adv-more summary::-webkit-details-marker{display:none}
+.adv-more summary:hover{text-decoration:underline}
+.adv-more .adv-less-t{display:none}
+.adv-more[open] .adv-more-t{display:none}
+.adv-more[open] .adv-less-t{display:inline}
+.adv-more[open] summary svg{transform:rotate(180deg)}
+.adv-more[open] summary{margin-bottom:12px}

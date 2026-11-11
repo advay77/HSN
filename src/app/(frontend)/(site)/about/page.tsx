@@ -3,6 +3,8 @@ import React from 'react'
 
 import '../../styles/pages/about.css'
 
+import { MatchHeight } from '@/components/site/MatchHeight'
+
 export const metadata = { title: 'About Us' }
 
 export default function AboutPage() {
@@ -11,7 +13,7 @@ export default function AboutPage() {
       {/* Intro */}
       <section className="sec" style={{ paddingTop: '48px', paddingBottom: '0' }}>
         <div className="wrap stack g24">
-          <div className="green-box light-box">
+          <div className="green-box light-box" data-about-box>
             <h1 className="sec-title">About Us</h1>
             <p className="box-text">The Healthcare Sustainability Network (HSN) is a dedicated collective of healthcare professionals, quality managers, clinicians, and health system administrators committed to advancing sustainable practices, green operations, and decarbonization across the healthcare sector.</p>
           </div>
@@ -41,12 +43,13 @@ export default function AboutPage() {
       </section>
 
       {/* Team */}
-      <section className="sec" aria-labelledby="team" style={{ background: 'linear-gradient(160deg, #E3F1E4 0%, #DDF0F6 100%)' }}>
-        <div className="wrap stack g48">
-          <div className="stack g16 center-head">
+      {/* Same compact light box as About Us (HSN request). */}
+      <section className="sec-sm" aria-labelledby="team" style={{ paddingTop: '0' }}>
+        <div className="wrap">
+          <MatchHeight source="[data-about-box]" className="green-box light-box team-box">
             <h2 className="sec-title" id="team">Our Team</h2>
-            <p className="lead muted">Our network is driven by experienced healthcare quality leaders, clinical governance specialists, environmental health advisors, and sustainability champions with deep expertise across healthcare systems.</p>
-          </div>
+            <p className="box-text">Our network is driven by experienced healthcare quality leaders, clinical governance specialists, environmental health advisors, and sustainability champions with deep expertise across healthcare systems.</p>
+          </MatchHeight>
         </div>
       </section>
 

@@ -11,3 +11,6 @@
 .pg main .center-head p{text-align:center;text-align-last:center;max-width:960px;margin-inline:auto}
 .pg .light-box .box-text{color:#17323A}
 .pg .light-box .box-body{color:#4A5F63}
+
+/* Our Team box matches the About Us box height; keep its text centred in the extra space. */
+.team-box{justify-content:center}
