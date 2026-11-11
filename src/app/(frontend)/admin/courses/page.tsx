@@ -7,6 +7,7 @@ import '@/app/(frontend)/styles/pages/admin-courses.css'
 import { CourseAdmin } from '@/components/admin/CourseAdmin'
 import { blankCourse } from '@/components/admin/courseTypes'
 import { requireAdmin } from '@/lib/admin/auth'
+import { getCourseFeedbackSummary } from '@/lib/admin/courseFeedback'
 import { getCourseForEditor, listCourses } from '@/lib/admin/courses'
 
 export const metadata = { title: 'Courses' }
@@ -17,5 +18,6 @@ export default async function AdminCoursesPage({ searchParams }: { searchParams:
   const rows = await listCourses()
   const editId = sp.new ? null : Number(sp.edit) || rows[0]?.id || null
   const initial = (editId && (await getCourseForEditor(editId))) || blankCourse()
-  return <CourseAdmin key={initial.id ?? 'new'} rows={rows} initial={initial} adminInitial={admin.initial} />
+  const feedback = await getCourseFeedbackSummary(initial.id)
+  return <CourseAdmin key={initial.id ?? 'new'} rows={rows} initial={initial} adminInitial={admin.initial} feedback={feedback} />
 }

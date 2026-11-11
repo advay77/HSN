@@ -92,6 +92,9 @@ export default async function CoursePage({ params }: Props) {
     : `Score at least ${course.certificate?.passMark ?? 80}%.${course.certificate?.retakes !== false ? ' You can retake it.' : ''}`
   const issuer = course.certificate?.issuer || 'Healthcare Sustainability Network'
   const audienceParas = (course.targetAudience || '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
+  // One group per line ("Physicians", "Nurses", …) shows as a grid of cards; long sentences stay paragraphs.
+  const audienceItems = (course.targetAudience || '').split('\n').map((p) => p.trim().replace(/^[-•*]\s*/, '')).filter(Boolean)
+  const audienceAsList = audienceItems.length > 1 && audienceItems.every((a) => a.length <= 80)
   // Example certificate: its QR opens the public verify page.
   const sampleVerify = `${(process.env.SITE_URL || 'https://healthcaresustainabilitynetwork.com').replace(/\/$/, '')}/verify/EXAMPLE`
   const sampleQr = certOn ? await certificateQr(sampleVerify) : ''
@@ -133,7 +136,7 @@ export default async function CoursePage({ params }: Props) {
         </div>
       </section>
       {/* Learning outcomes */}
-      {((course.outcomes?.length ?? 0) > 0 || audienceParas.length > 0) && (
+      {((course.outcomes?.length ?? 0) > 0 || audienceItems.length > 0) && (
         <section className="sec bg-surface" aria-labelledby="lo">
           <div className="wrap stack g32">
             <div className="stack g12">
@@ -147,10 +150,18 @@ export default async function CoursePage({ params }: Props) {
                 ))}
               </ul>
             )}
-            {audienceParas.length > 0 && (
-              <div className="stack g12">
-                <h3 className="h3" style={{ margin: 0 }}>Target Audience</h3>
-                {audienceParas.map((p, i) => <p key={i} className="lead" style={{ margin: 0, whiteSpace: 'pre-line' }}>{p}</p>)}
+            {audienceItems.length > 0 && (
+              <div className="stack g20" style={{ paddingTop: '16px' }}>
+                <h2 className="sec-title" id="ta">Target Audience</h2>
+                {audienceAsList ? (
+                  <ul className="cr-aud" aria-labelledby="ta">
+                    {audienceItems.map((a, i) => (
+                      <li key={i}><span className="cr-aud-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"></path></svg></span><span>{a}</span></li>
+                    ))}
+                  </ul>
+                ) : (
+                  audienceParas.map((p, i) => <p key={i} className="lead" style={{ margin: 0, whiteSpace: 'pre-line' }}>{p}</p>)
+                )}
               </div>
             )}
           </div>

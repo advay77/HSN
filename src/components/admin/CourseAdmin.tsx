@@ -18,8 +18,10 @@ import {
   uploadTutorialAction,
   uploadVideoAction,
 } from '@/app/(frontend)/admin/courses/actions'
+import type { CourseFeedbackSummary } from '@/lib/admin/courseFeedback'
 import type { ImportResult } from '@/lib/admin/pptx'
 import { CertificateSheet } from '@/components/courses/CertificateSheet'
+import { CourseFeedbackTab } from './CourseFeedbackTab'
 import { CourseTagRow, OpenAccessIcon, PaidAccessIcon, RegistrationIcon } from '@/components/courses/CourseTags'
 import { AdminTopbar } from './AdminTopbar'
 import { toUploadable } from '@/lib/uploads/client'
@@ -39,7 +41,7 @@ import {
   type Retakes,
 } from './courseTypes'
 
-type Tab = 'basics' | 'learn' | 'build' | 'cert' | 'publish'
+type Tab = 'basics' | 'learn' | 'build' | 'cert' | 'feedback' | 'publish'
 type Sel = { m: number; l: number } | null
 
 const LV: Record<string, string> = { Beginner: 'bdg b-beg', Intermediate: 'bdg b-int', Advanced: 'bdg b-adv' }
@@ -98,7 +100,7 @@ const STATUSES: ModuleStatus[] = ['Available', 'Coming soon', 'Hidden']
 
 const listText = (ns: number[]) => (ns.length > 1 ? `slides ${ns.slice(0, -1).join(', ')} and ${ns[ns.length - 1]}` : `slide ${ns[0]}`)
 
-export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]; initial: EditorCourse; adminInitial: string }) {
+export function CourseAdmin({ rows, initial, adminInitial, feedback = null }: { rows: CourseRow[]; initial: EditorCourse; adminInitial: string; feedback?: CourseFeedbackSummary | null }) {
   const router = useRouter()
   const [f, setF] = useState<EditorCourse>(initial)
   const [tab, setTab] = useState<Tab>('basics')
@@ -383,6 +385,7 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
     ['learn', 'What you’ll learn'],
     ['build', 'Modules & lessons'],
     ['cert', 'Certificate'],
+    ['feedback', 'Feedback'],
     ['publish', 'Publishing'],
   ]
   const passOpts = PASS.some(([v]) => v === f.certPass) ? PASS : [...PASS, [f.certPass, `${f.certPass}%`] as [number, string]]
@@ -528,6 +531,9 @@ export function CourseAdmin({ rows, initial, adminInitial }: { rows: CourseRow[]
               </aside>
             </div>
           )}
+
+          {/* Feedback: the built-in course feedback form and this course's answers */}
+          {tab === 'feedback' && <CourseFeedbackTab feedback={feedback} saved={!!f.id} />}
 
           {/* Certificate */}
           {tab === 'cert' && (
