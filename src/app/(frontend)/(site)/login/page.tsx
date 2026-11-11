@@ -2,6 +2,8 @@
 import { redirect } from 'next/navigation'
 import React from 'react'
 
+import '../../styles/pages/login.css'
+
 import { googleConfigured } from '@/lib/auth/google'
 import { safeNext } from '@/lib/auth/redirect'
 import { getCurrentMember } from '@/lib/auth/session'
@@ -26,16 +28,16 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <main className="sec" style={{ paddingTop: '56px' }}>
       <div className="wrap split" style={{ alignItems: 'stretch', maxWidth: '1200px' }}>
-        <div className="bg-green tabup stack g24" style={{ borderRadius: '24px', padding: '48px', position: 'relative', overflow: 'hidden', justifyContent: 'space-between' }}>
-          <svg width="360" height="360" viewBox="0 0 24 24" fill="none" stroke="#4FAE4E" strokeWidth=".5" strokeLinecap="round" aria-hidden="true" style={{ position: 'absolute', insetInlineEnd: '-60px', bottom: '-60px', opacity: 0.6 }}><path d="M5 19c0-8 6-14 15-14 0 9-6 15-14 15"></path><path d="M5 19 13 11"></path></svg>
+        {/* Left panel: photo of a green care team under a dark green wash, then the three reasons to log in (HSN request). */}
+        <div className="login-art tabup">
           <div className="stack g16" style={{ position: 'relative' }}>
-            <span className="over">Member area</span>
-            <h2 className="h1">Collaborating for a Green and Healthy Future.</h2>
+            <span className="over" style={{ color: '#BFE6C8', letterSpacing: '.18em' }}>Course Enrollment</span>
+            <h2 className="h1" style={{ color: '#FFFFFF' }}>Your Healthcare Sustainability Learning Journey Starts Here.</h2>
           </div>
-          <ul className="ticks" style={{ position: 'relative', color: '#E3F1E4' }}>
-            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Continue your courses where you left off</li>
-            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Track your registrations and case study submissions</li>
-            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Your accessibility settings follow you to any device</li>
+          <ul className="login-perks">
+            <li><span className="login-tick" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5 9-10"></path></svg></span><span><b>Instant, Passwordless Login</b><span>Get in with a secure one-time email code</span></span></li>
+            <li><span className="login-tick" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5 9-10"></path></svg></span><span><b>Seamless Progress Sync</b><span>Switch between devices effortlessly</span></span></li>
+            <li><span className="login-tick" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5 9-10"></path></svg></span><span><b>Continue your courses where you left off</b></span></li>
           </ul>
         </div>
         <LoginForm

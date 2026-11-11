@@ -19,7 +19,7 @@
 .cert-side{position:relative;background:linear-gradient(180deg,#F4F1E7,#ECE7D9);display:flex;flex-direction:column;align-items:center;border-right:calc(var(--u)*1) solid #DCD5C2}
 .cert-tree{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(var(--u)*258);height:auto;display:block}
 .cert-date{position:relative;z-index:1;margin-top:auto;margin-bottom:calc(var(--u)*62);display:flex;flex-direction:column;align-items:center;text-align:center;width:calc(var(--u)*200)}
-.cert-date b{font-size:calc(var(--u)*17);font-weight:700;color:#17323A;padding-bottom:calc(var(--u)*8);border-bottom:calc(var(--u)*1.5) solid #8A948F;width:100%}
+.cert-date b{font-family:'Playfair Display',Georgia,serif;font-size:calc(var(--u)*18);font-weight:600;color:#17323A;padding-bottom:calc(var(--u)*8);border-bottom:calc(var(--u)*1.5) solid #8A948F;width:100%}
 .cert-date span{font-size:calc(var(--u)*12.5);color:#5D6B67;margin-top:calc(var(--u)*7);letter-spacing:.04em}
 
 /* Right side: the award */
@@ -28,24 +28,21 @@
 .cert-gl path{fill:none;stroke:#0B6B3A;stroke-width:.6;opacity:.07}
 .cert-main>*:not(.cert-gl){position:relative;z-index:1}
 .cert-logo{height:calc(var(--u)*100);width:auto;display:block;margin-left:calc(var(--u)*-8)}
-.cert-k{margin-top:calc(var(--u)*36);font-family:Montserrat,Inter,sans-serif;font-weight:700;font-size:calc(var(--u)*19);letter-spacing:.24em;text-transform:uppercase;color:#134E5E}
-.cert-pre{margin-top:calc(var(--u)*22);font-size:calc(var(--u)*15);color:#5D6B67}
-.cert-name{margin-top:calc(var(--u)*6);font-family:Aptos,'Segoe UI',Montserrat,Inter,sans-serif;font-weight:700;font-size:calc(var(--u)*46);line-height:1.12;color:#0B6B3A;max-width:100%;overflow-wrap:anywhere}
-.cert-s{margin-top:calc(var(--u)*18);font-size:calc(var(--u)*15);color:#5D6B67}
-.cert-c{margin-top:calc(var(--u)*6);font-family:Aptos,'Segoe UI',Montserrat,Inter,sans-serif;font-weight:700;font-size:calc(var(--u)*25);line-height:1.28;color:#17323A;max-width:calc(var(--u)*600)}
+.cert-k{margin-top:calc(var(--u)*34);font-family:Cinzel,'Times New Roman',serif;font-weight:700;font-size:calc(var(--u)*22);letter-spacing:.14em;text-transform:uppercase;color:#134E5E}
+.cert-pre{margin-top:calc(var(--u)*20);font-family:'EB Garamond',Georgia,serif;font-style:italic;font-size:calc(var(--u)*18);color:#4A5A57}
+.cert-name{margin-top:calc(var(--u)*4);font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:calc(var(--u)*48);line-height:1.12;color:#0B6B3A;max-width:100%;overflow-wrap:anywhere}
+.cert-s{margin-top:calc(var(--u)*16);font-family:'EB Garamond',Georgia,serif;font-style:italic;font-size:calc(var(--u)*18);color:#4A5A57}
+.cert-c{margin-top:calc(var(--u)*4);font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:calc(var(--u)*26);line-height:1.28;color:#17323A;max-width:calc(var(--u)*600)}
 .cert-foot{margin-top:auto;width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:calc(var(--u)*24)}
 .cert-ver{display:flex;align-items:flex-end;gap:calc(var(--u)*14);min-width:0}
 .cert-qr{flex:none;display:block;width:calc(var(--u)*92);height:calc(var(--u)*92);background:#FFFFFF;padding:calc(var(--u)*4);border:calc(var(--u)*1) solid #DCD5C2}
 .cert-qr svg{display:block;width:100%;height:100%}
 .cert-ver-t{display:flex;flex-direction:column;gap:calc(var(--u)*3);font-size:calc(var(--u)*11.5);line-height:1.35;color:#5D6B67}
 .cert-ver-t b{color:#17323A;font-weight:600;letter-spacing:.03em}
-.cert-ver-t a{color:#1C6E8A;font-weight:600;text-decoration:none;font-size:calc(var(--u)*11);white-space:nowrap}
-.cert-sign{flex:none;width:calc(var(--u)*232);display:flex;flex-direction:column;align-items:center;text-align:center}
-/* Dr. Nishant Jaiswal's signature (scanned), standing on the signature line */
-.cert-sig{display:flex;justify-content:center;align-items:flex-end;padding-bottom:calc(var(--u)*4);border-bottom:calc(var(--u)*1.5) solid #8A948F;width:100%;height:calc(var(--u)*104)}
-.cert-sig img{display:block;height:100%;width:auto}
-.cert-sign b{margin-top:calc(var(--u)*8);font-size:calc(var(--u)*14.5);color:#17323A}
-.cert-sign>span:last-child{margin-top:calc(var(--u)*3);font-size:calc(var(--u)*12);color:#5D6B67}
+.cert-sign{flex:none;width:calc(var(--u)*290);display:flex;flex-direction:column;align-items:center;text-align:center}
+/* Digital signature: the full name in script, in dark ink, standing on the signature line */
+.cert-sig{font-family:'Great Vibes','Brush Script MT',cursive;font-size:calc(var(--u)*38);line-height:1.15;color:#1F2D6B;white-space:nowrap;padding:0 calc(var(--u)*6) calc(var(--u)*6);border-bottom:calc(var(--u)*1.5) solid #8A948F;width:100%}
+.cert-sign>span:last-child{margin-top:calc(var(--u)*8);font-family:'EB Garamond',Georgia,serif;font-size:calc(var(--u)*14.5);line-height:1.35;color:#4A5A57}
 
 @media (max-width:720px){
   .cert-tip{text-align:left}

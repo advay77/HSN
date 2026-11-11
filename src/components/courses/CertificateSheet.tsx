@@ -37,10 +37,11 @@ function Guilloche() {
   )
 }
 
-export function CertificateSheet({ name, course, issued, id, verifyUrl, qr, issuer }: Props) {
-  const shortUrl = verifyUrl.replace(/^https?:\/\//, '')
+export function CertificateSheet({ name, course, issued, id, qr, issuer }: Props) {
   return (
     <CertificateFit label={`Certificate of completion: ${course}, awarded to ${name}`}>
+      {/* Classic certificate type and the script for the digital signature (React loads it once). */}
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&family=Playfair+Display:wght@600;700&display=swap" precedence="default" />
       <div className="cert-sheet">
         <aside className="cert-side">
           <img className="cert-tree" src="/images/certificate/hsn-tree.png" alt="" aria-hidden="true" />
@@ -61,14 +62,14 @@ export function CertificateSheet({ name, course, issued, id, verifyUrl, qr, issu
             <div className="cert-ver">
               <span className="cert-qr" dangerouslySetInnerHTML={{ __html: qr }} />
               <span className="cert-ver-t">
-                <span>To verify, scan the code or visit</span>
-                <a href={verifyUrl}>{shortUrl.replace(/\/[^/]+$/, '')}</a>
-                <span>Certificate ID: <b>{id}</b></span>
+                <span>Scan the code to verify this certificate</span>
+                <span>Certificate ID</span>
+                <b>{id}</b>
               </span>
             </div>
             <div className="cert-sign">
-              <span className="cert-sig"><img src="/images/certificate/signature-nishant.png" alt="Signature of Dr. Nishant Jaiswal" /></span>
-              <b>Dr. Nishant Jaiswal, PhD</b>
+              {/* Digital signature: the full name in script (HSN request); the printed name below it was removed. */}
+              <span className="cert-sig">Dr. Nishant Jaiswal</span>
               <span>Founder<br />{issuer}</span>
             </div>
           </div>

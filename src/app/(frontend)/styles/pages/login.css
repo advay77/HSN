@@ -1,0 +1,11 @@
+/* Log in / sign up: left panel with the care-team photo under a dark green wash. */
+.login-art{position:relative;overflow:hidden;border-radius:24px;padding:48px;display:flex;flex-direction:column;justify-content:space-between;gap:32px;min-height:560px;color:#FFFFFF;
+  background:linear-gradient(180deg,rgba(8,64,38,.94) 0%,rgba(8,64,38,.78) 38%,rgba(8,64,38,.55) 62%,rgba(6,48,29,.92) 100%),url(/images/login-care-team.webp) 62% center/cover no-repeat,#0B6B3A}
+.login-art .h1{font-size:44px;line-height:52px}
+.login-perks{list-style:none;margin:0;padding:18px 20px;display:flex;flex-direction:column;gap:14px;border:1.5px solid rgba(123,211,137,.75);border-radius:14px;background:rgba(6,48,29,.55);backdrop-filter:blur(2px)}
+.login-perks li{display:flex;align-items:flex-start;gap:12px}
+.login-perks li>span:last-child{display:flex;flex-direction:column;gap:2px}
+.login-perks b{font-size:17px;line-height:24px;color:#FFFFFF}
+.login-perks li>span:last-child>span{font-size:15px;line-height:22px;color:#DCEFE3}
+.login-tick{flex:none;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin-top:1px;border-radius:5px;background:#4FAE4E;color:#FFFFFF}
+@container (max-width:1100px){.login-art{padding:36px;min-height:500px}.login-art .h1{font-size:36px;line-height:44px}}
