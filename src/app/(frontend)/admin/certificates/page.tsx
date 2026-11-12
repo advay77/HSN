@@ -3,7 +3,8 @@ import React from 'react'
 import { AdminTopbar } from '@/components/admin/AdminTopbar'
 import { listCompletions } from '@/lib/admin/certificates'
 import { requireAdmin } from '@/lib/admin/auth'
-import { formatIssuedAt } from '@/lib/courses/certificate'
+import { RestartNumbering } from '@/components/admin/RestartNumbering'
+import { formatIssuedAt, nextCertificateNumber } from '@/lib/courses/certificate'
 
 export const metadata = { title: 'Certificates' }
 export const dynamic = 'force-dynamic'
@@ -11,6 +12,7 @@ export const dynamic = 'force-dynamic'
 export default async function AdminCertificatesPage() {
   const admin = await requireAdmin('/admin/certificates')
   const { rows, generated, completed } = await listCompletions()
+  const next = await nextCertificateNumber()
 
   return (
     <>
@@ -24,6 +26,7 @@ export default async function AdminCertificatesPage() {
         }
       />
       <main className="amain">
+        <RestartNumbering next={next} />
         {rows.length > 0 ? (
           <div className="card" style={{ overflowX: 'auto', position: 'relative' }}>
             <table className="atbl m" style={{ minWidth: '980px' }}>

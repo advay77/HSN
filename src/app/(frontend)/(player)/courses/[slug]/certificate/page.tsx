@@ -73,7 +73,11 @@ export default async function CertificatePage({ params }: Props) {
   }
 
   const issued = enrollment.completedAt || enrollment.updatedAt
-  const id = certificateId(enrollment.id, issued)
+  // Every finished course has a certificate number; one finished before numbers existed gets the next one now.
+  const numbered = enrollment.completedAt && (enrollment.certificateNo === null || enrollment.certificateNo === undefined)
+    ? await payload.update({ collection: 'enrollments', id: enrollment.id, data: {}, overrideAccess: true, depth: 0 })
+    : enrollment
+  const id = certificateId(numbered)
   const site = (process.env.SITE_URL || 'https://healthcaresustainabilitynetwork.com').replace(/\/$/, '')
   const verifyUrl = `${site}/verify/${id}`
   const qr = await certificateQr(verifyUrl)

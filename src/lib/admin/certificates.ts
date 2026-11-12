@@ -40,7 +40,7 @@ export async function listCompletions(): Promise<{ rows: CompletionRow[]; genera
       course: course?.title || 'Course removed',
       when,
       generated,
-      certificateId: generated ? certificateId(enrollment.id, enrollment.completedAt!) : null,
+      certificateId: generated ? certificateId(enrollment) : null,
     }]
   })
   return { rows, generated: rows.filter((row) => row.generated).length, completed: rows.length }

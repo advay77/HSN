@@ -1,6 +1,17 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
 import { enrollmentActivity, membershipActivity, registrationActivity } from './hooks/activity'
+
+// Certificate numbers: when a course is completed, the enrollment gets the next number (highest so far + 1).
+// Numbers start again at 1 after an admin restarts the numbering (Admin → Certificates), which sets earlier ones to 0.
+const assignCertificateNo: CollectionBeforeChangeHook = async ({ data, originalDoc, req }) => {
+  const completed = data.completedAt ?? originalDoc?.completedAt
+  const current = data.certificateNo ?? originalDoc?.certificateNo
+  if (!completed || (current !== null && current !== undefined)) return data
+  const top = await req.payload.find({ collection: 'enrollments', where: { certificateNo: { greater_than: 0 } }, sort: '-certificateNo', limit: 1, depth: 0, req, overrideAccess: true })
+  data.certificateNo = (top.docs[0]?.certificateNo ?? 0) + 1
+  return data
+}
 
 // Course progress per member: which lessons are done, quiz results, completion.
 export const Enrollments: CollectionConfig = {
@@ -18,8 +29,15 @@ export const Enrollments: CollectionConfig = {
     { name: 'progress', label: 'Progress (%)', type: 'number', defaultValue: 0 },
     { name: 'savedForLater', type: 'checkbox', defaultValue: false },
     { name: 'completedAt', type: 'date' },
+    {
+      name: 'certificateNo',
+      label: 'Certificate number',
+      type: 'number',
+      index: true,
+      admin: { readOnly: true, description: 'Given automatically when the course is completed: 1, 2, 3… (0 = issued before the numbering was restarted).' },
+    },
   ],
-  hooks: { afterChange: [enrollmentActivity] },
+  hooks: { beforeChange: [assignCertificateNo], afterChange: [enrollmentActivity] },
   timestamps: true,
 }
 

@@ -3,7 +3,6 @@ import Link from 'next/link'
 import React from 'react'
 
 import { CONTACT_EMAIL } from '@/lib/site'
-import { CopyEmailButton } from './CopyEmailButton'
 
 import '../../styles/pages/contact.css'
 
@@ -22,10 +21,6 @@ export default function ContactPage() {
             <span className="ic ic-g"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg></span>
             <h2 className="h4" style={{ margin: '0' }}>Email Us</h2>
             <a className="ct-mail" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
-            <div className="ct-row">
-              <a className="btn btn-p" href={`mailto:${CONTACT_EMAIL}?subject=Contact%20HSN`}>Send an email</a>
-              <CopyEmailButton email={CONTACT_EMAIL} />
-            </div>
           </div>
         </div>
       </section>

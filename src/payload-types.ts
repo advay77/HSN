@@ -528,6 +528,10 @@ export interface Enrollment {
   progress?: number | null;
   savedForLater?: boolean | null;
   completedAt?: string | null;
+  /**
+   * Given automatically when the course is completed: 1, 2, 3… (0 = issued before the numbering was restarted).
+   */
+  certificateNo?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1143,6 +1147,7 @@ export interface EnrollmentsSelect<T extends boolean = true> {
   progress?: T;
   savedForLater?: T;
   completedAt?: T;
+  certificateNo?: T;
   updatedAt?: T;
   createdAt?: T;
 }
