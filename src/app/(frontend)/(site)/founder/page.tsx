@@ -1,19 +1,41 @@
-// Founder page. HSN will share the founder's details; until then it shows the heading and a short note.
+// Our Team. The nav label is "Our Team"; the address stays /founder. People are managed in Admin → Our Team.
+import type { Metadata } from 'next'
 import React from 'react'
 
 import '../../styles/pages/about.css'
+import '../../styles/pages/team.css'
 
-export const metadata = { title: 'Founder' }
+import { TeamBoard, type TeamPerson } from '@/components/site/TeamBoard'
+import { getPayloadClient } from '@/lib/payload'
+import type { Media } from '@/payload-types'
 
-export default function FounderPage() {
+export const metadata: Metadata = {
+  title: 'Our Team',
+  description: 'The people of the Healthcare Sustainability Network.',
+}
+export const revalidate = 60
+
+export default async function FounderPage() {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({ collection: 'team-members', where: { published: { equals: true } }, sort: 'sort', pagination: false, depth: 1 })
+  const people: TeamPerson[] = docs.map((m) => {
+    const photo = m.photo && typeof m.photo === 'object' ? (m.photo as Media).url : null
+    return { id: m.id, name: m.name, role: m.role || '', bio: m.bio || '', photo: photo || null }
+  })
+
   return (
     <main>
-      <section className="sec" style={{ paddingTop: '48px' }}>
+      <section className="sec" style={{ paddingTop: '48px', paddingBottom: '0' }}>
         <div className="wrap">
           <div className="green-box light-box">
-            <h1 className="sec-title">Founder</h1>
-            <p className="box-text">The founder&apos;s profile will be added here soon.</p>
+            <h1 className="sec-title">Our Team</h1>
           </div>
+        </div>
+      </section>
+
+      <section className="sec">
+        <div className="wrap">
+          {people.length > 0 ? <TeamBoard people={people} /> : <p className="muted">Team members will be added soon.</p>}
         </div>
       </section>
     </main>

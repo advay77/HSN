@@ -15,6 +15,7 @@ import * as migration_20261111_160000_library_description_optional from './20261
 import * as migration_20261112_100000_certificate_numbers from './20261112_100000_certificate_numbers';
 import * as migration_20261113_100000_case_category_optional from './20261113_100000_case_category_optional';
 import * as migration_20261113_120000_advisors from './20261113_120000_advisors';
+import * as migration_20261113_160000_team_members from './20261113_160000_team_members';
 
 export const migrations = [
   {
@@ -101,5 +102,10 @@ export const migrations = [
     up: migration_20261113_120000_advisors.up,
     down: migration_20261113_120000_advisors.down,
     name: '20261113_120000_advisors',
+  },
+  {
+    up: migration_20261113_160000_team_members.up,
+    down: migration_20261113_160000_team_members.down,
+    name: '20261113_160000_team_members',
   },
 ];

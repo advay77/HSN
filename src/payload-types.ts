@@ -71,6 +71,7 @@ export interface Config {
     'case-studies': CaseStudy;
     'library-resources': LibraryResource;
     advisors: Advisor;
+    'team-members': TeamMember;
     media: Media;
     members: Member;
     enrollments: Enrollment;
@@ -94,6 +95,7 @@ export interface Config {
     'case-studies': CaseStudiesSelect<false> | CaseStudiesSelect<true>;
     'library-resources': LibraryResourcesSelect<false> | LibraryResourcesSelect<true>;
     advisors: AdvisorsSelect<false> | AdvisorsSelect<true>;
+    'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     members: MembersSelect<false> | MembersSelect<true>;
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
@@ -494,6 +496,28 @@ export interface Advisor {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  name: string;
+  /**
+   * One line under the name.
+   */
+  role?: string | null;
+  section?: string | null;
+  /**
+   * Shown when someone opens this profile. Separate paragraphs with a blank line.
+   */
+  bio?: string | null;
+  photo?: (number | null) | Media;
+  sort?: number | null;
+  published?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "members".
  */
 export interface Member {
@@ -820,6 +844,10 @@ export interface PayloadLockedDocument {
         value: number | Advisor;
       } | null)
     | ({
+        relationTo: 'team-members';
+        value: number | TeamMember;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -1130,6 +1158,21 @@ export interface AdvisorsSelect<T extends boolean = true> {
   bio?: T;
   photo?: T;
   photoPath?: T;
+  sort?: T;
+  published?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  section?: T;
+  bio?: T;
+  photo?: T;
   sort?: T;
   published?: T;
   updatedAt?: T;
