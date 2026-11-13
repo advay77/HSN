@@ -86,7 +86,7 @@ export function FeedbackForm({
           <p className="muted">Your response for {courseTitle} has been sent to the HSN team.</p>
         </div>
         <div className="row g12 mstack">
-          <a className="btn btn-p" href={`/courses/${courseSlug}/certificate`}>View certificate</a>
+          <a className="btn btn-p" href={`/courses/${courseSlug}/certificate`}>Get your certificate</a>
           <a className="btn btn-s" href="/my">Back to My HSN</a>
         </div>
       </div>

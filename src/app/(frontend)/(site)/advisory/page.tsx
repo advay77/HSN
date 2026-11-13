@@ -42,7 +42,6 @@ export default async function AdvisoryPage() {
                 {photo ? <img className="adv-photo" src={photo} alt={a.name} /> : <span className="adv-photo adv-initials" aria-hidden="true">{initials(a.name)}</span>}
                 <div className="stack g16 grow">
                   <div className="stack g8">
-                    {a.badge && <span className="bdg b-cat self-start">{a.badge}</span>}
                     <h2 className="h2" id={anchor} style={{ margin: 0 }}>{a.name}</h2>
                     {a.role && <p className="lead" style={{ margin: 0 }}>{a.role}</p>}
                   </div>

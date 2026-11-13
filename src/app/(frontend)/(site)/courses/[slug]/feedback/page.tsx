@@ -56,7 +56,7 @@ export default async function CourseFeedbackPage({ params }: Props) {
               <h1 className="h2">Feedback already sent</h1>
               <p className="muted">You have already shared feedback for {course.title}. The HSN team can read it in the admin panel.</p>
               <div className="row g12 mstack">
-                <a className="btn btn-p" href={`/courses/${slug}/certificate`}>View certificate</a>
+                <a className="btn btn-p" href={`/courses/${slug}/certificate`}>Get your certificate</a>
                 <a className="btn btn-s" href="/my">Back to My HSN</a>
               </div>
             </div>

@@ -225,7 +225,6 @@ export function Player({ course, modules, initialCompleted, initialResults, star
   const courseDone = pctNum === 100 || course.finished
   const isLast = idx === total - 1 && !nextModule
   const feedbackHref = `/courses/${course.slug}/feedback`
-  const certHref = `/courses/${course.slug}/certificate`
 
   return (
     <>
@@ -352,9 +351,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
                 <div className="row g12 mstack">
                   {nextItem && <button className="btn btn-lg btn-light" onClick={next}>{nextItem.l.type === 'quiz' ? `Start ${nextItem.l.title}` : 'Continue'}</button>}
                   {isLast && !courseDone && !done.has(s.id) && <button className="btn btn-lg btn-light" onClick={() => markDone(s.id)}>Finish course</button>}
-                  {isLast && courseDone && !preview && (course.feedbackSent
-                    ? course.certificate && <a className="btn btn-lg btn-light" href={certHref}>Get your certificate</a>
-                    : <a className="btn btn-lg btn-light" href={feedbackHref}>Give feedback to get your certificate</a>)}
+                  {isLast && courseDone && !preview && <a className="btn btn-lg btn-light" href={feedbackHref}>Give feedback</a>}
                   {nextModule && <span className="small" style={{ color: '#BFE6F3' }}>Next module: {nextModule.title}</span>}
                 </div>
               </div>
@@ -381,6 +378,7 @@ export function Player({ course, modules, initialCompleted, initialResults, star
                       <strong>{passed ? (nextModule && nextModule.status === 'available' ? `Passed. Module ${nextModule.n} is unlocked.` : 'Passed. Well done.') : !outOfTries ? 'Not quite. Review the lessons and try again.' : 'Not quite.'}</strong>
                       <span className="muted">{passed ? (corr ? 'Correct answers are marked in green.' : 'You have passed this quiz.') : `You need ${s.need} out of ${n} to pass. Correct answers are marked in green.`}</span>
                     </span>
+                    {passed && isLast && courseDone && !preview && <a className="btn btn-p" href={feedbackHref}>Give feedback</a>}
                     {passed && !(isLast && courseDone) && <a className="btn btn-p" href={exitHref ?? `/courses/${course.slug}`}>{preview ? 'Back to admin' : 'Back to course'}</a>}
                     {!passed && !outOfTries && <button className="btn btn-s" onClick={retry}>Try again</button>}
                   </div>
@@ -396,15 +394,10 @@ export function Player({ course, modules, initialCompleted, initialResults, star
                   <span>Here learners fill in the course feedback form, then download their certificate.</span>
                   {exitHref && <a className="btn btn-p self-start" href={exitHref}>Back to admin</a>}
                 </>
-              ) : course.feedbackSent ? (
-                <>
-                  <strong style={{ fontSize: '18px' }}>Course complete. Your certificate is ready.</strong>
-                  {course.certificate && <a className="btn btn-p self-start" href={certHref}>Get your certificate</a>}
-                </>
               ) : (
                 <>
-                  <strong style={{ fontSize: '18px' }}>Course complete. One last step.</strong>
-                  <span>Share your feedback on this course. It is required, and your certificate opens as soon as you send it.</span>
+                  <strong style={{ fontSize: '18px' }}>Course complete. Share your feedback next.</strong>
+                  <span>Your certificate opens after you send the feedback.</span>
                   <a className="btn btn-p self-start" href={feedbackHref}>Give feedback</a>
                 </>
               )}
