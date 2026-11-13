@@ -43,7 +43,7 @@ export default async function AdvisoryPage() {
                 <div className="stack g16 grow">
                   <div className="stack g8">
                     <h2 className="h2" id={anchor} style={{ margin: 0 }}>{a.name}</h2>
-                    {a.role && <p className="lead" style={{ margin: 0 }}>{a.role}</p>}
+                    {a.role && <p className="adv-role">{a.role}</p>}
                   </div>
                   {paras.length > 0 && (
                     <div className="adv-bio stack g16">

@@ -29,6 +29,7 @@ export function Footer() {
               <Link className="ftr-l" href="/">Home</Link>
               <Link className="ftr-l" href="/about">About Us</Link>
               <Link className="ftr-l" href="/advisory">Advisory Board</Link>
+              <Link className="ftr-l" href="/founder">Our Team</Link>
               <Link className="ftr-l" href="/services">Services</Link>
               <Link className="ftr-l" href="/courses">Courses</Link>
             </nav>
