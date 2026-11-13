@@ -114,7 +114,7 @@ export default async function CoursePage({ params }: Props) {
                 {(course.tagVideo ?? hasVideo(course)) && <span className="bdg b-reg">Contains video</span>}
                 {(course.tags ?? []).map((t) => <span key={t.id} className="bdg b-reg">{t.label}</span>)}
               </CourseTagRow>
-              <h1 className="sec-title hero-title" style={{ textTransform: 'none', letterSpacing: '0' }}>{course.title}</h1>
+              <h1 className="h2 cr-title" style={{ textTransform: 'none', margin: 0 }}>{course.title}</h1>
               <p className="lead measure">{course.description}</p>
               <div className="row g12 mstack" style={{ paddingTop: '4px' }}>
                 {soon ? <SoonButton /> : <a className="btn btn-p btn-lg" href={learnHref}>{enrollment && (enrollment.progress ?? 0) > 0 ? 'Continue course' : 'Start course now'}{' '}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></a>}

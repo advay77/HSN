@@ -43,7 +43,7 @@ export function CaseStudyList({ rows }: { rows: CaseStudyRow[] }) {
               <li key={c.slug} className={isOpen ? 'cs-item open' : 'cs-item'}>
                 <button className="cs-head" aria-expanded={isOpen} onClick={() => setOpen({ ...open, [c.slug]: !isOpen })}>
                   <span className="cs-swatch" style={{ background: c.color }} aria-hidden="true"></span>
-                  <span className="cs-t"><span className="cs-tt">{c.title}</span><span className="cs-ts">{c.cat}{c.organization ? ` · By ${c.organization}` : ''}</span></span>
+                  <span className="cs-t"><span className="cs-tt">{c.title}</span><span className="cs-ts">{[c.cat, c.organization ? `By ${c.organization}` : ''].filter(Boolean).join(' · ')}</span></span>
                   <span className="cs-m"><span className="cs-mm">{c.metric}</span><span className="cs-mu">{c.unit}</span></span>
                   <svg className={isOpen ? 'cs-chev up' : 'cs-chev'} width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#134E5E" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
                 </button>

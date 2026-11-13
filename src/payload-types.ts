@@ -359,7 +359,8 @@ export interface CaseStudy {
    */
   reviewNote?: string | null;
   reviewedAt?: string | null;
-  category: 'Energy & Decarbonization' | 'Clinical Care & SusQI' | 'Waste Minimization' | 'Procurement & Logistics';
+  category?:
+    ('Energy & Decarbonization' | 'Clinical Care & SusQI' | 'Waste Minimization' | 'Procurement & Logistics') | null;
   region?: ('India' | 'GCC' | 'International') | null;
   country?: string | null;
   organization?: string | null;

@@ -75,7 +75,6 @@ export default async function CoursesPage() {
                 {featured.cover && (
                   <img src={featured.cover} alt="" style={{ display: 'block', width: '100%', height: '100%', objectFit: 'contain', padding: '48px 24px 24px', boxSizing: 'border-box' }} />
                 )}
-                <span className="bdg b-feat" style={{ position: 'absolute', top: '16px', left: '16px' }}>Featured course</span>
               </div>
               <div className="pad-l stack g16" style={{ flex: '2 1 480px' }}>
                 <CourseTagRow access={featured.access} registration={featured.registration}>

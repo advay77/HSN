@@ -254,6 +254,19 @@ export function Player({ course, modules, initialCompleted, initialResults, star
           {lockedRows.map((r, i) => (
             <div key={r.n} className="pl-lock" style={i > 0 ? { marginTop: '0' } : undefined}><span className="pl-st" aria-hidden="true">{r.n}</span><span><span className="strong" style={{ color: '#17323A' }}>Module {r.n} · {r.title}</span><span className="pl-k">{r.note}</span></span></div>
           ))}
+          {/* Final, required step after the last module: the course feedback form (it opens the certificate). */}
+          <>
+              <div className="pl-mh"><span className="over">Final step</span><b>Course feedback</b><span className="small muted">{course.feedbackSent ? 'Sent. Thank you!' : 'Required to get your certificate'}</span></div>
+              <ol className="pl-list">
+                <li>
+                  {courseDone && !course.feedbackSent && !preview ? (
+                    <a className="pl-item" href={feedbackHref} style={{ textDecoration: 'none', color: 'inherit' }}><span className="pl-st now" aria-hidden="true"></span><span><span>Course feedback form</span><span className="pl-k">Required · about 3 minutes</span></span></a>
+                  ) : (
+                    <span className={course.feedbackSent ? 'pl-item' : 'pl-item locked'} title={course.feedbackSent ? undefined : preview ? 'Learners fill this in after the last module' : 'Finish every module first'}><span className={course.feedbackSent ? 'pl-st done' : 'pl-st'} aria-hidden="true">{course.feedbackSent ? '✓' : '🔒'}</span><span><span>Course feedback form</span><span className="pl-k">{course.feedbackSent ? 'Sent' : 'Opens after the last module'}</span></span></span>
+                  )}
+                </li>
+              </ol>
+          </>
         </nav>
         <main className="pl-main">
           <div className="stack g4">

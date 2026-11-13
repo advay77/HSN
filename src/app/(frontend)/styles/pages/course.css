@@ -49,3 +49,6 @@
 .cr-aud-ic{display:inline-flex;align-items:center;justify-content:center;flex:none;width:36px;height:36px;border-radius:50%;background:#E3F1E4;color:#0B6B3A}
 @container (max-width:1100px){.cr-aud{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @container (max-width:600px){.cr-aud{grid-template-columns:1fr}}
+
+/* Course title: same size and blue as the course card title on the Courses page (HSN request). */
+.pg h1.cr-title{color:#134E5E}

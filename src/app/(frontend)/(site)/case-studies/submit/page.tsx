@@ -4,7 +4,7 @@ import React from 'react'
 
 import { SubmitCaseForm } from '@/components/cases/SubmitCaseForm'
 
-export const metadata = { title: 'Submit a Case Study' }
+export const metadata = { title: 'Submit a Case Study / Poster' }
 
 export default function SubmitCasePage() {
   return (
@@ -12,8 +12,7 @@ export default function SubmitCasePage() {
       <section className="sec" style={{ paddingTop: '48px' }}>
         <div className="wrap stack g32">
           <div className="stack g12">
-            <h1 className="sec-title hero-title">Submit a Case Study</h1>
-            <p className="lead muted">Tell us about a project that cut carbon, waste or cost without compromising patient safety. HSN reviews every submission before it is published.</p>
+            <h1 className="sec-title">Submit a Case Study / Poster</h1>
           </div>
           <div className="side-r">
             <SubmitCaseForm />

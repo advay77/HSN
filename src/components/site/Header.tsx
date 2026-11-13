@@ -22,6 +22,7 @@ const MENU: NavItem[] = [
     label: 'About Us',
     items: [
       { id: 'about', label: 'About Us', href: '/about', sub: 'Our Mission, Story, Team & Partners' },
+      { id: 'founder', label: 'Founder', href: '/founder', sub: 'The Vision Behind HSN' },
       { id: 'advisory', label: 'Advisory Board', href: '/advisory', sub: 'Visionary Healthcare Leaders' },
     ],
   },

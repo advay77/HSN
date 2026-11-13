@@ -124,36 +124,7 @@ export function SubmitCaseForm() {
       </fieldset>
       <fieldset className="card pad-l stack g20" style={{ margin: '0' }}>
         <legend className="h4" style={{ float: 'left', width: '100%', padding: '0', marginBottom: '4px' }}>2. Your project</legend>
-        <div className="fld"><label className="lbl" htmlFor="s-title">Project title</label><input className={inp('title')} id="s-title" placeholder="e.g., Reducing single-use plastics in the ICU" value={f.title} onChange={(x) => set('title', x.target.value)} aria-invalid={!!e.title} aria-describedby={described('title')} />{msg('title')}</div>
-        <div className="grid c2" style={{ gap: '20px' }}>
-          <div className="fld"><label className="lbl" htmlFor="s-cat">Category</label><span className="sel"><select className={inp('category')} id="s-cat" value={f.category} onChange={(x) => set('category', x.target.value)} aria-invalid={!!e.category} aria-describedby={described('category')}><option value="">Select a category</option><option>Energy &amp; Decarbonization</option><option>Clinical Care &amp; SusQI</option><option>Waste Minimization</option><option>Procurement &amp; Logistics</option></select>{chevron}</span>{msg('category')}</div>
-          <fieldset className="fld" style={{ border: '0', padding: '0', margin: '0' }}>
-            <legend className="lbl" style={{ padding: '0', marginBottom: '6px' }}>Region</legend>
-            <div className="row g20">
-              {['India', 'GCC', 'International'].map((r) => (
-                <label key={r} className="rad"><input type="radio" name="s-reg" checked={f.region === r} onChange={() => set('region', r)} />{r}</label>
-              ))}
-            </div>
-            {msg('region')}
-          </fieldset>
-        </div>
-        <div className="stack g8">
-          <span className="lbl" id="s-imp">Measured impact</span>
-          <span className="hint">Add at least one measured result. Use your baseline and post-change figures.</span>
-          {f.measures.map((m, i) => (
-            <div key={i} className="row g12 nowrap" role="group" aria-labelledby="s-imp">
-              <label className="sr" htmlFor={`s-val-${i}`}>Value</label><input className={e.measures ? 'inp err' : 'inp'} id={`s-val-${i}`} inputMode="decimal" placeholder="e.g., 120" style={{ flex: '0 0 160px' }} value={m.value} onChange={(x) => set('measures', f.measures.map((mm, j) => (j === i ? { ...mm, value: x.target.value } : mm)))} aria-invalid={!!e.measures} aria-describedby={described('measures')} />
-              <span className="sel grow"><label className="sr" htmlFor={`s-unit-${i}`}>Unit</label><select className="inp" id={`s-unit-${i}`} value={m.unit} onChange={(x) => set('measures', f.measures.map((mm, j) => (j === i ? { ...mm, unit: x.target.value } : mm)))}>{UNITS.map((u) => <option key={u}>{u}</option>)}</select>{chevron}</span>
-              {i > 0 && (
-                <button type="button" className="ico ico-bare" aria-label={`Remove measure ${i + 1}`} onClick={() => set('measures', f.measures.filter((_, j) => j !== i))}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
-              )}
-            </div>
-          ))}
-          {msg('measures')}
-          {f.measures.length < 4 && (
-            <button type="button" className="btn btn-t btn-sm self-start" style={{ padding: '0' }} onClick={() => set('measures', [...f.measures, { value: '', unit: UNITS[0]! }])}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Add another measure</button>
-          )}
-        </div>
+        <div className="fld"><label className="lbl" htmlFor="s-title">Case study / poster title</label><input className={inp('title')} id="s-title" placeholder="e.g., Reducing single-use plastics in the ICU" value={f.title} onChange={(x) => set('title', x.target.value)} aria-invalid={!!e.title} aria-describedby={described('title')} />{msg('title')}</div>
         <div className="fld"><label className="lbl" htmlFor="s-sum">Project summary</label><textarea className={inp('summary')} id="s-sum" aria-describedby={described('summary', 's-sum-h')} aria-invalid={!!e.summary} placeholder="Describe the baseline, the change you made and how you measured the impact." value={f.summary} onChange={(x) => set('summary', x.target.value)}></textarea><span className="hint" id="s-sum-h">Up to 1,000 characters{f.summary.length > 0 ? ` · ${f.summary.length} used` : ''}</span>{msg('summary')}</div>
         <div className="stack g8">
           <span className="lbl">Attachments{' '}<span className="opt-t">(optional)</span></span>

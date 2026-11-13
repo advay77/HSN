@@ -15,7 +15,7 @@ export default async function CaseStudiesPage() {
   const rows: CaseStudyRow[] = docs.map((d) => ({
     slug: d.slug || String(d.id),
     title: d.title,
-    cat: d.category,
+    cat: d.category ?? '',
     organization: d.organization || '',
     metric: d.impacts?.[0]?.value || '',
     unit: d.impacts?.[0]?.label || '',

@@ -16,7 +16,6 @@ export default function AdvisoryPage() {
         <div className="wrap">
           <div className="green-box light-box">
             <h1 className="sec-title">Advisory Board</h1>
-            <p className="box-text">The Advisory Board guides the Healthcare Sustainability Network on health systems, sustainability, and how hospitals can put both into practice.</p>
           </div>
         </div>
       </section>

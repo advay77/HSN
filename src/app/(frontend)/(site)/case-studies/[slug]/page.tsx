@@ -48,7 +48,7 @@ export default async function CaseStudyPage({ params, searchParams }: Props) {
     <main>
       <section className="bg-teal" style={{ paddingBlock: '48px 56px' }}>
         <div className="wrap stack g24">
-          <div className="row g8"><span className="bdg b-cat">{cs.category}</span>{cs.region && <span className="bdg b-reg">{cs.region}</span>}</div>
+          <div className="row g8">{cs.category && <span className="bdg b-cat">{cs.category}</span>}{cs.region && <span className="bdg b-reg">{cs.region}</span>}</div>
           <h1 className="h1" style={{ color: '#FFFFFF', maxWidth: '980px' }}>{cs.title}</h1>
           <div className="row g24 small" style={{ color: '#DCE6E2' }}>
             {cs.organization && <span>By{' '}<strong style={{ color: '#FFFFFF' }}>{cs.organization}</strong></span>}

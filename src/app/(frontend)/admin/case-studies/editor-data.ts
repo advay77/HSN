@@ -18,7 +18,7 @@ export function toForm(cs: CaseStudy): CaseForm {
     title: cs.title,
     slug: cs.slug || '',
     status: cs.status,
-    category: cs.category,
+    category: cs.category ?? '',
     region: cs.region || '',
     country: cs.country || '',
     organization: cs.organization || '',

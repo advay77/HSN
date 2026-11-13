@@ -52,7 +52,8 @@ export const CaseStudies: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'category', type: 'select', required: true, options: [...CASE_CATEGORIES] },
+        // Optional: members no longer choose it on the submit form; the HSN team sets it while reviewing.
+        { name: 'category', type: 'select', options: [...CASE_CATEGORIES] },
         { name: 'region', type: 'select', options: [...CASE_REGIONS] },
         { name: 'country', type: 'text' },
       ],

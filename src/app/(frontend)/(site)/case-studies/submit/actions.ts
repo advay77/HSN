@@ -49,9 +49,9 @@ export async function submitCaseStudy(_prev: SubmitCaseState, form: FormData): P
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Enter a valid email address, like name@hospital.org.'
   if (!organization) errors.organization = 'Enter your organization or hospital name.'
   if (!COUNTRIES.includes(country)) errors.country = 'Select your country.'
-  if (!title) errors.title = 'Enter a project title.'
-  if (!(CASE_CATEGORIES as readonly string[]).includes(category)) errors.category = 'Select a category.'
-  if (!(CASE_REGIONS as readonly string[]).includes(region)) errors.region = 'Select a region.'
+  if (!title) errors.title = 'Enter a title for your case study or poster.'
+  // Category, region and measured impact are no longer asked on this form (HSN request); the HSN team adds them
+  // when reviewing. Values still sent by an older page are accepted.
   if (!summary) errors.summary = 'Describe your project.'
   else if (summary.length > 1000) errors.summary = `Keep the summary to 1,000 characters (now ${summary.length}).`
   if (form.get('permission') !== 'on') errors.permission = 'Confirm you have permission to share this project.'
@@ -62,8 +62,7 @@ export async function submitCaseStudy(_prev: SubmitCaseState, form: FormData): P
   const impacts = values
     .map((v, i) => ({ v, u: UNITS[units[i] ?? ''] }))
     .filter((m) => m.v !== '')
-  if (impacts.length === 0) errors.measures = 'Add at least one measured result.'
-  else if (impacts.some((m) => !m.u || !/^[\d.,\s]+$/.test(m.v))) errors.measures = 'Use numbers only for each measured value, e.g. 120.'
+  const goodImpacts = impacts.filter((m) => m.u && /^[\d.,\s]+$/.test(m.v))
 
   // Attachments arrive as Files (development) or "incoming:<path>" uploaded straight to storage (production).
   const entries = form.getAll('attachments').filter((f) => (typeof f === 'string' ? f !== '' : f.size > 0))
@@ -108,13 +107,13 @@ export async function submitCaseStudy(_prev: SubmitCaseState, form: FormData): P
       // Unique even when two people send the same title; the admin can tidy it before publishing.
       slug: `${toSlug(title)}-${Date.now().toString(36)}`,
       status: 'submitted',
-      category: category as (typeof CASE_CATEGORIES)[number],
-      region: region as (typeof CASE_REGIONS)[number],
+      category: (CASE_CATEGORIES as readonly string[]).includes(category) ? (category as (typeof CASE_CATEGORIES)[number]) : undefined,
+      region: (CASE_REGIONS as readonly string[]).includes(region) ? (region as (typeof CASE_REGIONS)[number]) : undefined,
       country,
       organization,
       summary,
       patientSafety: patientSafety || undefined,
-      impacts: impacts.map((m) => ({ value: `${m.v}${m.u!.suffix}`, label: m.u!.label })),
+      impacts: goodImpacts.map((m) => ({ value: `${m.v}${m.u!.suffix}`, label: m.u!.label })),
       submittedBy: { name, email, attachments: attachmentIds as number[] },
     },
   })
