@@ -12,6 +12,7 @@ import { Activity, ClickEvents, PageViews } from './collections/Activity'
 import { CaseStudies } from './collections/CaseStudies'
 import { Courses } from './collections/Courses'
 import { LibraryResources } from './collections/LibraryResources'
+import { Advisors } from './collections/Advisors'
 import { LoginCodes } from './collections/LoginCodes'
 import { Media } from './collections/Media'
 import { Members } from './collections/Members'
@@ -51,6 +52,7 @@ export default buildConfig({
     Courses,
     CaseStudies,
     LibraryResources,
+    Advisors,
     Media,
     Members,
     Enrollments,

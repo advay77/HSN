@@ -16,6 +16,7 @@ const NAV: [string, string][] = [
   ['/admin/interest', 'Membership interest'],
   ['/admin/case-studies', 'Case studies'],
   ['/admin/library', 'Library'],
+  ['/admin/advisory', 'Advisory Board'],
 ]
 
 export function AdminNav({ pendingCases }: { pendingCases: number }) {

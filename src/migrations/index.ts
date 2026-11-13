@@ -14,6 +14,7 @@ import * as migration_20261111_140000_open_course_modules from './20261111_14000
 import * as migration_20261111_160000_library_description_optional from './20261111_160000_library_description_optional';
 import * as migration_20261112_100000_certificate_numbers from './20261112_100000_certificate_numbers';
 import * as migration_20261113_100000_case_category_optional from './20261113_100000_case_category_optional';
+import * as migration_20261113_120000_advisors from './20261113_120000_advisors';
 
 export const migrations = [
   {
@@ -95,5 +96,10 @@ export const migrations = [
     up: migration_20261113_100000_case_category_optional.up,
     down: migration_20261113_100000_case_category_optional.down,
     name: '20261113_100000_case_category_optional',
+  },
+  {
+    up: migration_20261113_120000_advisors.up,
+    down: migration_20261113_120000_advisors.down,
+    name: '20261113_120000_advisors',
   },
 ];

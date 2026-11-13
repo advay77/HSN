@@ -14,3 +14,6 @@
 .adv-more[open] .adv-less-t{display:inline}
 .adv-more[open] summary svg{transform:rotate(180deg)}
 .adv-more[open] summary{margin-bottom:12px}
+
+/* Advisor without a photo yet: initials in the photo spot */
+.adv-initials{display:inline-flex;align-items:center;justify-content:center;font-family:Montserrat,Inter,sans-serif;font-size:56px;font-weight:700;color:#134E5E}

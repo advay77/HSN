@@ -70,6 +70,7 @@ export interface Config {
     courses: Course;
     'case-studies': CaseStudy;
     'library-resources': LibraryResource;
+    advisors: Advisor;
     media: Media;
     members: Member;
     enrollments: Enrollment;
@@ -92,6 +93,7 @@ export interface Config {
     courses: CoursesSelect<false> | CoursesSelect<true>;
     'case-studies': CaseStudiesSelect<false> | CaseStudiesSelect<true>;
     'library-resources': LibraryResourcesSelect<false> | LibraryResourcesSelect<true>;
+    advisors: AdvisorsSelect<false> | AdvisorsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     members: MembersSelect<false> | MembersSelect<true>;
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
@@ -469,6 +471,29 @@ export interface LibraryResource {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "advisors".
+ */
+export interface Advisor {
+  id: number;
+  name: string;
+  /**
+   * One line under the name, e.g. job title and organization.
+   */
+  role?: string | null;
+  badge?: string | null;
+  /**
+   * Separate paragraphs with a blank line. The first paragraph is shown; the rest opens with Read more.
+   */
+  bio?: string | null;
+  photo?: (number | null) | Media;
+  photoPath?: string | null;
+  sort?: number | null;
+  published?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "members".
  */
 export interface Member {
@@ -791,6 +816,10 @@ export interface PayloadLockedDocument {
         value: number | LibraryResource;
       } | null)
     | ({
+        relationTo: 'advisors';
+        value: number | Advisor;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -1086,6 +1115,22 @@ export interface LibraryResourcesSelect<T extends boolean = true> {
   size?: T;
   file?: T;
   externalUrl?: T;
+  published?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "advisors_select".
+ */
+export interface AdvisorsSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  badge?: T;
+  bio?: T;
+  photo?: T;
+  photoPath?: T;
+  sort?: T;
   published?: T;
   updatedAt?: T;
   createdAt?: T;
