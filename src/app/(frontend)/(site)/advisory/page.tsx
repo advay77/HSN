@@ -6,6 +6,7 @@ import '../../styles/pages/about.css'
 import '../../styles/pages/advisory.css'
 
 import { getPayloadClient } from '@/lib/payload'
+import { getSiteCopy } from '@/lib/site/copy'
 import type { Media } from '@/payload-types'
 
 export const metadata: Metadata = {
@@ -18,7 +19,7 @@ const photoOf = (photo: unknown, path?: string | null) => (photo && typeof photo
 const initials = (name: string) => name.replace(/^(Dr|Prof|Mr|Ms|Mrs)\.?\s+/i, '').split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase()
 
 export default async function AdvisoryPage() {
-  const payload = await getPayloadClient()
+  const [payload, copy] = await Promise.all([getPayloadClient(), getSiteCopy()])
   const { docs } = await payload.find({ collection: 'advisors', where: { published: { equals: true } }, sort: 'sort', pagination: false, depth: 1 })
 
   return (
@@ -26,7 +27,7 @@ export default async function AdvisoryPage() {
       <section className="sec" style={{ paddingTop: '48px', paddingBottom: '0' }}>
         <div className="wrap">
           <div className="green-box light-box">
-            <h1 className="sec-title">Advisory Board</h1>
+            <h1 className="sec-title">{copy.advisoryTitle}</h1>
           </div>
         </div>
       </section>

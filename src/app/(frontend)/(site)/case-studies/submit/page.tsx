@@ -3,16 +3,18 @@ import Link from 'next/link'
 import React from 'react'
 
 import { SubmitCaseForm } from '@/components/cases/SubmitCaseForm'
+import { getSiteCopy } from '@/lib/site/copy'
 
 export const metadata = { title: 'Submit a Case Study / Poster' }
 
-export default function SubmitCasePage() {
+export default async function SubmitCasePage() {
+  const copy = await getSiteCopy()
   return (
     <main>
       <section className="sec" style={{ paddingTop: '48px' }}>
         <div className="wrap stack g32">
           <div className="stack g12">
-            <h1 className="sec-title">Submit a Case Study / Poster</h1>
+            <h1 className="sec-title">{copy.submitTitle}</h1>
           </div>
           <div className="side-r">
             <SubmitCaseForm />

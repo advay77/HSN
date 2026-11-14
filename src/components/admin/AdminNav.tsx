@@ -18,6 +18,7 @@ const NAV: [string, string][] = [
   ['/admin/library', 'Library'],
   ['/admin/advisory', 'Advisory Board'],
   ['/admin/team', 'Our Team'],
+  ['/admin/site-text', 'Page text'],
 ]
 
 export function AdminNav({ pendingCases }: { pendingCases: number }) {

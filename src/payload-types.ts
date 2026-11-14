@@ -72,6 +72,7 @@ export interface Config {
     'library-resources': LibraryResource;
     advisors: Advisor;
     'team-members': TeamMember;
+    'site-copy': SiteCopy;
     media: Media;
     members: Member;
     enrollments: Enrollment;
@@ -96,6 +97,7 @@ export interface Config {
     'library-resources': LibraryResourcesSelect<false> | LibraryResourcesSelect<true>;
     advisors: AdvisorsSelect<false> | AdvisorsSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
+    'site-copy': SiteCopySelect<false> | SiteCopySelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     members: MembersSelect<false> | MembersSelect<true>;
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
@@ -518,6 +520,41 @@ export interface TeamMember {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-copy".
+ */
+export interface SiteCopy {
+  id: number;
+  aboutIntro?: string | null;
+  mission?: string | null;
+  purpose?: string | null;
+  story?: string | null;
+  team?: string | null;
+  services?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  caseStudiesTitle?: string | null;
+  caseStudiesMenu?: string | null;
+  caseStudiesIntro?: string | null;
+  pages?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "members".
  */
 export interface Member {
@@ -848,6 +885,10 @@ export interface PayloadLockedDocument {
         value: number | TeamMember;
       } | null)
     | ({
+        relationTo: 'site-copy';
+        value: number | SiteCopy;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -1175,6 +1216,24 @@ export interface TeamMembersSelect<T extends boolean = true> {
   photo?: T;
   sort?: T;
   published?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-copy_select".
+ */
+export interface SiteCopySelect<T extends boolean = true> {
+  aboutIntro?: T;
+  mission?: T;
+  purpose?: T;
+  story?: T;
+  team?: T;
+  services?: T;
+  caseStudiesTitle?: T;
+  caseStudiesMenu?: T;
+  caseStudiesIntro?: T;
+  pages?: T;
   updatedAt?: T;
   createdAt?: T;
 }

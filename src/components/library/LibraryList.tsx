@@ -34,8 +34,7 @@ export function LibraryList({ rows, signedIn }: { rows: LibraryRow[]; signedIn: 
     <div className="wrap stack g32">
       <div className="stack g20">
         <div className="row between g16">
-          <h2 className="h2" id="res">All Resources</h2>
-          <span className="small muted" role="status">{`Showing ${shown.length} of ${rows.length} resources`}</span>
+          <span className="small muted" role="status">{`Showing ${shown.length} of ${rows.length}`}</span>
         </div>
         <div className="row g16 between">
           <div className="row g8 scrollx" role="group" aria-label="Filter by type">

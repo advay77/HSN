@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react'
 import { A11yPanel } from './A11yPanel'
 import { OPEN_A11Y_EVENT } from './FooterA11yLink'
 import { SOCIAL } from '@/lib/site'
+import { SITE_COPY, type NavCopy } from '@/lib/site/copy-defaults'
 
 export type HeaderMember = { name: string; initials: string; membershipType?: string | null }
 
@@ -15,30 +16,30 @@ export type HeaderMember = { name: string; initials: string; membershipType?: st
 // Join HSN menu and the footer.
 type NavLink = { id: string; label: string; href: string; sub?: string }
 type NavItem = NavLink | { id: string; label: string; items: NavLink[] }
-const MENU: NavItem[] = [
-  { id: 'home', label: 'Home', href: '/' },
+const menuFrom = (nav: NavCopy, casesLabel: string): NavItem[] => [
+  { id: 'home', label: nav.home, href: '/' },
   {
     id: 'about-menu',
-    label: 'About Us',
+    label: nav.about,
     items: [
-      { id: 'about', label: 'About Us', href: '/about', sub: 'Our Mission, Story, Team & Partners' },
-      { id: 'advisory', label: 'Advisory Board', href: '/advisory', sub: 'Visionary Healthcare Leaders' },
-      { id: 'founder', label: 'Our Team', href: '/founder', sub: 'The people of HSN' },
+      { id: 'about', label: nav.aboutPage, href: '/about', sub: nav.aboutBlurb },
+      { id: 'advisory', label: nav.advisory, href: '/advisory', sub: nav.advisoryBlurb },
+      { id: 'founder', label: nav.team, href: '/founder', sub: nav.teamBlurb },
     ],
   },
-  { id: 'courses', label: 'Courses', href: '/courses' },
-  { id: 'services', label: 'Services', href: '/services' },
+  { id: 'courses', label: nav.courses, href: '/courses' },
+  { id: 'services', label: nav.services, href: '/services' },
   {
     id: 'resources',
-    label: 'Resources',
+    label: nav.resources,
     items: [
-      { id: 'cases', label: 'Case Studies & Posters', href: '/case-studies', sub: 'Real Hospital Projects' },
-      { id: 'library', label: 'Library', href: '/library', sub: 'Downloadable Toolkits, Guides and Documents' },
+      { id: 'cases', label: casesLabel, href: '/case-studies', sub: nav.casesBlurb },
+      { id: 'library', label: nav.library, href: '/library', sub: nav.libraryBlurb },
     ],
   },
 ]
 const LINKS: NavLink[] = [
-  ...MENU.flatMap((m) => ('items' in m ? m.items : [m])),
+  ...menuFrom(SITE_COPY.nav, 'Case Studies & Posters').flatMap((m) => ('items' in m ? m.items : [m])),
   { id: 'involved', label: 'Get Involved', href: '/get-involved' },
   { id: 'membership', label: 'Membership', href: '/membership' },
 ]
@@ -54,7 +55,12 @@ const Chevron = () => (
 )
 const MENU_BOX: React.CSSProperties = { position: 'absolute', top: '50px', left: '0', zIndex: 30, width: '330px', padding: '6px', borderRadius: '12px', background: '#FFFDF8', border: '1px solid #D9D2C1', boxShadow: '0 8px 24px rgba(19,78,94,.14)' }
 
-export function Header({ member = null }: { member?: HeaderMember | null }) {
+export function Header({ member = null, caseStudiesLabel, nav = SITE_COPY.nav }: { member?: HeaderMember | null; caseStudiesLabel?: string; nav?: NavCopy }) {
+  const menu = menuFrom(nav, caseStudiesLabel || 'Case Studies & Posters')
+  const joinLinks: NavLink[] = [
+    { id: 'membership', label: nav.membership, href: '/membership' },
+    { id: 'involved', label: nav.involved, href: '/get-involved' },
+  ]
   const pathname = usePathname() || '/'
   const cur = currentFromPath(pathname)
   const [open, setOpen] = useState(false)
@@ -131,17 +137,17 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
     <div className="cq" style={{ fontFamily: 'Inter, system-ui, sans-serif', color: '#17323A', width: '100%' }}>
       <header className="hdr">
         <div className="hdr-in">
-          <Link className="logo" href="/" aria-label="Healthcare Sustainability Network, home">
+          <Link className="logo" href="/" aria-label={`${nav.logo1} ${nav.logo2}, home`}>
             <span className="logo-m">
               <img src="/images/hsn-logo.jpg" alt="" />
             </span>
             <span className="logo-t">
-              <span className="logo-1">HEALTHCARE</span>
-              <span className="logo-2">SUSTAINABILITY NETWORK</span>
+              <span className="logo-1">{nav.logo1}</span>
+              <span className="logo-2">{nav.logo2}</span>
             </span>
           </Link>
           <nav className="nav-l lap" aria-label="Main">
-            {MENU.map((m) =>
+            {menu.map((m) =>
               'items' in m ? (
                 <span key={m.id} data-navmenu style={{ position: 'relative' }}>
                   <button type="button" className={isCur(m) ? 'nav nav-btn cur' : 'nav nav-btn'} aria-haspopup="menu" aria-expanded={navOpen === m.id} onClick={() => toggleNav(m.id)}>
@@ -183,27 +189,27 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
             </button>
             {guest && (
               <>
-                <Link className="btn btn-sm btn-s lap" href="/login">Log in</Link>
+                <Link className="btn btn-sm btn-s lap" href="/login">{nav.login}</Link>
                 <span className="tabup" style={{ position: 'relative' }}>
-                  <button className="btn btn-sm btn-p" aria-haspopup="menu" aria-expanded={joinOpen} onClick={toggleJoin}>Join HSN{' '}
+                  <button className="btn btn-sm btn-p" aria-haspopup="menu" aria-expanded={joinOpen} onClick={toggleJoin}>{nav.join}{' '}
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
                   {joinOpen && (
-                    <div role="menu" aria-label="Join HSN" style={{ position: 'absolute', top: '50px', right: '0', zIndex: 30, width: '270px', padding: '6px', borderRadius: '12px', background: '#FFFDF8', border: '1px solid #D9D2C1', boxShadow: '0 8px 24px rgba(19,78,94,.14)' }}>
+                    <div role="menu" aria-label={nav.join} style={{ position: 'absolute', top: '50px', right: '0', zIndex: 30, width: '270px', padding: '6px', borderRadius: '12px', background: '#FFFDF8', border: '1px solid #D9D2C1', boxShadow: '0 8px 24px rgba(19,78,94,.14)' }}>
                       <a role="menuitem" className="join-item" href={SOCIAL.whatsapp} target="_blank" rel="noopener">
                         <span className="join-ic" style={{ background: '#E3F1E4', color: '#0B6B3A' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3.5 20.5 5 16a8.5 8.5 0 1 1 3.2 3.1z"></path><path d="M9 9.5c.3 2.3 2.2 4.2 4.5 4.5l1-1.2 2 1-.4 1.5c-3.6.3-7.2-3.3-6.9-6.9l1.5-.4 1 2z"></path></svg></span>
-                        <span className="stack"><span>Join WhatsApp Group</span><span className="join-sub">Opens WhatsApp</span></span>
+                        <span className="stack"><span>{nav.whatsapp}</span><span className="join-sub">{nav.whatsappBlurb}</span></span>
                       </a>
                       <a role="menuitem" className="join-item" href={SOCIAL.linkedin} target="_blank" rel="noopener">
                         <span className="join-ic" style={{ background: '#DDF0F6', color: '#1C6E8A' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M8 10.5V17M8 7.5v.01M12 17v-6.5M12 13.5c0-1.7 1-3 2.5-3S17 11.5 17 13v4"></path></svg></span>
-                        <span className="stack"><span>Follow on LinkedIn</span><span className="join-sub">Opens LinkedIn</span></span>
+                        <span className="stack"><span>{nav.linkedin}</span><span className="join-sub">{nav.linkedinBlurb}</span></span>
                       </a>
                       <Link role="menuitem" className="join-item" href="/membership">
                         <span className="join-ic" style={{ background: '#EDE7D8', color: '#134E5E' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4l-5.2 2.7 1-5.8L3.5 9.2l5.9-.9z"></path></svg></span>
-                        <span className="stack"><span>Membership</span><span className="join-sub">Plans and How to Join</span></span>
+                        <span className="stack"><span>{nav.membership}</span><span className="join-sub">{nav.membershipBlurb}</span></span>
                       </Link>
                       <Link role="menuitem" className="join-item" href="/get-involved">
                         <span className="join-ic" style={{ background: '#E3F1E4', color: '#0B6B3A' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path><circle cx="10" cy="7" r="4"></circle><path d="M21 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"></path></svg></span>
-                        <span className="stack"><span>Get Involved</span><span className="join-sub">Ways to Take Part</span></span>
+                        <span className="stack"><span>{nav.involved}</span><span className="join-sub">{nav.involvedBlurb}</span></span>
                       </Link>
                     </div>
                   )}
@@ -211,7 +217,7 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
               </>
             )}
             {member && (
-              <Link className="acct tabup" href="/my" aria-label={`My account, ${member.name}`}><span className="avatar" aria-hidden="true">{member.initials}</span><span>My HSN</span></Link>
+              <Link className="acct tabup" href="/my" aria-label={`${nav.myHsn}, ${member.name}`}><span className="avatar" aria-hidden="true">{member.initials}</span><span>{nav.myHsn}</span></Link>
             )}
             <button className="ico nolap" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} onClick={() => setOpen(!open)}>
               {!open && (
@@ -226,10 +232,10 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
         {open && (
           <div className="msheet nolap">
             <nav aria-label="Main" className="stack g4" style={{ maxWidth: '560px', marginInline: 'auto' }}>
-              {MENU.map((m) =>
+              {menu.map((m) =>
                 'items' in m ? (
                   <div key={m.id} className="stack g4">
-                    <span className="small muted strong" style={{ padding: '12px 16px 2px' }}>{m.label === 'About Us' ? 'About' : m.label}</span>
+                    <span className="small muted strong" style={{ padding: '12px 16px 2px' }}>{m.id === 'about-menu' ? nav.about.split(' ')[0] : m.label}</span>
                     {m.items.map((i) => (
                       <Link key={i.href} className={i.id === cur ? 'mrow cur' : 'mrow'} href={i.href} aria-current={i.id === cur ? 'page' : undefined}><span>{i.label}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5F63" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></Link>
                     ))}
@@ -239,24 +245,24 @@ export function Header({ member = null }: { member?: HeaderMember | null }) {
                 ),
               )}
               <div className="stack g4">
-                <span className="small muted strong" style={{ padding: '12px 16px 2px' }}>Join</span>
-                {LINKS.filter((l) => l.id === 'membership' || l.id === 'involved').map((i) => (
+                <span className="small muted strong" style={{ padding: '12px 16px 2px' }}>{nav.joinShort}</span>
+                {joinLinks.map((i) => (
                   <Link key={i.href} className={i.id === cur ? 'mrow cur' : 'mrow'} href={i.href} aria-current={i.id === cur ? 'page' : undefined}><span>{i.label}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5F63" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></Link>
                 ))}
               </div>
               {guest && (
                 <div className="stack g12" style={{ padding: '20px 16px 8px', borderTop: '1px solid #D9D2C1', marginTop: '12px' }}>
-                  <span className="small muted strong">Join HSN</span>
-                  <a className="btn btn-p btn-lg" href={SOCIAL.whatsapp} target="_blank" rel="noopener">Join WhatsApp Group</a>
-                  <a className="btn btn-s btn-lg" href={SOCIAL.linkedin} target="_blank" rel="noopener">Follow on LinkedIn</a>
-                  <Link className="btn btn-t btn-lg" href="/login">Log in</Link>
+                  <span className="small muted strong">{nav.join}</span>
+                  <a className="btn btn-p btn-lg" href={SOCIAL.whatsapp} target="_blank" rel="noopener">{nav.whatsapp}</a>
+                  <a className="btn btn-s btn-lg" href={SOCIAL.linkedin} target="_blank" rel="noopener">{nav.linkedin}</a>
+                  <Link className="btn btn-t btn-lg" href="/login">{nav.login}</Link>
                 </div>
               )}
               {member && (
                 <div className="stack g12" style={{ padding: '20px 16px 8px', borderTop: '1px solid #D9D2C1', marginTop: '12px' }}>
                   <span className="row g12"><span className="avatar" aria-hidden="true">{member.initials}</span><span className="stack"><strong>{member.name}</strong>{member.membershipType && <span className="small muted">{member.membershipType}</span>}</span></span>
-                  <Link className="btn btn-p btn-lg" href="/my">My dashboard</Link>
-                  <a className="btn btn-s btn-lg" href="/api/auth/logout">Log out</a>
+                  <Link className="btn btn-p btn-lg" href="/my">{nav.dashboard}</Link>
+                  <a className="btn btn-s btn-lg" href="/api/auth/logout">{nav.logout}</a>
                 </div>
               )}
               <div className="stack g8" style={{ padding: '12px 16px 0' }}>

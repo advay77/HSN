@@ -4,10 +4,13 @@ import React from 'react'
 import '../../styles/pages/about.css'
 
 import { MatchHeight } from '@/components/site/MatchHeight'
+import { getSiteCopy } from '@/lib/site/copy'
 
 export const metadata = { title: 'About Us' }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const copy = await getSiteCopy()
+  const story = copy.story.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
   return (
     <main>
       {/* Intro */}
@@ -15,7 +18,7 @@ export default function AboutPage() {
         <div className="wrap stack g24">
           <div className="green-box light-box" data-about-box>
             <h1 className="sec-title">About Us</h1>
-            <p className="box-text">The Healthcare Sustainability Network (HSN) is a dedicated collective of healthcare professionals, quality managers, clinicians, and health system administrators committed to advancing sustainable practices, green operations, and decarbonization across the healthcare sector.</p>
+            <p className="box-text">{copy.aboutIntro}</p>
           </div>
         </div>
       </section>
@@ -25,7 +28,7 @@ export default function AboutPage() {
         <div className="wrap">
           <div className="green-box light-box">
             <h2 className="sec-title" id="mission">Our Mission</h2>
-            <p className="box-text">Our mission is to bridge the gap between healthcare quality, patient safety, and environmental stewardship—empowering healthcare professionals to drive measurable, low-carbon transformation within their organizations.</p>
+            <p className="box-text">{copy.mission}</p>
           </div>
         </div>
       </section>
@@ -35,7 +38,7 @@ export default function AboutPage() {
         <div className="wrap">
           <div className="green-box light-box">
             <h2 className="sec-title" id="purpose">Our Purpose</h2>
-            <p className="box-text">Providing grounded, practical frameworks so healthcare professionals can integrate green practices into daily hospital routines without compromising patient safety or clinical outcomes.</p>
+            <p className="box-text">{copy.purpose}</p>
           </div>
         </div>
       </section>
@@ -45,9 +48,8 @@ export default function AboutPage() {
         <div className="wrap">
           <div className="green-box light-box">
             <h2 className="sec-title" id="story">Our Story</h2>
-            <p className="box-text">HSN was founded out of a clear operational realization: while sustainability is globally recognized as a priority, healthcare leaders and frontline clinical staff often lack practical, grounded frameworks to integrate green practices into daily hospital routines without compromising patient safety or clinical outcomes.</p>
-            <p className="box-body">Starting as an initiative focused on bridging clinical quality governance with environmental standards—such as international accreditation guidelines and regional health directives—HSN rapidly grew into a dedicated professional network.</p>
-            <p className="box-body">Today, HSN connects healthcare leaders, quality and patient safety professionals, clinical leads, facility heads, and sustainability advocates working collectively to transform health facilities across the region into sustainable centers of excellence.</p>
+            {story[0] && <p className="box-text">{story[0]}</p>}
+            {story.slice(1).map((p) => <p key={p} className="box-body">{p}</p>)}
           </div>
         </div>
       </section>
@@ -58,7 +60,7 @@ export default function AboutPage() {
         <div className="wrap">
           <MatchHeight source="[data-about-box]" className="green-box light-box team-box">
             <h2 className="sec-title" id="team">Our Team</h2>
-            <p className="box-text">Our network is driven by experienced healthcare quality leaders, clinical governance specialists, environmental health advisors, and sustainability champions with deep expertise across healthcare systems.</p>
+            <p className="box-text">{copy.team}</p>
           </MatchHeight>
         </div>
       </section>
@@ -69,23 +71,23 @@ export default function AboutPage() {
         <div className="wrap stack g48">
           <div className="stack g16 center-head">
             <h2 className="sec-title" id="partners">Our Partners</h2>
-            <p className="lead muted">We collaborate alongside forward-thinking health organizations, accreditation partners, and academic institutions committed to sustainable healthcare transformation.</p>
+            <p className="lead muted">{copy.partnersIntro}</p>
           </div>
           <div className="grid c3">
             <article className="card pad stack g16">
               <span className="ic ic-g"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path><path d="M12 9v6M9 12h6"></path></svg></span>
-              <h3 className="h4">Healthcare Delivery Partners</h3>
-              <p className="muted">Hospitals, medical centers, and outpatient networks implementing sustainability initiatives.</p>
+              <h3 className="h4">{copy.partners[0]?.title}</h3>
+              <p className="muted">{copy.partners[0]?.summary}</p>
             </article>
             <article className="card pad stack g16">
               <span className="ic ic-a"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6"></circle><path d="m8.5 14-1.5 7 5-3 5 3-1.5-7"></path></svg></span>
-              <h3 className="h4">Quality &amp; Accreditation Networks</h3>
-              <p className="muted">Professional health associations and quality bodies aligning patient care standards with environmental stewardship.</p>
+              <h3 className="h4">{copy.partners[1]?.title}</h3>
+              <p className="muted">{copy.partners[1]?.summary}</p>
             </article>
             <article className="card pad stack g16">
               <span className="ic ic-l"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5L2 9z"></path><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"></path></svg></span>
-              <h3 className="h4">Knowledge &amp; Academic Collaborators</h3>
-              <p className="muted">Technical advisors, sustainability experts, and educational facilitators contributing to evidence-based healthcare decarbonization.</p>
+              <h3 className="h4">{copy.partners[2]?.title}</h3>
+              <p className="muted">{copy.partners[2]?.summary}</p>
             </article>
           </div>
         </div>

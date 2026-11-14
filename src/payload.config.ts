@@ -14,6 +14,7 @@ import { Courses } from './collections/Courses'
 import { LibraryResources } from './collections/LibraryResources'
 import { Advisors } from './collections/Advisors'
 import { TeamMembers } from './collections/TeamMembers'
+import { SiteCopy } from './collections/SiteCopy'
 import { LoginCodes } from './collections/LoginCodes'
 import { Media } from './collections/Media'
 import { Members } from './collections/Members'
@@ -55,6 +56,7 @@ export default buildConfig({
     LibraryResources,
     Advisors,
     TeamMembers,
+    SiteCopy,
     Media,
     Members,
     Enrollments,

@@ -16,6 +16,8 @@ import * as migration_20261112_100000_certificate_numbers from './20261112_10000
 import * as migration_20261113_100000_case_category_optional from './20261113_100000_case_category_optional';
 import * as migration_20261113_120000_advisors from './20261113_120000_advisors';
 import * as migration_20261113_160000_team_members from './20261113_160000_team_members';
+import * as migration_20261114_140000_site_copy from './20261114_140000_site_copy';
+import * as migration_20261114_180000_site_copy_pages from './20261114_180000_site_copy_pages';
 
 export const migrations = [
   {
@@ -107,5 +109,15 @@ export const migrations = [
     up: migration_20261113_160000_team_members.up,
     down: migration_20261113_160000_team_members.down,
     name: '20261113_160000_team_members',
+  },
+  {
+    up: migration_20261114_140000_site_copy.up,
+    down: migration_20261114_140000_site_copy.down,
+    name: '20261114_140000_site_copy',
+  },
+  {
+    up: migration_20261114_180000_site_copy_pages.up,
+    down: migration_20261114_180000_site_copy_pages.down,
+    name: '20261114_180000_site_copy_pages',
   },
 ];

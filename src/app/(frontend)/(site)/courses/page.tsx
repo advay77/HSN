@@ -5,6 +5,7 @@ import React from 'react'
 import { CourseLibrary, type CourseCard } from '@/components/courses/CourseLibrary'
 import { CourseTagRow } from '@/components/courses/CourseTags'
 import { getCurrentMember } from '@/lib/auth/session'
+import { getSiteCopy } from '@/lib/site/copy'
 import { getEnrollmentsFor, getPublishedCourses, hasVideo, media, progressOf, visibleModules, availableModules } from '@/lib/courses/data'
 
 export const metadata: Metadata = { title: 'Courses' }
@@ -15,7 +16,7 @@ const ctaFor = (progress: number, start: string, cont: string) =>
   progress === 0 ? start : progress === 100 ? 'Review course' : cont
 
 export default async function CoursesPage() {
-  const [courses, member] = await Promise.all([getPublishedCourses(), getCurrentMember()])
+  const [courses, member, copy] = await Promise.all([getPublishedCourses(), getCurrentMember(), getSiteCopy()])
   const enrollments = member ? await getEnrollmentsFor(member.id) : []
   const progressFor = (c: (typeof courses)[number]) => {
     const e = enrollments.find((x) => (typeof x.course === 'object' ? x.course.id : x.course) === c.id)
@@ -61,7 +62,7 @@ export default async function CoursesPage() {
       <section className="sec" style={{ paddingTop: '48px', paddingBottom: '40px' }}>
         <div className="wrap stack g32">
           <div className="stack g20">
-            <h1 className="sec-title">Courses</h1>
+            <h1 className="sec-title">{copy.coursesTitle}</h1>
           </div>
         </div>
       </section>

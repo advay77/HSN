@@ -7,13 +7,27 @@ import './styles/motion.css'
 
 import { NavProgress } from '@/components/site/NavProgress'
 
+const SITE = 'https://healthcaresustainabilitynetwork.com'
+
 export const metadata = {
+  metadataBase: new URL(SITE),
   title: {
-    default: 'Healthcare Sustainability Network',
-    template: '%s · Healthcare Sustainability Network',
+    default: 'Healthcare Sustainability Network (HSN)',
+    template: '%s · Healthcare Sustainability Network (HSN)',
   },
   description:
-    'Advancing Sustainable Healthcare, Green Operations, and Decarbonization. Bridging the gap between healthcare quality, patient safety, and environmental stewardship across health systems.',
+    'Healthcare Sustainability Network (HSN) advances sustainable healthcare, green hospital operations, and decarbonization. It bridges healthcare quality, patient safety, and environmental stewardship.',
+  keywords: ['HSN', 'Healthcare Sustainability Network', 'healthcare sustainability', 'green hospitals', 'sustainable healthcare', 'hospital decarbonization'],
+  applicationName: 'Healthcare Sustainability Network',
+  authors: [{ name: 'Healthcare Sustainability Network', url: SITE }],
+  openGraph: {
+    type: 'website',
+    url: SITE,
+    siteName: 'Healthcare Sustainability Network (HSN)',
+    title: 'Healthcare Sustainability Network (HSN)',
+    description: 'HSN advances sustainable healthcare, green hospital operations, and decarbonization.',
+  },
+  robots: { index: true, follow: true },
   icons: { icon: '/images/hsn-logo.jpg' },
 }
 
@@ -32,6 +46,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'Healthcare Sustainability Network',
+              alternateName: ['HSN', 'Healthcare Sustainability Network (HSN)'],
+              url: SITE,
+              logo: `${SITE}/images/hsn-logo.jpg`,
+              description: 'Healthcare Sustainability Network (HSN) advances sustainable healthcare, green hospital operations, and decarbonization.',
+            }),
+          }}
+        />
         <NavProgress />
         {children}
       </body>

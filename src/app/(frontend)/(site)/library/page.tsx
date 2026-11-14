@@ -4,6 +4,7 @@ import React from 'react'
 
 import { LibraryList, type LibraryRow } from '@/components/library/LibraryList'
 import { requireMember } from '@/lib/auth/guard'
+import { getSiteCopy } from '@/lib/site/copy'
 import { getPayloadClient } from '@/lib/payload'
 
 import '../../styles/pages/library.css'
@@ -13,9 +14,10 @@ export const dynamic = 'force-dynamic'
 
 export default async function LibraryPage() {
   const payload = await getPayloadClient()
-  const [res, member] = await Promise.all([
+  const [res, member, copy] = await Promise.all([
     payload.find({ collection: 'library-resources', where: { published: { equals: true } }, sort: '-createdAt', limit: 500, depth: 0 }),
     requireMember('/library'),
+    getSiteCopy(),
   ])
   const activeMember = member?.membershipStatus === 'active'
   const rows: LibraryRow[] = res.docs.map((d) => {
@@ -39,12 +41,11 @@ export default async function LibraryPage() {
       <section className="sec" style={{ paddingTop: '48px', paddingBottom: '40px' }}>
         <div className="wrap stack g32">
           <div className="stack g20">
-            <h1 className="sec-title hero-title">Library</h1>
-            <p className="lead">Guides, toolkits, reports and templates to help healthcare teams plan, measure and report sustainability improvements.</p>
+            <h1 className="sec-title">{copy.libraryTitle}</h1>
           </div>
         </div>
       </section>
-      <section className="sec" style={{ paddingTop: '8px' }} aria-labelledby="res">
+      <section className="sec" style={{ paddingTop: '8px' }}>
         <LibraryList rows={rows} signedIn={!!member} />
       </section>
     </main>
