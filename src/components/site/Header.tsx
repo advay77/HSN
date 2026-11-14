@@ -12,8 +12,7 @@ import { SITE_COPY, type NavCopy } from '@/lib/site/copy-defaults'
 
 export type HeaderMember = { name: string; initials: string; membershipType?: string | null }
 
-// Five top items; About Us and Resources open a small menu. Get Involved and Membership sit in the
-// Join HSN menu and the footer.
+// About Us and Resources open a small menu. Membership and Get Involved are their own items after Resources.
 type NavLink = { id: string; label: string; href: string; sub?: string }
 type NavItem = NavLink | { id: string; label: string; items: NavLink[] }
 const menuFrom = (nav: NavCopy, casesLabel: string): NavItem[] => [
@@ -37,12 +36,10 @@ const menuFrom = (nav: NavCopy, casesLabel: string): NavItem[] => [
       { id: 'library', label: nav.library, href: '/library', sub: nav.libraryBlurb },
     ],
   },
+  { id: 'membership', label: nav.membership, href: '/membership' },
+  { id: 'involved', label: nav.involved, href: '/get-involved' },
 ]
-const LINKS: NavLink[] = [
-  ...menuFrom(SITE_COPY.nav, 'Case Studies & Posters').flatMap((m) => ('items' in m ? m.items : [m])),
-  { id: 'involved', label: 'Get Involved', href: '/get-involved' },
-  { id: 'membership', label: 'Membership', href: '/membership' },
-]
+const LINKS: NavLink[] = menuFrom(SITE_COPY.nav, 'Case Studies & Posters').flatMap((m) => ('items' in m ? m.items : [m]))
 
 function currentFromPath(pathname: string) {
   if (pathname === '/') return 'home'
@@ -57,10 +54,6 @@ const MENU_BOX: React.CSSProperties = { position: 'absolute', top: '50px', left:
 
 export function Header({ member = null, caseStudiesLabel, nav = SITE_COPY.nav }: { member?: HeaderMember | null; caseStudiesLabel?: string; nav?: NavCopy }) {
   const menu = menuFrom(nav, caseStudiesLabel || 'Case Studies & Posters')
-  const joinLinks: NavLink[] = [
-    { id: 'membership', label: nav.membership, href: '/membership' },
-    { id: 'involved', label: nav.involved, href: '/get-involved' },
-  ]
   const pathname = usePathname() || '/'
   const cur = currentFromPath(pathname)
   const [open, setOpen] = useState(false)
@@ -203,14 +196,6 @@ export function Header({ member = null, caseStudiesLabel, nav = SITE_COPY.nav }:
                         <span className="join-ic" style={{ background: '#DDF0F6', color: '#1C6E8A' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M8 10.5V17M8 7.5v.01M12 17v-6.5M12 13.5c0-1.7 1-3 2.5-3S17 11.5 17 13v4"></path></svg></span>
                         <span className="stack"><span>{nav.linkedin}</span><span className="join-sub">{nav.linkedinBlurb}</span></span>
                       </a>
-                      <Link role="menuitem" className="join-item" href="/membership">
-                        <span className="join-ic" style={{ background: '#EDE7D8', color: '#134E5E' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4l-5.2 2.7 1-5.8L3.5 9.2l5.9-.9z"></path></svg></span>
-                        <span className="stack"><span>{nav.membership}</span><span className="join-sub">{nav.membershipBlurb}</span></span>
-                      </Link>
-                      <Link role="menuitem" className="join-item" href="/get-involved">
-                        <span className="join-ic" style={{ background: '#E3F1E4', color: '#0B6B3A' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path><circle cx="10" cy="7" r="4"></circle><path d="M21 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"></path></svg></span>
-                        <span className="stack"><span>{nav.involved}</span><span className="join-sub">{nav.involvedBlurb}</span></span>
-                      </Link>
                     </div>
                   )}
                 </span>
@@ -244,12 +229,6 @@ export function Header({ member = null, caseStudiesLabel, nav = SITE_COPY.nav }:
                   <Link key={m.href} className={m.id === cur ? 'mrow cur' : 'mrow'} href={m.href} aria-current={m.id === cur ? 'page' : undefined}><span>{m.label}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5F63" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></Link>
                 ),
               )}
-              <div className="stack g4">
-                <span className="small muted strong" style={{ padding: '12px 16px 2px' }}>{nav.joinShort}</span>
-                {joinLinks.map((i) => (
-                  <Link key={i.href} className={i.id === cur ? 'mrow cur' : 'mrow'} href={i.href} aria-current={i.id === cur ? 'page' : undefined}><span>{i.label}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5F63" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></Link>
-                ))}
-              </div>
               {guest && (
                 <div className="stack g12" style={{ padding: '20px 16px 8px', borderTop: '1px solid #D9D2C1', marginTop: '12px' }}>
                   <span className="small muted strong">{nav.join}</span>
