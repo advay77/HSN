@@ -96,6 +96,22 @@ export function SiteTextAdmin({ initial }: { initial: SiteCopy }) {
   const [error, setError] = useState('')
   const [pending, start] = useTransition()
   const frameRef = useRef<HTMLIFrameElement>(null)
+  const boxRef = useRef<HTMLDivElement>(null)
+  const [fit, setFit] = useState({ scale: 1, width: 1280, height: 720 })
+  useEffect(() => {
+    const el = boxRef.current
+    if (!el) return
+    const measure = () => {
+      const box = el.clientWidth
+      const height = el.clientHeight || 720
+      const width = Math.max(1280, box)
+      setFit({ scale: box > 0 ? box / width : 1, width, height })
+    }
+    measure()
+    const watch = new ResizeObserver(measure)
+    watch.observe(el)
+    return () => watch.disconnect()
+  }, [])
   const dirty = useRef(false)
   const mark = (next: SiteCopy) => {
     dirty.current = true
@@ -177,42 +193,41 @@ export function SiteTextAdmin({ initial }: { initial: SiteCopy }) {
   const group = GROUPS.find((item) => item.id === page) || GROUPS[0]!
   const previewSrc = `${group.href}${group.href.includes('?') ? '&' : '?'}hsnpreview=1&v=${frame}`
   const fontSelect = (label: string, value: string, onChange: (value: string) => void, allowSame = false) => (
-    <div className="fld">
-      <label className="lbl">{label}</label>
+    <label className="fld" style={{ flex: '1 1 160px', margin: 0 }}>
+      <span className="lbl">{label}</span>
       <select className="inp" value={value} onChange={(e) => onChange(e.target.value)}>
-        {allowSame && <option value="">Same as the whole website</option>}
+        {allowSame && <option value="">Same as the website</option>}
         {SITE_FONTS.map((font) => <option key={font.id} value={font.id} style={{ fontFamily: font.stack }}>{font.label}</option>)}
       </select>
-    </div>
+    </label>
   )
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '240px minmax(0, 1fr)', gap: '16px', minHeight: 'calc(100vh - 120px)' }}>
-      <aside className="stack g16">
-        <nav className="stack g4" aria-label="Pages">
-          {GROUPS.map((g) => (
-            <button key={g.id} type="button" className={g.id === page ? 'btn btn-p btn-sm' : 'btn btn-s btn-sm'} onClick={() => setPage(g.id)} style={{ justifyContent: 'flex-start' }}>{g.title}</button>
-          ))}
-        </nav>
-        <div className="card pad stack g12">
-          <h2 className="h4" style={{ margin: 0 }}>Look</h2>
-          {fontSelect('Font for the whole website', f.design.body, (body) => setDesign({ body }))}
-          {fontSelect('Font for headings', f.design.heading, (heading) => setDesign({ heading }))}
-          {page !== 'menu' && page !== 'footer' && fontSelect('Font for this page only', f.design.pages[page] || '', (value) => setDesign({ pages: { ...f.design.pages, [page]: value } }), true)}
-          <div className="fld">
-            <label className="lbl" htmlFor="st-gap">Space between sections</label>
-            <input id="st-gap" type="range" min={56} max={140} value={f.design.gap} onChange={(e) => setDesign({ gap: Number(e.target.value) })} />
-            <span className="hint">{f.design.gap < 80 ? 'Tight' : f.design.gap > 110 ? 'Roomy' : 'Normal'}</span>
-          </div>
-        </div>
-        {note && <div className="note note-ok" role="status"><span>{note}</span></div>}
-        {error && <div className="note note-err" role="alert"><span>{error}</span></div>}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', height: 'calc(100vh - 120px)', minHeight: '640px' }}>
+      <nav aria-label="Pages" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+        {GROUPS.map((g) => (
+          <button key={g.id} type="button" className={g.id === page ? 'btn btn-p btn-sm' : 'btn btn-s btn-sm'} onClick={() => setPage(g.id)} style={{ flex: 'none' }}>{g.title}</button>
+        ))}
+      </nav>
+      <div className="card pad" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'flex-end' }}>
+        {fontSelect('Font', f.design.body, (body) => setDesign({ body }))}
+        {fontSelect('Headings', f.design.heading, (heading) => setDesign({ heading }))}
+        {page !== 'menu' && page !== 'footer' && fontSelect('This page', f.design.pages[page] || '', (value) => setDesign({ pages: { ...f.design.pages, [page]: value } }), true)}
+        <label className="fld" style={{ flex: '1 1 180px', margin: 0 }}>
+          <span className="lbl" id="st-gap-label">Spacing · {f.design.gap < 80 ? 'Tight' : f.design.gap > 110 ? 'Roomy' : 'Normal'}</span>
+          <input id="st-gap" aria-labelledby="st-gap-label" type="range" min={56} max={140} value={f.design.gap} onChange={(e) => setDesign({ gap: Number(e.target.value) })} />
+        </label>
         <button className="btn btn-p" onClick={save} disabled={pending}>{pending ? 'Saving…' : 'Save'}</button>
-      </aside>
-      <div className="stack g12" style={{ minWidth: 0 }}>
-        <iframe ref={frameRef} title={`${group.title} preview`} src={previewSrc} onLoad={showDesign} style={{ width: '100%', flex: '1 1 auto', minHeight: '420px', border: '1px solid #D9D2C1', borderRadius: '16px', background: '#FFFDF8' }} />
-        <section className="card pad stack g12" style={{ maxHeight: '34vh', overflow: 'auto' }} aria-labelledby="st-edit">
-          <h2 className="h3" id="st-edit" style={{ margin: 0 }}>{group.title}</h2>
+      </div>
+      {note && <div className="note note-ok" role="status"><span>{note}</span></div>}
+      {error && <div className="note note-err" role="alert"><span>{error}</span></div>}
+      <style>{'@media (max-width: 980px){.st-split{grid-template-columns:minmax(0,1fr) !important}}'}</style>
+      <div className="st-split" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(300px, 400px)', gap: '16px', flex: '1 1 auto', minHeight: 0 }}>
+        <div ref={boxRef} style={{ position: 'relative', overflow: 'hidden', height: '100%', minHeight: '480px', border: '1px solid #D9D2C1', borderRadius: '16px', background: '#FFFDF8' }}>
+          <iframe ref={frameRef} title={`${group.title} preview`} src={previewSrc} onLoad={showDesign} style={{ position: 'absolute', top: 0, left: 0, width: fit.width, height: fit.height / fit.scale, border: 0, transform: `scale(${fit.scale})`, transformOrigin: 'top left', background: '#FFFDF8' }} />
+        </div>
+        <section className="card pad stack g16" style={{ overflow: 'auto', minHeight: 0 }} aria-labelledby="st-edit">
+          <h2 className="h3" id="st-edit" style={{ margin: 0 }}>Edit {group.title}</h2>
           {fields(group.fields)}
           {group.cards && f[group.cards.key].map((row, i) => (
             <div key={`${group.cards!.key}-${i}`} className="stack g12" style={{ paddingTop: '8px', borderTop: '1px solid #EDE7D8' }}>
