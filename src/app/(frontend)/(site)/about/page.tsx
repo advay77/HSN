@@ -3,7 +3,6 @@ import React from 'react'
 
 import '../../styles/pages/about.css'
 
-import { MatchHeight } from '@/components/site/MatchHeight'
 import { getSiteCopy } from '@/lib/site/copy'
 
 export const metadata = { title: 'About Us' }
@@ -51,17 +50,6 @@ export default async function AboutPage() {
             {story[0] && <p className="box-text">{story[0]}</p>}
             {story.slice(1).map((p) => <p key={p} className="box-body">{p}</p>)}
           </div>
-        </div>
-      </section>
-
-      {/* Team */}
-      {/* Same compact light box as About Us (HSN request). */}
-      <section className="sec-sm" aria-labelledby="team" style={{ paddingTop: '0' }}>
-        <div className="wrap">
-          <MatchHeight source="[data-about-box]" className="green-box light-box team-box">
-            <h2 className="sec-title" id="team">Our Team</h2>
-            <p className="box-text">{copy.team}</p>
-          </MatchHeight>
         </div>
       </section>
 

@@ -8,7 +8,7 @@ import { SITE_COPY, SITE_FONTS, type CompareRow, type ServiceLine, type SiteCopy
 export type { CompareRow, FooterCopy, NavCopy, PrivacyCopy, ServiceLine, SiteCopy, SiteDesign, TierCopy } from '@/lib/site/copy-defaults'
 export { SITE_COPY } from '@/lib/site/copy-defaults'
 const TEXT_KEYS = [
-  'homeTitle', 'homeSubtitle', 'homeLead', 'communityTitle', 'communityText', 'goalTitle', 'goalText',
+  'homeTitle', 'homeSubtitle', 'homeLead', 'impactTitle', 'communityTitle', 'communityText', 'goalTitle', 'goalText',
   'partnersIntro', 'coursesTitle', 'libraryTitle', 'libraryIntro', 'involvedTitle', 'involvedIntro',
   'contactTitle', 'contactIntro', 'membershipTitle', 'membershipIntro', 'involvedPros', 'involvedHospitals', 'involvedResearchers', 'advisoryTitle', 'teamPageTitle',
   'submitTitle', 'feedbackTitle', 'feedbackIntro', 'footerTagline',

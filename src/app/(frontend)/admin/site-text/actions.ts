@@ -32,6 +32,7 @@ function cleanedCopy(input: SiteCopy): SiteCopy {
     homeTitle: clean(input.homeTitle, 160),
     homeSubtitle: clean(input.homeSubtitle, 240),
     homeLead: clean(input.homeLead),
+    impactTitle: clean(input.impactTitle, 80) || SITE_COPY.impactTitle,
     communityTitle: clean(input.communityTitle, 80),
     communityText: clean(input.communityText),
     goalTitle: clean(input.goalTitle, 80),

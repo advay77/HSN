@@ -53,7 +53,7 @@ export default async function HomePage() {
       {/* Network Impact */}
       <section className="sec bg-teal" aria-labelledby="impact">
         <div className="wrap stack g40">
-          <h2 className="sec-title" id="impact">Network Impact</h2>
+          <h2 className="sec-title" id="impact">{copy.impactTitle}</h2>
           <div className="grid c2">
             <div className="stack g12" style={{ padding: '24px 28px', borderRadius: '16px', background: '#0F4251', border: '1px solid #2D6878' }}>
               <div className="row nowrap g12" style={{ alignItems: 'center' }}><span className="ic" style={{ background: '#5BC0E3', color: '#0E1F22' }}><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M16 14.2a5 5 0 0 1 5.5 5.3"></path></svg></span><h3 className="h3" style={{ margin: 0 }}>{copy.communityTitle}</h3></div>

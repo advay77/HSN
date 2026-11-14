@@ -21,6 +21,7 @@ const GROUPS: Group[] = [
     ],
     cards: { key: 'focus', label: 'Focus area' },
     after: [
+      { key: 'impactTitle', label: 'Network Impact heading' },
       { key: 'communityTitle', label: 'Community heading' },
       { key: 'communityText', label: 'Community text', area: true },
       { key: 'goalTitle', label: 'Goal heading' },
@@ -34,7 +35,6 @@ const GROUPS: Group[] = [
       { key: 'mission', label: 'Our Mission', area: true },
       { key: 'purpose', label: 'Our Purpose', area: true },
       { key: 'story', label: 'Our Story', area: true, hint: 'Leave a blank line between paragraphs.' },
-      { key: 'team', label: 'Our Team', area: true },
       { key: 'partnersIntro', label: 'Our Partners introduction', area: true },
     ],
     cards: { key: 'partners', label: 'Partner' },

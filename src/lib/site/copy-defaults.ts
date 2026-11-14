@@ -110,6 +110,7 @@ export type SiteCopy = {
   homeSubtitle: string
   homeLead: string
   focus: ServiceLine[]
+  impactTitle: string
   communityTitle: string
   communityText: string
   goalTitle: string
@@ -179,6 +180,7 @@ export const SITE_COPY: SiteCopy = {
     { title: 'Green Procurement, Waste Reduction & Circular Economy', summary: 'Optimizing supply chains, diverting medical waste, and advancing circular resource use.' },
     { title: 'Case Studies, Research & Best Practices', summary: 'Sharing practical, field-tested evidence and scalable implementation models.' },
   ],
+  impactTitle: 'Network Impact',
   communityTitle: 'Community',
   communityText: 'A dedicated collective of healthcare professionals, quality and patient safety professionals, clinicians, and health system administrators.',
   goalTitle: 'Goal',
