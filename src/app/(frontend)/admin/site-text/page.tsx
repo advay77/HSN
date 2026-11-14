@@ -18,7 +18,7 @@ export default async function SiteTextPage() {
     <>
       <AdminTopbar
         initial={admin.initial}
-        left={<div className="stack g4"><h1 className="h2" style={{ margin: 0 }}>Page text</h1><span className="small muted">Wording on every public page</span></div>}
+        left={<div className="stack g4"><h1 className="h2" style={{ margin: 0 }}>Website</h1><span className="small muted">Edit a page, see it on the right, then save</span></div>}
       />
       <main className="amain">
         <SiteTextAdmin initial={copy} />

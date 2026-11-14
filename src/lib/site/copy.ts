@@ -1,9 +1,11 @@
 ﻿import 'server-only'
 
-import { getPayloadClient } from '@/lib/payload'
-import { SITE_COPY, type CompareRow, type ServiceLine, type SiteCopy, type TierCopy } from '@/lib/site/copy-defaults'
+import { headers } from 'next/headers'
 
-export type { CompareRow, FooterCopy, NavCopy, PrivacyCopy, ServiceLine, SiteCopy, TierCopy } from '@/lib/site/copy-defaults'
+import { getPayloadClient } from '@/lib/payload'
+import { SITE_COPY, SITE_FONTS, type CompareRow, type ServiceLine, type SiteCopy, type SiteDesign, type TierCopy } from '@/lib/site/copy-defaults'
+
+export type { CompareRow, FooterCopy, NavCopy, PrivacyCopy, ServiceLine, SiteCopy, SiteDesign, TierCopy } from '@/lib/site/copy-defaults'
 export { SITE_COPY } from '@/lib/site/copy-defaults'
 const TEXT_KEYS = [
   'homeTitle', 'homeSubtitle', 'homeLead', 'communityTitle', 'communityText', 'goalTitle', 'goalText',
@@ -73,10 +75,27 @@ const lines = (value: unknown, fallback: ServiceLine[]): ServiceLine[] => {
 const asRecord = (value: unknown): Record<string, unknown> | null =>
   value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : null
 
+const fontOk = (value: unknown) => SITE_FONTS.some((font) => font.id === value)
+
+const designOf = (value: unknown): SiteDesign => {
+  const row = asRecord(value)
+  const pages: Record<string, string> = {}
+  const saved = asRecord(row?.pages)
+  if (saved) for (const [key, font] of Object.entries(saved)) if (fontOk(font)) pages[key] = String(font)
+  const gap = Number(row?.gap)
+  return {
+    body: fontOk(row?.body) ? String(row?.body) : SITE_COPY.design.body,
+    heading: fontOk(row?.heading) ? String(row?.heading) : SITE_COPY.design.heading,
+    gap: Number.isFinite(gap) ? Math.min(140, Math.max(56, Math.round(gap))) : SITE_COPY.design.gap,
+    pages,
+  }
+}
+
 export async function getSiteCopy(): Promise<SiteCopy & { id: number | null }> {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({ collection: 'site-copy', limit: 1, depth: 0, sort: 'id' })
   const doc = docs[0]
+  const requestHeaders = await headers()
   const fresh = (): SiteCopy & { id: number | null } => ({
     ...SITE_COPY,
     focus: cloneCards(SITE_COPY.focus),
@@ -89,22 +108,26 @@ export async function getSiteCopy(): Promise<SiteCopy & { id: number | null }> {
     footer: { ...SITE_COPY.footer },
     tiers: SITE_COPY.tiers.map((t) => ({ ...t })),
     compare: SITE_COPY.compare.map((r) => ({ ...r })),
+    design: { ...SITE_COPY.design, pages: { ...SITE_COPY.design.pages } },
     id: null,
   })
   if (!doc) return fresh()
-  const pages = asRecord(doc.pages)
+  const stored = asRecord(doc.pages)
+  const preview = requestHeaders.get('x-hsn-preview') === '1' ? asRecord(stored?.preview) : null
+  const source = preview ? { ...doc, ...preview } : doc
+  const pages = preview ? asRecord(preview.pages) : stored
   const text = (key: (typeof TEXT_KEYS)[number]) => (pages && key in pages && pages[key] != null ? String(pages[key]) : SITE_COPY[key])
   const copy = fresh()
   copy.id = doc.id
-  copy.aboutIntro = doc.aboutIntro ?? ''
-  copy.mission = doc.mission ?? ''
-  copy.purpose = doc.purpose ?? ''
-  copy.story = doc.story ?? ''
-  copy.team = doc.team ?? ''
-  copy.services = lines(doc.services, SITE_COPY.services)
-  copy.caseStudiesTitle = doc.caseStudiesTitle || SITE_COPY.caseStudiesTitle
-  copy.caseStudiesMenu = doc.caseStudiesMenu || SITE_COPY.caseStudiesMenu
-  copy.caseStudiesIntro = doc.caseStudiesIntro ?? ''
+  copy.aboutIntro = String(source.aboutIntro ?? '')
+  copy.mission = String(source.mission ?? '')
+  copy.purpose = String(source.purpose ?? '')
+  copy.story = String(source.story ?? '')
+  copy.team = String(source.team ?? '')
+  copy.services = lines(source.services, SITE_COPY.services)
+  copy.caseStudiesTitle = String(source.caseStudiesTitle || SITE_COPY.caseStudiesTitle)
+  copy.caseStudiesMenu = String(source.caseStudiesMenu || SITE_COPY.caseStudiesMenu)
+  copy.caseStudiesIntro = String(source.caseStudiesIntro ?? '')
   for (const key of TEXT_KEYS) copy[key] = text(key)
   copy.focus = lines(pages?.focus, SITE_COPY.focus)
   copy.partners = lines(pages?.partners, SITE_COPY.partners)
@@ -120,6 +143,7 @@ export async function getSiteCopy(): Promise<SiteCopy & { id: number | null }> {
   copy.footer = fillText(pages?.footer, SITE_COPY.footer)
   copy.tiers = tiersOf(pages?.tiers)
   copy.compare = compareOf(pages?.compare)
+  copy.design = designOf(pages?.design)
   return copy
 }
 
@@ -136,6 +160,7 @@ export function siteCopyData(input: SiteCopy) {
   pages.footer = input.footer
   pages.tiers = input.tiers
   pages.compare = input.compare
+  pages.design = input.design
   return {
     aboutIntro: input.aboutIntro,
     mission: input.mission,

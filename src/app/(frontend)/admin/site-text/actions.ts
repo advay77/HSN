@@ -5,15 +5,17 @@ import { revalidatePath } from 'next/cache'
 import { requireAdmin } from '@/lib/admin/auth'
 import { getPayloadClient } from '@/lib/payload'
 import { getSiteCopy, siteCopyData, SITE_COPY, type ServiceLine, type SiteCopy } from '@/lib/site/copy'
+import { SITE_FONTS } from '@/lib/site/copy-defaults'
 
 const clean = (s: string, max = 20000) => (s ?? '').replace(/\r\n/g, '\n').trim().slice(0, max)
 
 const cards = (rows: ServiceLine[] | undefined, count: number): ServiceLine[] =>
   Array.from({ length: count }, (_, i) => ({ title: clean(rows?.[i]?.title ?? '', 300), summary: clean(rows?.[i]?.summary ?? '', 2000) }))
 
-export async function saveSiteTextAction(input: SiteCopy): Promise<{ ok: true } | { ok: false; error: string }> {
-  await requireAdmin('/admin/site-text')
-  const data = siteCopyData({
+const fontId = (value: unknown) => (SITE_FONTS.some((font) => font.id === value) ? String(value) : 'default')
+
+function cleanedCopy(input: SiteCopy): SiteCopy {
+  return {
     ...input,
     aboutIntro: clean(input.aboutIntro),
     mission: clean(input.mission),
@@ -84,7 +86,45 @@ export async function saveSiteTextAction(input: SiteCopy): Promise<{ ok: true } 
       individual: clean(input.compare?.[i]?.individual ?? '', 160),
       institutional: clean(input.compare?.[i]?.institutional ?? '', 200),
     })),
-  })
+    design: {
+      body: fontId(input.design?.body),
+      heading: fontId(input.design?.heading),
+      gap: Math.min(140, Math.max(56, Math.round(Number(input.design?.gap) || 96))),
+      pages: Object.fromEntries(Object.entries(input.design?.pages || {}).flatMap(([key, value]) => (fontId(value) === String(value) ? [[key, String(value)]] : []))),
+    },
+  }
+}
+
+const refresh = () => {
+  for (const path of ['/', '/about', '/services', '/courses', '/case-studies', '/case-studies/submit', '/library', '/get-involved', '/contact', '/membership', '/advisory', '/founder', '/feedback', '/privacy']) {
+    revalidatePath(path)
+  }
+  revalidatePath('/', 'layout')
+}
+
+export async function previewSiteTextAction(input: SiteCopy): Promise<{ ok: true } | { ok: false; error: string }> {
+  await requireAdmin('/admin/site-text')
+  const snapshot = siteCopyData(cleanedCopy(input))
+  const payload = await getPayloadClient()
+  try {
+    const current = await getSiteCopy()
+    if (!current.id) {
+      await payload.create({ collection: 'site-copy', data: { ...snapshot, pages: { ...snapshot.pages, preview: snapshot } } })
+    } else {
+      const doc = await payload.findByID({ collection: 'site-copy', id: current.id, depth: 0 })
+      const pages = doc.pages && typeof doc.pages === 'object' && !Array.isArray(doc.pages) ? doc.pages : {}
+      await payload.update({ collection: 'site-copy', id: current.id, data: { pages: { ...pages, preview: snapshot } } })
+    }
+  } catch {
+    return { ok: false, error: 'The preview could not be updated.' }
+  }
+  refresh()
+  return { ok: true }
+}
+
+export async function saveSiteTextAction(input: SiteCopy): Promise<{ ok: true } | { ok: false; error: string }> {
+  await requireAdmin('/admin/site-text')
+  const data = siteCopyData(cleanedCopy(input))
   const payload = await getPayloadClient()
   try {
     const current = await getSiteCopy()
@@ -93,9 +133,6 @@ export async function saveSiteTextAction(input: SiteCopy): Promise<{ ok: true } 
   } catch {
     return { ok: false, error: 'The text could not be saved. Please try again.' }
   }
-  for (const path of ['/', '/about', '/services', '/courses', '/case-studies', '/case-studies/submit', '/library', '/get-involved', '/contact', '/membership', '/advisory', '/founder', '/feedback', '/privacy']) {
-    revalidatePath(path)
-  }
-  revalidatePath('/', 'layout')
+  refresh()
   return { ok: true }
 }

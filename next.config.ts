@@ -25,8 +25,8 @@ const csp = [
   "img-src 'self' data: blob: https:",
   "media-src 'self' blob:",
   `connect-src 'self'${supabaseOrigin ? ' ' + supabaseOrigin : ''}${dev ? ' ws: wss:' : ''}`,
-  'frame-src https://www.youtube-nocookie.com https://www.youtube.com https://challenges.cloudflare.com',
-  "frame-ancestors 'none'",
+  "frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com https://challenges.cloudflare.com",
+  "frame-ancestors 'self'",
   "form-action 'self'",
   "base-uri 'self'",
   "object-src 'none'",
@@ -35,7 +35,7 @@ const csp = [
 
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
-  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()' },
   { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },

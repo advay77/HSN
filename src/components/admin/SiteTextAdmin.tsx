@@ -1,9 +1,9 @@
 'use client'
 
-import React, { useState, useTransition } from 'react'
+import React, { useEffect, useRef, useState, useTransition } from 'react'
 
-import { saveSiteTextAction } from '@/app/(frontend)/admin/site-text/actions'
-import type { ServiceLine, SiteCopy } from '@/lib/site/copy-defaults'
+import { previewSiteTextAction, saveSiteTextAction } from '@/app/(frontend)/admin/site-text/actions'
+import { SITE_FONTS, type ServiceLine, type SiteCopy } from '@/lib/site/copy-defaults'
 
 type TextKey = { [K in keyof SiteCopy]: SiteCopy[K] extends string ? K : never }[keyof SiteCopy]
 type CardKey = { [K in keyof SiteCopy]: SiteCopy[K] extends ServiceLine[] ? K : never }[keyof SiteCopy]
@@ -90,14 +90,23 @@ const GROUPS: Group[] = [
 
 export function SiteTextAdmin({ initial }: { initial: SiteCopy }) {
   const [f, setF] = useState(initial)
+  const [page, setPage] = useState('home')
+  const [frame, setFrame] = useState(0)
   const [note, setNote] = useState('')
   const [error, setError] = useState('')
   const [pending, start] = useTransition()
-  const setText = (key: TextKey, value: string) => setF((x) => ({ ...x, [key]: value }))
-  const setNav = (key: keyof SiteCopy['nav'], value: string) => setF((x) => ({ ...x, nav: { ...x.nav, [key]: value } }))
-  const setFooter = (key: keyof SiteCopy['footer'], value: string) => setF((x) => ({ ...x, footer: { ...x.footer, [key]: value } }))
-  const setTier = (index: number, patch: Partial<SiteCopy['tiers'][number]>) => setF((x) => ({ ...x, tiers: x.tiers.map((row, i) => (i === index ? { ...row, ...patch } : row)) }))
-  const setCompare = (index: number, patch: Partial<SiteCopy['compare'][number]>) => setF((x) => ({ ...x, compare: x.compare.map((row, i) => (i === index ? { ...row, ...patch } : row)) }))
+  const frameRef = useRef<HTMLIFrameElement>(null)
+  const dirty = useRef(false)
+  const mark = (next: SiteCopy) => {
+    dirty.current = true
+    return next
+  }
+  const setText = (key: TextKey, value: string) => setF((x) => mark({ ...x, [key]: value }))
+  const setNav = (key: keyof SiteCopy['nav'], value: string) => setF((x) => mark({ ...x, nav: { ...x.nav, [key]: value } }))
+  const setFooter = (key: keyof SiteCopy['footer'], value: string) => setF((x) => mark({ ...x, footer: { ...x.footer, [key]: value } }))
+  const setTier = (index: number, patch: Partial<SiteCopy['tiers'][number]>) => setF((x) => mark({ ...x, tiers: x.tiers.map((row, i) => (i === index ? { ...row, ...patch } : row)) }))
+  const setCompare = (index: number, patch: Partial<SiteCopy['compare'][number]>) => setF((x) => mark({ ...x, compare: x.compare.map((row, i) => (i === index ? { ...row, ...patch } : row)) }))
+  const setDesign = (patch: Partial<SiteCopy['design']>) => setF((x) => mark({ ...x, design: { ...x.design, ...patch } }))
   const menuFields: [keyof SiteCopy['nav'], string][] = [
     ['home', 'Home'], ['about', 'About Us menu name'], ['aboutPage', 'About Us link name'], ['aboutBlurb', 'About Us subtitle'],
     ['advisory', 'Advisory Board'], ['advisoryBlurb', 'Advisory Board subtitle'], ['team', 'Our Team'], ['teamBlurb', 'Our Team subtitle'],
@@ -125,7 +134,23 @@ export function SiteTextAdmin({ initial }: { initial: SiteCopy }) {
     ['accessibility', 'Accessibility'], ['feedback', 'Feedback'], ['privacy', 'Privacy Policy'], ['contact', 'Contact us'], ['copyright', 'Copyright name'],
   ]
   const setCard = (key: CardKey, i: number, patch: Partial<ServiceLine>) =>
-    setF((x) => ({ ...x, [key]: x[key].map((row, n) => (n === i ? { ...row, ...patch } : row)) }))
+    setF((x) => mark({ ...x, [key]: x[key].map((row, n) => (n === i ? { ...row, ...patch } : row)) }))
+
+  const showDesign = () => frameRef.current?.contentWindow?.postMessage({ type: 'hsn-design', design: f.design }, window.location.origin)
+
+  useEffect(() => {
+    showDesign()
+  })
+
+  useEffect(() => {
+    if (!dirty.current) return
+    const timer = window.setTimeout(() => {
+      void previewSiteTextAction(f).then((r) => {
+        if (r.ok) setFrame((n) => n + 1)
+      })
+    }, 700)
+    return () => window.clearTimeout(timer)
+  }, [f])
 
   const save = () => {
     setError('')
@@ -133,7 +158,9 @@ export function SiteTextAdmin({ initial }: { initial: SiteCopy }) {
     start(async () => {
       const r = await saveSiteTextAction(f)
       if (!r.ok) return setError(r.error)
-      setNote('Saved. The new wording is on the website.')
+      dirty.current = false
+      setFrame((n) => n + 1)
+      setNote('Saved. The website now looks like this.')
     })
   }
 
@@ -147,40 +174,65 @@ export function SiteTextAdmin({ initial }: { initial: SiteCopy }) {
     </div>
   ))
 
-  return (
-    <div className="stack g24">
-      <p className="muted" style={{ margin: 0, maxWidth: '720px' }}>Every page below can be edited here. Type the new wording and click Save. Courses, team members, advisors, case studies and library files have their own sections in the menu.</p>
-      <nav className="row g8" aria-label="Pages" style={{ flexWrap: 'wrap' }}>
-        {GROUPS.map((g) => <a key={g.id} className="btn btn-s btn-sm" href={`#st-${g.id}`}>{g.title}</a>)}
-      </nav>
-      {note && <div className="note note-ok" role="status"><span>{note}</span></div>}
+  const group = GROUPS.find((item) => item.id === page) || GROUPS[0]!
+  const previewSrc = `${group.href}${group.href.includes('?') ? '&' : '?'}hsnpreview=1&v=${frame}`
+  const fontSelect = (label: string, value: string, onChange: (value: string) => void, allowSame = false) => (
+    <div className="fld">
+      <label className="lbl">{label}</label>
+      <select className="inp" value={value} onChange={(e) => onChange(e.target.value)}>
+        {allowSame && <option value="">Same as the whole website</option>}
+        {SITE_FONTS.map((font) => <option key={font.id} value={font.id} style={{ fontFamily: font.stack }}>{font.label}</option>)}
+      </select>
+    </div>
+  )
 
-      {GROUPS.map((g) => (
-        <section key={g.id} className="card pad-l stack g16" id={`st-${g.id}`} aria-labelledby={`sth-${g.id}`}>
-          <div className="row between g12" style={{ alignItems: 'center' }}>
-            <h2 className="h3" id={`sth-${g.id}`} style={{ margin: 0 }}>{g.title}</h2>
-            <a className="btn btn-s btn-sm" href={g.href} target="_blank" rel="noopener">View page</a>
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '240px minmax(0, 1fr)', gap: '16px', minHeight: 'calc(100vh - 120px)' }}>
+      <aside className="stack g16">
+        <nav className="stack g4" aria-label="Pages">
+          {GROUPS.map((g) => (
+            <button key={g.id} type="button" className={g.id === page ? 'btn btn-p btn-sm' : 'btn btn-s btn-sm'} onClick={() => setPage(g.id)} style={{ justifyContent: 'flex-start' }}>{g.title}</button>
+          ))}
+        </nav>
+        <div className="card pad stack g12">
+          <h2 className="h4" style={{ margin: 0 }}>Look</h2>
+          {fontSelect('Font for the whole website', f.design.body, (body) => setDesign({ body }))}
+          {fontSelect('Font for headings', f.design.heading, (heading) => setDesign({ heading }))}
+          {page !== 'menu' && page !== 'footer' && fontSelect('Font for this page only', f.design.pages[page] || '', (value) => setDesign({ pages: { ...f.design.pages, [page]: value } }), true)}
+          <div className="fld">
+            <label className="lbl" htmlFor="st-gap">Space between sections</label>
+            <input id="st-gap" type="range" min={56} max={140} value={f.design.gap} onChange={(e) => setDesign({ gap: Number(e.target.value) })} />
+            <span className="hint">{f.design.gap < 80 ? 'Tight' : f.design.gap > 110 ? 'Roomy' : 'Normal'}</span>
           </div>
-          {fields(g.fields)}
-          {g.cards && f[g.cards.key].map((row, i) => (
-            <div key={`${g.cards!.key}-${i}`} className="stack g12" style={{ paddingTop: '8px', borderTop: '1px solid #EDE7D8' }}>
-              <div className="fld"><label className="lbl" htmlFor={`st-${g.cards!.key}-t-${i}`}>{g.cards!.label} {i + 1} title</label><input className="inp" id={`st-${g.cards!.key}-t-${i}`} value={row.title} onChange={(e) => setCard(g.cards!.key, i, { title: e.target.value })} /></div>
-              <div className="fld"><label className="lbl" htmlFor={`st-${g.cards!.key}-s-${i}`}>{g.cards!.label} {i + 1} text</label><textarea className="inp" id={`st-${g.cards!.key}-s-${i}`} value={row.summary} onChange={(e) => setCard(g.cards!.key, i, { summary: e.target.value })} style={{ minHeight: '80px' }} /></div>
+        </div>
+        {note && <div className="note note-ok" role="status"><span>{note}</span></div>}
+        {error && <div className="note note-err" role="alert"><span>{error}</span></div>}
+        <button className="btn btn-p" onClick={save} disabled={pending}>{pending ? 'Saving…' : 'Save'}</button>
+      </aside>
+      <div className="stack g12" style={{ minWidth: 0 }}>
+        <iframe ref={frameRef} title={`${group.title} preview`} src={previewSrc} onLoad={showDesign} style={{ width: '100%', flex: '1 1 auto', minHeight: '420px', border: '1px solid #D9D2C1', borderRadius: '16px', background: '#FFFDF8' }} />
+        <section className="card pad stack g12" style={{ maxHeight: '34vh', overflow: 'auto' }} aria-labelledby="st-edit">
+          <h2 className="h3" id="st-edit" style={{ margin: 0 }}>{group.title}</h2>
+          {fields(group.fields)}
+          {group.cards && f[group.cards.key].map((row, i) => (
+            <div key={`${group.cards!.key}-${i}`} className="stack g12" style={{ paddingTop: '8px', borderTop: '1px solid #EDE7D8' }}>
+              <div className="fld"><label className="lbl" htmlFor={`st-${group.cards!.key}-t-${i}`}>{group.cards!.label} {i + 1} title</label><input className="inp" id={`st-${group.cards!.key}-t-${i}`} value={row.title} onChange={(e) => setCard(group.cards!.key, i, { title: e.target.value })} /></div>
+              <div className="fld"><label className="lbl" htmlFor={`st-${group.cards!.key}-s-${i}`}>{group.cards!.label} {i + 1} text</label><textarea className="inp" id={`st-${group.cards!.key}-s-${i}`} value={row.summary} onChange={(e) => setCard(group.cards!.key, i, { summary: e.target.value })} style={{ minHeight: '80px' }} /></div>
             </div>
           ))}
-          {g.after && fields(g.after)}
-          {g.id === 'involved' && f.involvedButtons.map((label, i) => (
-            <div className="fld" key={`btn-${i}`}><label className="lbl" htmlFor={`ib-${i}`}>Button {i + 1}</label><input className="inp" id={`ib-${i}`} value={label} onChange={(e) => setF((x) => ({ ...x, involvedButtons: x.involvedButtons.map((item, n) => n === i ? e.target.value : item) })) } /><span className="hint">{buttonLabels[i]}</span></div>
+          {group.after && fields(group.after)}
+          {group.id === 'involved' && f.involvedButtons.map((label, i) => (
+            <div className="fld" key={`btn-${i}`}><label className="lbl" htmlFor={`ib-${i}`}>Button {i + 1}</label><input className="inp" id={`ib-${i}`} value={label} onChange={(e) => setF((x) => mark({ ...x, involvedButtons: x.involvedButtons.map((item, n) => n === i ? e.target.value : item) })) } /><span className="hint">{buttonLabels[i]}</span></div>
           ))}
-          {g.id === 'privacy' && privacyFields.map(([key, label]) => (
+          {group.id === 'privacy' && privacyFields.map(([key, label]) => (
             <div className="fld" key={key}>
               <label className="lbl" htmlFor={`pv-${key}`}>{label}</label>
               {['lead', 's1intro', 's2intro', 's3body', 's4body', 's5ad', 's5bd', 's6body', 's7body', 's3note'].includes(key)
-                ? <textarea className="inp" id={`pv-${key}`} value={f.privacy[key]} onChange={(e) => setF((x) => ({ ...x, privacy: { ...x.privacy, [key]: e.target.value } }))} style={{ minHeight: '90px' }} />
-                : <input className="inp" id={`pv-${key}`} value={f.privacy[key]} onChange={(e) => setF((x) => ({ ...x, privacy: { ...x.privacy, [key]: e.target.value } }))} />}
+                ? <textarea className="inp" id={`pv-${key}`} value={f.privacy[key]} onChange={(e) => setF((x) => mark({ ...x, privacy: { ...x.privacy, [key]: e.target.value } }))} style={{ minHeight: '90px' }} />
+                : <input className="inp" id={`pv-${key}`} value={f.privacy[key]} onChange={(e) => setF((x) => mark({ ...x, privacy: { ...x.privacy, [key]: e.target.value } }))} />}
             </div>
           ))}
-          {g.id === 'membership' && f.tiers.map((tier, i) => (
+          {group.id === 'membership' && f.tiers.map((tier, i) => (
             <div key={`tier-${i}`} className="stack g12" style={{ paddingTop: '8px', borderTop: '1px solid #EDE7D8' }}>
               <div className="fld"><label className="lbl" htmlFor={`tier-n-${i}`}>Plan {i + 1} name</label><input className="inp" id={`tier-n-${i}`} value={tier.name} onChange={(e) => setTier(i, { name: e.target.value })} /></div>
               <div className="fld"><label className="lbl" htmlFor={`tier-t-${i}`}>Plan {i + 1} tag</label><input className="inp" id={`tier-t-${i}`} value={tier.tag} onChange={(e) => setTier(i, { tag: e.target.value })} /></div>
@@ -188,7 +240,7 @@ export function SiteTextAdmin({ initial }: { initial: SiteCopy }) {
               <div className="fld"><label className="lbl" htmlFor={`tier-f-${i}`}>Plan {i + 1} points, one per line</label><textarea className="inp" id={`tier-f-${i}`} value={tier.features} onChange={(e) => setTier(i, { features: e.target.value })} style={{ minHeight: '120px' }} /></div>
             </div>
           ))}
-          {g.id === 'membership' && f.compare.map((row, i) => (
+          {group.id === 'membership' && f.compare.map((row, i) => (
             <div key={`cmp-${i}`} className="stack g12" style={{ paddingTop: '8px', borderTop: '1px solid #EDE7D8' }}>
               <div className="fld"><label className="lbl" htmlFor={`cmp-b-${i}`}>Compare row {i + 1}</label><input className="inp" id={`cmp-b-${i}`} value={row.benefit} onChange={(e) => setCompare(i, { benefit: e.target.value })} /></div>
               <div className="row g12" style={{ flexWrap: 'wrap' }}>
@@ -198,17 +250,14 @@ export function SiteTextAdmin({ initial }: { initial: SiteCopy }) {
               </div>
             </div>
           ))}
-          {g.id === 'menu' && menuFields.map(([key, label]) => (
+          {group.id === 'menu' && menuFields.map(([key, label]) => (
             <div className="fld" key={key}><label className="lbl" htmlFor={`nav-${key}`}>{label}</label><input className="inp" id={`nav-${key}`} value={f.nav[key]} onChange={(e) => setNav(key, e.target.value)} /></div>
           ))}
-          {g.id === 'footer' && footerFields.map(([key, label]) => (
+          {group.id === 'footer' && footerFields.map(([key, label]) => (
             <div className="fld" key={key}><label className="lbl" htmlFor={`ft-${key}`}>{label}</label><input className="inp" id={`ft-${key}`} value={f.footer[key]} onChange={(e) => setFooter(key, e.target.value)} /></div>
           ))}
         </section>
-      ))}
-
-      {error && <div className="note note-err" role="alert"><span>{error}</span></div>}
-      <button className="btn btn-p self-start" onClick={save} disabled={pending}>{pending ? 'Saving…' : 'Save page text'}</button>
+      </div>
     </div>
   )
 }

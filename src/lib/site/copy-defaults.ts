@@ -53,6 +53,22 @@ export type FooterCopy = {
 }
 export type TierCopy = { name: string; tag: string; blurb: string; features: string }
 export type CompareRow = { benefit: string; student: string; individual: string; institutional: string }
+export type SiteDesign = { body: string; heading: string; gap: number; pages: Record<string, string> }
+export const SITE_FONTS = [
+  { id: 'default', label: 'Current', stack: '"Aptos Display","Aptos","Segoe UI Variable Display","Segoe UI",Inter,system-ui,sans-serif' },
+  { id: 'inter', label: 'Inter', stack: 'Inter,system-ui,sans-serif' },
+  { id: 'source', label: 'Source Sans', stack: '"Source Sans 3",Inter,sans-serif' },
+  { id: 'nunito', label: 'Nunito Sans', stack: '"Nunito Sans",Inter,sans-serif' },
+  { id: 'manrope', label: 'Manrope', stack: 'Manrope,Inter,sans-serif' },
+  { id: 'outfit', label: 'Outfit', stack: 'Outfit,Inter,sans-serif' },
+  { id: 'libre', label: 'Libre Baskerville', stack: '"Libre Baskerville",Georgia,serif' },
+  { id: 'lora', label: 'Lora', stack: 'Lora,Georgia,serif' },
+] as const
+export const fontStack = (id: string) => SITE_FONTS.find((f) => f.id === id)?.stack || SITE_FONTS[0].stack
+export const pageIdFromPath = (path: string) => {
+  const hit: [string, string][] = [['/about', 'about'], ['/advisory', 'advisory'], ['/founder', 'team'], ['/services', 'services'], ['/courses', 'courses'], ['/case-studies', 'cases'], ['/library', 'library'], ['/get-involved', 'involved'], ['/membership', 'membership'], ['/contact', 'contact'], ['/feedback', 'feedback'], ['/privacy', 'privacy']]
+  return hit.find(([href]) => path === href || path.startsWith(href + '/'))?.[1] || 'home'
+}
 export type PrivacyCopy = {
   title: string
   date: string
@@ -149,6 +165,7 @@ export type SiteCopy = {
   footer: FooterCopy
   tiers: TierCopy[]
   compare: CompareRow[]
+  design: SiteDesign
 }
 
 // Words on the site until someone saves new ones in Admin → Page text.
@@ -298,4 +315,5 @@ Today, HSN connects healthcare leaders, quality and patient safety professionals
     { benefit: 'Accounts', student: '1', individual: '1', institutional: 'Up to 20 staff accounts' },
     { benefit: 'Tools', student: '—', individual: '—', institutional: 'Green audit toolkits, benchmarking reports' },
   ],
+  design: { body: 'default', heading: 'default', gap: 96, pages: {} },
 }
