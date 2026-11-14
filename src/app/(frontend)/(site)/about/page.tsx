@@ -30,6 +30,16 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Purpose */}
+      <section className="sec-sm" aria-labelledby="purpose" style={{ paddingBottom: '0' }}>
+        <div className="wrap">
+          <div className="green-box light-box">
+            <h2 className="sec-title" id="purpose">Our Purpose</h2>
+            <p className="box-text">Providing grounded, practical frameworks so healthcare professionals can integrate green practices into daily hospital routines without compromising patient safety or clinical outcomes.</p>
+          </div>
+        </div>
+      </section>
+
       {/* Story */}
       <section className="sec-sm" aria-labelledby="story">
         <div className="wrap">

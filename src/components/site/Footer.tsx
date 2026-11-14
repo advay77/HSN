@@ -35,7 +35,7 @@ export function Footer() {
             </nav>
             <nav aria-label="Network" className="stack">
               <span className="ftr-h">Network</span>
-              <Link className="ftr-l" href="/case-studies">Case Studies</Link>
+              <Link className="ftr-l" href="/case-studies">Case Studies & Posters</Link>
               <Link className="ftr-l" href="/library">Library</Link>
               <Link className="ftr-l" href="/get-involved">Get Involved</Link>
               <Link className="ftr-l" href="/membership">Membership</Link>

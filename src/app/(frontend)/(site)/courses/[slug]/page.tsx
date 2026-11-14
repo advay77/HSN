@@ -12,6 +12,7 @@ import { CourseTagRow } from '@/components/courses/CourseTags'
 import { certificateQr, formatIssued } from '@/lib/courses/certificate'
 import { courseTestimonials } from '@/lib/courses/testimonials'
 import { getCurrentMember } from '@/lib/auth/session'
+import { getPayloadClient } from '@/lib/payload'
 import {
   availableModules,
   getCourseBySlug,
@@ -51,18 +52,22 @@ export default async function CoursePage({ params }: Props) {
   const avail = availableModules(course)
 
   // Facts strip
-  const firstAvail = avail[0]
   const availLessons = avail.flatMap((m) => m.lessons ?? [])
+  // Lesson, video and quiz details stay hidden until this visitor is registered on the course.
+  let registered = !!enrollment
+  if (!registered && member) {
+    const payload = await getPayloadClient()
+    const regs = await payload.find({
+      collection: 'course-registrations',
+      where: { and: [{ course: { equals: course.id } }, { or: [{ member: { equals: Number(member.id) } }, { email: { equals: member.email } }] }] },
+      limit: 1,
+      depth: 0,
+    })
+    registered = regs.docs.length > 0
+  }
   // Modules number: the admin's own number (e.g. 4, 5 or 6), else the modules added.
   const modulesShown = course.facts?.modules && course.facts.modules >= 1 ? Math.floor(course.facts.modules) : mods.length
-  const modulesSub =
-    avail.length > 0 && avail.length >= modulesShown
-      ? 'All available now'
-      : avail.length === 1
-        ? `Module ${mods.indexOf(firstAvail!) + 1} available now`
-        : avail.length === 0
-          ? 'Coming soon'
-          : `${avail.length} available now`
+  const modulesSub = avail.length === 0 ? 'Coming soon' : ''
   const certOn = course.certificate?.enabled !== false
   const { items: testimonials, summary: fbSummary } = await courseTestimonials(course.id)
   // Every module "Coming soon": the course is shown but cannot be started yet.
@@ -74,14 +79,16 @@ export default async function CoursePage({ params }: Props) {
     return {
       n: String(i + 1),
       title: m.title,
-      meta: moduleMeta(m),
+      meta: registered ? moduleMeta(m) : '',
       locked: m.status !== 'available',
-      topics: lessons.length
-        ? lessons.map((l) => ({
-            title: isQuiz(l) ? `${l.title} · ${plural(l.questions?.length ?? 0, 'question')}` : l.title,
-            kind: topicKind(l),
-          }))
-        : [{ title: 'Lessons will be added soon', kind: '' }],
+      topics: registered
+        ? lessons.length
+          ? lessons.map((l) => ({
+              title: isQuiz(l) ? `${l.title} · ${plural(l.questions?.length ?? 0, 'question')}` : l.title,
+              kind: topicKind(l),
+            }))
+          : [{ title: 'Lessons will be added soon', kind: '' }]
+        : [],
     }
   })
 
@@ -104,14 +111,14 @@ export default async function CoursePage({ params }: Props) {
   return (
     <main>
       {/* Hero */}
-      <section className="sec" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
+      <section className="sec cr-band">
         <div className="wrap stack g32">
           <div className="cr-hero">
             <div className="stack g20">
               <CourseTagRow access={course.access === 'paid' ? 'paid' : 'open'} registration={course.tagRegistration !== false}>
                 <span className={LEVEL_CLS[course.level] ?? 'bdg b-beg'}>{course.level}</span>
                 {course.tagSelfPaced !== false && <span className="bdg b-reg">Self-paced</span>}
-                {(course.tagVideo ?? hasVideo(course)) && <span className="bdg b-reg">Contains video</span>}
+                {registered && (course.tagVideo ?? hasVideo(course)) && <span className="bdg b-reg">Contains video</span>}
                 {(course.tags ?? []).map((t) => <span key={t.id} className="bdg b-reg">{t.label}</span>)}
               </CourseTagRow>
               <h1 className="h2 cr-title" style={{ textTransform: 'none', margin: 0 }}>{course.title}</h1>
@@ -128,7 +135,7 @@ export default async function CoursePage({ params }: Props) {
             </div>
           </div>
           <div className="cr-stats" role="list" aria-label="Course facts">
-            <div className="cr-stat" role="listitem"><b>{plural(modulesShown, 'module')}</b><span>{modulesSub}</span></div>
+            <div className="cr-stat" role="listitem"><b>{plural(modulesShown, 'Module')}</b>{modulesSub && <span>{modulesSub}</span>}</div>
             <div className="cr-stat" role="listitem">{course.facts?.duration ? (<><b>{course.facts.duration}</b><span>Average time to finish</span></>) : (<><b>Self-paced</b><span>Learn at your own pace</span></>)}</div>
             <div className="cr-stat" role="listitem"><b>{course.facts?.language || 'English'}</b><span>Course language</span></div>
             <div className="cr-stat" role="listitem"><b>Certificate</b><span>{certOn ? 'On completion' : 'Not included'}</span></div>
@@ -136,8 +143,8 @@ export default async function CoursePage({ params }: Props) {
         </div>
       </section>
       {/* Learning outcomes */}
-      {((course.outcomes?.length ?? 0) > 0 || audienceItems.length > 0) && (
-        <section className="sec bg-surface" aria-labelledby="lo">
+      {((course.outcomes?.length ?? 0) > 0 || !!course.learnIntro) && (
+        <section className="sec cr-band bg-surface" aria-labelledby="lo">
           <div className="wrap stack g32">
             <div className="stack g12">
               <h2 className="sec-title" id="lo">What You Will Learn</h2>
@@ -150,19 +157,21 @@ export default async function CoursePage({ params }: Props) {
                 ))}
               </ul>
             )}
-            {audienceItems.length > 0 && (
-              <div className="stack g20" style={{ paddingTop: '16px' }}>
-                <h2 className="sec-title" id="ta">Target Audience</h2>
-                {audienceAsList ? (
-                  <ul className="cr-aud" aria-labelledby="ta">
-                    {audienceItems.map((a, i) => (
-                      <li key={i}><span className="cr-aud-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"></path></svg></span><span>{a}</span></li>
-                    ))}
-                  </ul>
-                ) : (
-                  audienceParas.map((p, i) => <p key={i} className="lead" style={{ margin: 0, whiteSpace: 'pre-line' }}>{p}</p>)
-                )}
-              </div>
+          </div>
+        </section>
+      )}
+      {audienceItems.length > 0 && (
+        <section className="sec cr-band bg-surface" aria-labelledby="ta">
+          <div className="wrap stack g20">
+            <h2 className="sec-title" id="ta">Target Audience</h2>
+            {audienceAsList ? (
+              <ul className="cr-aud" aria-labelledby="ta">
+                {audienceItems.map((a, i) => (
+                  <li key={i}><span className="cr-aud-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"></path></svg></span><span>{a}</span></li>
+                ))}
+              </ul>
+            ) : (
+              audienceParas.map((p, i) => <p key={i} className="lead" style={{ margin: 0, whiteSpace: 'pre-line' }}>{p}</p>)
             )}
           </div>
         </section>
@@ -176,7 +185,7 @@ export default async function CoursePage({ params }: Props) {
       <CourseModules modules={moduleViews} learnHref={soon ? '' : learnHref} />
       {/* What learners say: feedback learners agreed to share and HSN chose to show */}
       {(testimonials.length > 0 || fbSummary) && (
-        <section className="sec" aria-labelledby="ls">
+        <section className="sec cr-band" aria-labelledby="ls">
           <div className="wrap stack g24">
             <div className="stack g8">
               <h2 className="sec-title" id="ls">What Learners Say</h2>

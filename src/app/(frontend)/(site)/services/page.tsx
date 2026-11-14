@@ -33,7 +33,6 @@ export default function ServicesPage() {
       <section className="sec" style={{ paddingTop: '48px', paddingBottom: '48px' }}>
         <div className="wrap stack g24">
           <h1 className="sec-title">Our Services</h1>
-          <p className="lead">Advisory, training and technical guidance that connects healthcare quality, patient safety, and environmental stewardship in everyday care delivery.</p>
         </div>
       </section>
       <section className="sec" style={{ paddingTop: '0' }}>

@@ -41,22 +41,31 @@ export function CourseModules({ modules, learnHref }: { modules: ModuleView[]; l
   const allOpen = modules.every((_, i) => open[i])
   const toggleAll = () => setOpen(allOpen ? {} : Object.fromEntries(modules.map((_, i) => [i, true])))
   return (
-    <section className="sec bg-surface" aria-labelledby="md">
+    <section className="sec cr-band bg-surface" aria-labelledby="md">
       <div className="wrap stack g24">
         <div className="row between end g16">
           <h2 className="sec-title" id="md">Course Modules</h2>
-          {modules.length > 0 && <button className="btn btn-t" onClick={toggleAll} style={{ padding: '0' }}>{allOpen ? 'Collapse all' : 'Expand all'}</button>}
+          {modules.some((m) => m.topics.length > 0) && <button className="btn btn-t" onClick={toggleAll} style={{ padding: '0' }}>{allOpen ? 'Collapse all' : 'Expand all'}</button>}
         </div>
         <div>
-          {modules.map((m, i) => (
-            <div className="cr-mod" key={i}>
-              <button className="cr-mod-h" aria-expanded={!!open[i]} onClick={() => setOpen({ ...open, [i]: !open[i] })}>
+          {modules.map((m, i) => {
+            const canOpen = m.topics.length > 0
+            const head = (
+              <>
                 <span className={m.locked ? 'cr-mod-n lock' : 'cr-mod-n'}>{m.n}</span>{' '}
-                <span className="cr-mod-t"><b>{m.title}</b><span>{m.meta}</span></span>{' '}
-                <span className={m.locked ? 'bdg b-reg' : 'bdg b-ok'}>{m.locked ? 'Coming soon' : 'Available'}</span>{' '}
-                <svg className={open[i] ? 'cr-chev up' : 'cr-chev'} width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#134E5E" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
-              </button>
-              {open[i] && (
+                <span className="cr-mod-t"><b>{m.title}</b>{m.meta && <span>{m.meta}</span>}</span>{' '}
+                {m.locked && <span className="bdg b-reg">Coming soon</span>}{' '}
+                {canOpen && <svg className={open[i] ? 'cr-chev up' : 'cr-chev'} width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#134E5E" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>}
+              </>
+            )
+            return (
+            <div className="cr-mod" key={i}>
+              {canOpen ? (
+                <button className="cr-mod-h" aria-expanded={!!open[i]} onClick={() => setOpen({ ...open, [i]: !open[i] })}>{head}</button>
+              ) : (
+                <div className="cr-mod-h">{head}</div>
+              )}
+              {canOpen && open[i] && (
                 <ol className="cr-topics">
                   {m.topics.map((t, j) => (
                     <li className="cr-topic" key={j}>
@@ -68,7 +77,8 @@ export function CourseModules({ modules, learnHref }: { modules: ModuleView[]; l
                 </ol>
               )}
             </div>
-          ))}
+            )
+          })}
         </div>
         {learnHref && <a className="btn btn-p btn-lg self-start" href={learnHref}>Start course now</a>}
       </div>

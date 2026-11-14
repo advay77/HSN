@@ -32,7 +32,7 @@ export default async function CoursesPage() {
       kind: c.kind,
       color: c.coverColor || '#134E5E',
       duration: c.facts?.duration || '',
-      meta: `${mods} ${mods === 1 ? 'module' : 'modules'}`,
+      meta: `${mods} ${mods === 1 ? 'Module' : 'Modules'}`,
       cta: availableModules(c).length === 0 ? 'Coming soon' : member ? ctaFor(progressFor(c), 'View course', 'Continue') : 'View course',
       access: c.access === 'paid' ? 'paid' : 'open',
       registration: c.tagRegistration !== false,
@@ -61,8 +61,7 @@ export default async function CoursesPage() {
       <section className="sec" style={{ paddingTop: '48px', paddingBottom: '40px' }}>
         <div className="wrap stack g32">
           <div className="stack g20">
-            <h1 className="sec-title hero-title">Courses</h1>
-            <p className="lead">Self-paced courses with short lessons, videos and quizzes that help healthcare professionals turn sustainability into safer, higher-quality care.</p>
+            <h1 className="sec-title">Courses</h1>
           </div>
         </div>
       </section>

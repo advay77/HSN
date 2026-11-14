@@ -52,3 +52,5 @@
 
 /* Course title: same size and blue as the course card title on the Courses page (HSN request). */
 .pg h1.cr-title{color:#134E5E}
+/* Even space between the course title, learning outcomes, audience, modules and learner feedback. */
+.sec.cr-band{padding-block:48px}
