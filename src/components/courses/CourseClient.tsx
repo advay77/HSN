@@ -53,7 +53,7 @@ export function CourseModules({ modules, learnHref }: { modules: ModuleView[]; l
             const head = (
               <>
                 <span className={m.locked ? 'cr-mod-n lock' : 'cr-mod-n'}>{m.n}</span>{' '}
-                <span className="cr-mod-t"><b>{m.title}</b>{m.meta && <span>{m.meta}</span>}</span>{' '}
+                <span className="cr-mod-t"><span className="cr-mod-k">Module {m.n}</span><b>{m.title}</b>{m.meta && <span className="cr-mod-m">{m.meta}</span>}</span>{' '}
                 {m.locked && <span className="bdg b-reg">Coming soon</span>}{' '}
                 {canOpen && <svg className={open[i] ? 'cr-chev up' : 'cr-chev'} width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#134E5E" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>}
               </>

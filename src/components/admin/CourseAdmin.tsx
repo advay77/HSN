@@ -376,7 +376,8 @@ export function CourseAdmin({ rows, initial, adminInitial, feedback = null }: { 
     ['Top of page', 'basics', !!(f.title && f.desc)],
     ['Course facts', 'basics', !!f.duration],
     ['What you will learn', 'learn', !!f.outcomes.trim()],
-    ['Modules', 'build', lessonTotal > 0],
+    ['Module titles', 'basics', mods.length > 0],
+    ['Lessons', 'build', lessonTotal > 0],
     ['Certificate', 'cert', f.certOn],
     ['Publishing', 'publish', f.published],
   ]
@@ -448,7 +449,7 @@ export function CourseAdmin({ rows, initial, adminInitial, feedback = null }: { 
               <div className="stack g24">
                 <fieldset className="cb-fs">
                   <legend>Top of the course page</legend>
-                  <div className="fld"><label className="lbl" htmlFor="c-t">Course title</label><input className="inp" id="c-t" value={f.title} onChange={upd('title')} /></div>
+                  <div className="fld"><label className="lbl" htmlFor="c-t">Course title</label><input className="inp" id="c-t" value={f.title} onChange={upd('title')} /><span className="hint">The big heading at the top of the course page. Module names are edited in “Module titles” below.</span></div>
                   <div className="fld"><label className="lbl" htmlFor="c-d">Short description</label><textarea className="inp" id="c-d" value={f.desc} onChange={upd('desc')}></textarea><span className="hint">Shown under the title and on the course card.</span></div>
                   <div className="grid c2" style={{ gap: '20px' }}>
                     <div className="fld"><label className="lbl" htmlFor="c-l">Level</label><span className="sel"><select className="inp" id="c-l" value={f.level} onChange={upd('level')}><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select><SelArrow /></span></div>
@@ -465,6 +466,26 @@ export function CourseAdmin({ rows, initial, adminInitial, feedback = null }: { 
                     </div>
                     <span className="hint">Visitors see these above the course title. Access is always first. This screen is only the editor.</span>
                   </div>
+                </fieldset>
+                <fieldset className="cb-fs">
+                  <legend>Module titles</legend>
+                  <span className="hint" style={{ marginTop: 0 }}>The names shown in the “Course Modules” list on the course page. Lessons inside each module are edited in the Course builder tab.</span>
+                  {mods.length === 0 ? (
+                    <span className="small muted">No modules yet. Add one in the Course builder tab.</span>
+                  ) : (
+                    <ol className="cb-mtl">
+                      {mods.map((m, i) => (
+                        <li key={m.id ?? `new-${i}`}>
+                          <span className="cb-n" aria-hidden="true">{i + 1}</span>
+                          <span className="fld grow" style={{ minWidth: 0 }}>
+                            <label className="lbl" htmlFor={'bt-' + i}>Module {i + 1} title</label>
+                            <input className="inp" id={'bt-' + i} value={m.title} onChange={(e) => { const c = clone(); c[i] = { ...c[i]!, title: e.target.value }; setMods(c) }} />
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  )}
+                  <button type="button" className="btn btn-t btn-sm self-start" onClick={() => setTab('build')}>Edit lessons in Course builder →</button>
                 </fieldset>
                 <fieldset className="cb-fs">
                   <legend>Cover image</legend>
@@ -638,8 +659,10 @@ export function CourseAdmin({ rows, initial, adminInitial, feedback = null }: { 
                   <div key={m.id ?? `new-${i}`} className="cb-mod">
                     <div className="cb-mod-h">
                       <span className="cb-n">{i + 1}</span>
-                      <label className="sr" htmlFor={'mt-' + i}>Module {i + 1} title</label>
-                      <input className="inp grow" id={'mt-' + i} value={m.title} onChange={(e) => { const c = clone(); c[i] = { ...c[i]!, title: e.target.value }; setMods(c) }} style={{ minWidth: '160px' }} />
+                      <span className="fld grow cb-mt" style={{ minWidth: '160px' }}>
+                        <label className="cb-mt-l" htmlFor={'mt-' + i}>Module {i + 1} title · shown on the course page</label>
+                        <input className="inp" id={'mt-' + i} value={m.title} onChange={(e) => { const c = clone(); c[i] = { ...c[i]!, title: e.target.value }; setMods(c) }} />
+                      </span>
                       <button className="cb-mini" aria-label={(open[i] ? 'Collapse' : 'Expand') + ' module ' + (i + 1)} aria-expanded={!!open[i]} onClick={() => setOpen((o) => ({ ...o, [i]: !o[i] }))}><Chevron cls={open[i] ? 'cr-up' : ''} /></button>
                       <button className="cb-mini" aria-label={'Delete module ' + (i + 1)} onClick={() => { if (!window.confirm(`Delete module ${i + 1} “${m.title}” and its ${m.lessons.length} lessons?`)) return; const c = clone(); c.splice(i, 1); setMods(c, null) }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B3261E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"></path></svg></button>
                     </div>

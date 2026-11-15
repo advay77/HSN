@@ -60,3 +60,10 @@
 
 /* The box title is a heading inside the box (floated legends leave the border line). */
 .cb-fs legend+*{clear:both}
+
+/* Module titles: listed in Basics and labelled in the builder, so they are not mistaken for the course title. */
+.cb-mtl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.cb-mtl li{display:flex;align-items:flex-end;gap:12px}
+.cb-mtl .cb-n{margin-bottom:4px}
+.cb-mt{gap:2px}
+.cb-mt-l{font-size:12px;line-height:16px;font-weight:600;color:#4A5F63}
