@@ -25,8 +25,6 @@ export default async function MembershipPage() {
         title={copy.membershipTitle}
         intro={copy.membershipIntro}
         tiers={copy.tiers}
-        compare={copy.compare}
-        compareTitle={copy.membershipCompareTitle}
         note={copy.membershipNote}
         priceSoon={copy.membershipPriceSoon}
         ctaLabel={copy.membershipCta}
@@ -35,7 +33,6 @@ export default async function MembershipPage() {
         regionLabel={copy.membershipRegion}
         pricesHelp={copy.membershipPrices}
         perYear={copy.membershipPerYear}
-        benefitLabel={copy.membershipBenefit}
       />
     </main>
   )

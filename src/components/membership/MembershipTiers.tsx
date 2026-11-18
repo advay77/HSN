@@ -1,12 +1,12 @@
 'use client'
 
-// Body of Membership.dc.html: region selector, tier cards, compare table and the modal.
+// Body of Membership.dc.html: region selector, tier cards and the modal.
 import Link from 'next/link'
 import React, { useCallback, useState } from 'react'
 
 import { COUNTRY_CODES, regionOfCountry } from '@/lib/regions'
 
-import { SITE_COPY, type CompareRow, type TierCopy } from '@/lib/site/copy-defaults'
+import { SITE_COPY, type TierCopy } from '@/lib/site/copy-defaults'
 
 import { MembershipModal, type TierId } from './MembershipModal'
 
@@ -42,8 +42,6 @@ export function MembershipTiers({
   title = SITE_COPY.membershipTitle,
   intro = SITE_COPY.membershipIntro,
   tiers = SITE_COPY.tiers,
-  compare = SITE_COPY.compare,
-  compareTitle = SITE_COPY.membershipCompareTitle,
   note = SITE_COPY.membershipNote,
   priceSoon = SITE_COPY.membershipPriceSoon,
   ctaLabel = SITE_COPY.membershipCta,
@@ -52,7 +50,6 @@ export function MembershipTiers({
   regionLabel = SITE_COPY.membershipRegion,
   pricesHelp = SITE_COPY.membershipPrices,
   perYear = SITE_COPY.membershipPerYear,
-  benefitLabel = SITE_COPY.membershipBenefit,
 }: {
   country?: string | null
   live: boolean
@@ -61,8 +58,6 @@ export function MembershipTiers({
   title?: string
   intro?: string
   tiers?: TierCopy[]
-  compare?: CompareRow[]
-  compareTitle?: string
   note?: string
   priceSoon?: string
   ctaLabel?: string
@@ -71,7 +66,6 @@ export function MembershipTiers({
   regionLabel?: string
   pricesHelp?: string
   perYear?: string
-  benefitLabel?: string
 }) {
   const start = COUNTRIES.find((c) => c.code === (detected || '').toUpperCase())?.code ?? 'IN'
   const [country, setCountry] = useState(start)
@@ -144,21 +138,6 @@ export function MembershipTiers({
             })}
           </div>
           {!live && <p className="small muted">{note}</p>}
-        </div>
-      </section>
-      <section className="sec bg-surface" aria-labelledby="cmp">
-        <div className="wrap stack g24">
-          <h2 className="h2" id="cmp">{compareTitle}</h2>
-          <div className="card" style={{ overflowX: 'auto', position: 'relative' }}>
-            <table className="tbl" style={{ minWidth: '640px' }}>
-              <thead><tr><th scope="col">{benefitLabel}</th>{plans.map((t) => <th key={t.id} scope="col">{t.name}</th>)}</tr></thead>
-              <tbody>
-                {compare.map((row) => (
-                  <tr key={row.benefit}><td>{row.benefit}</td><td>{row.student}</td><td>{row.individual}</td><td>{row.institutional}</td></tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </div>
       </section>
       {modalTier && (

@@ -70,7 +70,6 @@ const GROUPS: Group[] = [
   { id: 'membership', title: 'Membership', href: '/membership', fields: [
     { key: 'membershipTitle', label: 'Page heading' },
     { key: 'membershipIntro', label: 'Introduction', area: true },
-    { key: 'membershipCompareTitle', label: 'Compare table heading' },
     { key: 'membershipPriceSoon', label: 'Shown when a plan has no price' },
     { key: 'membershipCta', label: 'Button before payment is open' },
     { key: 'membershipCtaLive', label: 'Button when payment is open' },
@@ -79,7 +78,6 @@ const GROUPS: Group[] = [
     { key: 'membershipRegion', label: 'Region label' },
     { key: 'membershipPrices', label: 'Region help text', hint: 'Use {currency} and {country} where the live values should appear.' },
     { key: 'membershipPerYear', label: 'Text after the price' },
-    { key: 'membershipBenefit', label: 'Compare table first column' },
   ]},
   { id: 'contact', title: 'Contact', href: '/contact', fields: [{ key: 'contactTitle', label: 'Page heading' }, { key: 'contactIntro', label: 'Introduction', area: true }, { key: 'contactEmailLabel', label: 'Email card heading' }] },
   { id: 'feedback', title: 'Feedback', href: '/feedback', fields: [{ key: 'feedbackTitle', label: 'Page heading' }, { key: 'feedbackIntro', label: 'Introduction', area: true }, { key: 'feedbackTab', label: 'Button on the edge of every page' }] },
@@ -121,7 +119,6 @@ export function SiteTextAdmin({ initial }: { initial: SiteCopy }) {
   const setNav = (key: keyof SiteCopy['nav'], value: string) => setF((x) => mark({ ...x, nav: { ...x.nav, [key]: value } }))
   const setFooter = (key: keyof SiteCopy['footer'], value: string) => setF((x) => mark({ ...x, footer: { ...x.footer, [key]: value } }))
   const setTier = (index: number, patch: Partial<SiteCopy['tiers'][number]>) => setF((x) => mark({ ...x, tiers: x.tiers.map((row, i) => (i === index ? { ...row, ...patch } : row)) }))
-  const setCompare = (index: number, patch: Partial<SiteCopy['compare'][number]>) => setF((x) => mark({ ...x, compare: x.compare.map((row, i) => (i === index ? { ...row, ...patch } : row)) }))
   const setDesign = (patch: Partial<SiteCopy['design']>) => setF((x) => mark({ ...x, design: { ...x.design, ...patch } }))
   const menuFields: [keyof SiteCopy['nav'], string][] = [
     ['home', 'Home'], ['about', 'About Us menu name'], ['aboutPage', 'About Us link name'], ['aboutBlurb', 'About Us subtitle'],
@@ -253,16 +250,6 @@ export function SiteTextAdmin({ initial }: { initial: SiteCopy }) {
               <div className="fld"><label className="lbl" htmlFor={`tier-t-${i}`}>Plan {i + 1} tag</label><input className="inp" id={`tier-t-${i}`} value={tier.tag} onChange={(e) => setTier(i, { tag: e.target.value })} /></div>
               <div className="fld"><label className="lbl" htmlFor={`tier-b-${i}`}>Plan {i + 1} text</label><textarea className="inp" id={`tier-b-${i}`} value={tier.blurb} onChange={(e) => setTier(i, { blurb: e.target.value })} style={{ minHeight: '80px' }} /></div>
               <div className="fld"><label className="lbl" htmlFor={`tier-f-${i}`}>Plan {i + 1} points, one per line</label><textarea className="inp" id={`tier-f-${i}`} value={tier.features} onChange={(e) => setTier(i, { features: e.target.value })} style={{ minHeight: '120px' }} /></div>
-            </div>
-          ))}
-          {group.id === 'membership' && f.compare.map((row, i) => (
-            <div key={`cmp-${i}`} className="stack g12" style={{ paddingTop: '8px', borderTop: '1px solid #EDE7D8' }}>
-              <div className="fld"><label className="lbl" htmlFor={`cmp-b-${i}`}>Compare row {i + 1}</label><input className="inp" id={`cmp-b-${i}`} value={row.benefit} onChange={(e) => setCompare(i, { benefit: e.target.value })} /></div>
-              <div className="row g12" style={{ flexWrap: 'wrap' }}>
-                <div className="fld" style={{ flex: '1 1 180px' }}><label className="lbl" htmlFor={`cmp-s-${i}`}>Student</label><input className="inp" id={`cmp-s-${i}`} value={row.student} onChange={(e) => setCompare(i, { student: e.target.value })} /></div>
-                <div className="fld" style={{ flex: '1 1 180px' }}><label className="lbl" htmlFor={`cmp-i-${i}`}>Individual</label><input className="inp" id={`cmp-i-${i}`} value={row.individual} onChange={(e) => setCompare(i, { individual: e.target.value })} /></div>
-                <div className="fld" style={{ flex: '1 1 180px' }}><label className="lbl" htmlFor={`cmp-n-${i}`}>Institutional</label><input className="inp" id={`cmp-n-${i}`} value={row.institutional} onChange={(e) => setCompare(i, { institutional: e.target.value })} /></div>
-              </div>
             </div>
           ))}
           {group.id === 'menu' && menuFields.map(([key, label]) => (
