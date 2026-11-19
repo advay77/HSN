@@ -34,7 +34,7 @@ export default async function AdminLibraryPage() {
     <>
       <AdminTopbar
         initial={admin.initial}
-        left={<div className="stack g4"><h1 className="h2" style={{ margin: 0 }}>Library</h1><span className="small muted">{rows.length ? `${rows.length} ${rows.length === 1 ? 'resource' : 'resources'} · ${live} on the website` : 'Guides, toolkits, reports and templates for the Library page'}</span></div>}
+        left={<div className="stack g4"><h1 className="h2" style={{ margin: 0 }}>Library</h1><span className="small muted">{rows.length ? `${rows.length} ${rows.length === 1 ? 'resource' : 'resources'} · ${live} on the website` : 'Guides, toolkits, checklists, reports, templates and policies for the Library page'}</span></div>}
         actions={<Link className="btn btn-p btn-sm" href="/admin/library/new"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Add resource</Link>}
       />
       <main className="amain">

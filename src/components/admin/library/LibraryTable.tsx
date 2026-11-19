@@ -19,7 +19,8 @@ export type LibraryRow = {
   when: string
 }
 
-const TYPES = ['Guide', 'Toolkit', 'Report', 'Template']
+const TYPES = ['Guide', 'Toolkit', 'Checklist', 'Report', 'Template', 'Policy/Program']
+const typeName = (t: string) => (t === 'Policy/Program' ? 'Policies/Programs' : `${t}s`)
 
 export function LibraryTable({ rows }: { rows: LibraryRow[] }) {
   const router = useRouter()
@@ -56,7 +57,7 @@ export function LibraryTable({ rows }: { rows: LibraryRow[] }) {
   return (
     <>
       <div className="row g12 between">
-        <div className="fld"><label className="small strong muted" htmlFor="lt">Type</label><span className="sel"><select className="inp" id="lt" style={{ minHeight: '44px', width: '220px' }} value={type} onChange={(e) => setType(e.target.value)}><option value="all">All types</option>{TYPES.map((t) => <option key={t} value={t}>{t}s</option>)}</select>{chevron}</span></div>
+        <div className="fld"><label className="small strong muted" htmlFor="lt">Type</label><span className="sel"><select className="inp" id="lt" style={{ minHeight: '44px', width: '220px' }} value={type} onChange={(e) => setType(e.target.value)}><option value="all">All types</option>{TYPES.map((t) => <option key={t} value={t}>{typeName(t)}</option>)}</select>{chevron}</span></div>
         <span className="strong" role="status">{`Showing ${shown.length} of ${rows.length}`}</span>
       </div>
       <div className="card" style={{ overflowX: 'auto', position: 'relative' }}>

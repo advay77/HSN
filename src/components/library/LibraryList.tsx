@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 
 export type LibraryRow = {
   id: string
-  type: 'Guide' | 'Toolkit' | 'Report' | 'Template'
+  type: 'Guide' | 'Toolkit' | 'Checklist' | 'Report' | 'Template' | 'Policy/Program'
   title: string
   desc: string
   format: string
@@ -16,12 +16,15 @@ export type LibraryRow = {
   locked: boolean
 }
 
-const TYPES = ['All', 'Guide', 'Toolkit', 'Report', 'Template'] as const
+const TYPES = ['All', 'Guide', 'Toolkit', 'Checklist', 'Report', 'Template', 'Policy/Program'] as const
+const typeName = (n: (typeof TYPES)[number]) => (n === 'All' ? 'All types' : n === 'Policy/Program' ? 'Policies/Programs' : `${n}s`)
 const ICON: Record<LibraryRow['type'], React.CSSProperties> = {
   Guide: { background: '#E3F1E4', color: '#0B6B3A' },
   Toolkit: { background: '#DDF0F6', color: '#1C6E8A' },
+  Checklist: { background: '#E7F3EA', color: '#134E5E' },
   Report: { background: '#FBEFD5', color: '#8A5A00' },
   Template: { background: '#EDE7D8', color: '#17323A' },
+  'Policy/Program': { background: '#E4EEF2', color: '#134E5E' },
 }
 
 export function LibraryList({ rows, signedIn }: { rows: LibraryRow[]; signedIn: boolean }) {
@@ -43,7 +46,7 @@ export function LibraryList({ rows, signedIn }: { rows: LibraryRow[]; signedIn: 
               return (
                 <button key={n} className={on ? 'chp on' : 'chp'} aria-pressed={on} onClick={() => setTy(n)}>
                   {on && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>}{' '}
-                  {n === 'All' ? 'All types' : n + 's'}{' '}<span className="cnt">{n === 'All' ? rows.length : rows.filter((r) => r.type === n).length}</span>
+                  {typeName(n)}{' '}<span className="cnt">{n === 'All' ? rows.length : rows.filter((r) => r.type === n).length}</span>
                 </button>
               )
             })}

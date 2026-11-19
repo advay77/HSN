@@ -18,6 +18,8 @@ import * as migration_20261113_120000_advisors from './20261113_120000_advisors'
 import * as migration_20261113_160000_team_members from './20261113_160000_team_members';
 import * as migration_20261114_140000_site_copy from './20261114_140000_site_copy';
 import * as migration_20261114_180000_site_copy_pages from './20261114_180000_site_copy_pages';
+import * as migration_20261119_140000_library_types from './20261119_140000_library_types';
+import * as migration_20261119_140100_library_checklist_row from './20261119_140100_library_checklist_row';
 
 export const migrations = [
   {
@@ -119,5 +121,15 @@ export const migrations = [
     up: migration_20261114_180000_site_copy_pages.up,
     down: migration_20261114_180000_site_copy_pages.down,
     name: '20261114_180000_site_copy_pages',
+  },
+  {
+    up: migration_20261119_140000_library_types.up,
+    down: migration_20261119_140000_library_types.down,
+    name: '20261119_140000_library_types',
+  },
+  {
+    up: migration_20261119_140100_library_checklist_row.up,
+    down: migration_20261119_140100_library_checklist_row.down,
+    name: '20261119_140100_library_checklist_row',
   },
 ];

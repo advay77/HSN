@@ -9,7 +9,7 @@ import { saveLibraryResource, type LibraryForm } from '@/app/(frontend)/admin/li
 import { ErrorText, FilePicker, type CurrentFile } from '@/components/admin/editor/EditorParts'
 import { toUploadable } from '@/lib/uploads/client'
 
-const TYPES = ['Guide', 'Toolkit', 'Report', 'Template'] as const
+const TYPES = ['Guide', 'Toolkit', 'Checklist', 'Report', 'Template', 'Policy/Program'] as const
 
 const emptyResource = (): LibraryForm => ({
   title: '',

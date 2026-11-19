@@ -456,7 +456,7 @@ export interface CaseStudy {
 export interface LibraryResource {
   id: number;
   title: string;
-  type: 'Guide' | 'Toolkit' | 'Report' | 'Template';
+  type: 'Guide' | 'Toolkit' | 'Checklist' | 'Report' | 'Template' | 'Policy/Program';
   access: 'free' | 'members';
   description?: string | null;
   /**

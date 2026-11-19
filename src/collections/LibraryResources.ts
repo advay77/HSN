@@ -1,8 +1,8 @@
 import type { CollectionConfig } from 'payload'
 
-export const LIBRARY_TYPES = ['Guide', 'Toolkit', 'Report', 'Template'] as const
+export const LIBRARY_TYPES = ['Guide', 'Toolkit', 'Checklist', 'Report', 'Template', 'Policy/Program'] as const
 
-// Library page resources (guides, toolkits, reports, templates).
+// Library page resources (guides, toolkits, checklists, reports, templates, policies).
 export const LibraryResources: CollectionConfig = {
   slug: 'library-resources',
   labels: { singular: 'Library resource', plural: 'Library' },
