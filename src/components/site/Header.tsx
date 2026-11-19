@@ -60,6 +60,7 @@ export function Header({ member = null, caseStudiesLabel, nav = SITE_COPY.nav }:
   const [langOpen, setLangOpen] = useState(false)
   const [joinOpen, setJoinOpen] = useState(false)
   const [navOpen, setNavOpen] = useState<string | null>(null)
+  const [sheetGroup, setSheetGroup] = useState<string | null>(null)
   const [a11yOpen, setA11yOpen] = useState(false)
 
   // Close menus when the route changes.
@@ -68,6 +69,8 @@ export function Header({ member = null, caseStudiesLabel, nav = SITE_COPY.nav }:
     setLangOpen(false)
     setJoinOpen(false)
     setNavOpen(null)
+    const group = menu.find((m) => 'items' in m && m.items.some((i) => i.id === cur))
+    setSheetGroup(group ? group.id : null)
   }, [pathname])
 
   // A click anywhere outside an open About Us / Resources menu closes it.
@@ -220,9 +223,12 @@ export function Header({ member = null, caseStudiesLabel, nav = SITE_COPY.nav }:
               {menu.map((m) =>
                 'items' in m ? (
                   <div key={m.id} className="stack g4">
-                    <span className="small muted strong" style={{ padding: '12px 16px 2px' }}>{m.id === 'about-menu' ? nav.about.split(' ')[0] : m.label}</span>
-                    {m.items.map((i) => (
-                      <Link key={i.href} className={i.id === cur ? 'mrow cur' : 'mrow'} href={i.href} aria-current={i.id === cur ? 'page' : undefined}><span>{i.label}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5F63" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></Link>
+                    <button type="button" className={isCur(m) ? 'mrow cur' : 'mrow'} aria-expanded={sheetGroup === m.id} onClick={() => setSheetGroup(sheetGroup === m.id ? null : m.id)}>
+                      <span>{m.label}</span>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5F63" strokeWidth="2" strokeLinecap="round" aria-hidden="true" style={{ transform: sheetGroup === m.id ? 'rotate(90deg)' : undefined }}><path d="m9 6 6 6-6 6"></path></svg>
+                    </button>
+                    {sheetGroup === m.id && m.items.map((i) => (
+                      <Link key={i.href} className={i.id === cur ? 'mrow cur' : 'mrow'} href={i.href} aria-current={i.id === cur ? 'page' : undefined} style={{ paddingInlineStart: '28px' }}><span>{i.label}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5F63" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg></Link>
                     ))}
                   </div>
                 ) : (
