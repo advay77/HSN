@@ -61,9 +61,9 @@ export function LibraryList({ rows, signedIn }: { rows: LibraryRow[]; signedIn: 
         </div>
       </div>
       {shown.length > 0 && (
-        <div className="grid c2">
+        <div className="grid c2 lib-grid">
           {shown.map((r) => (
-            <article key={r.id} className="card pad-l lib-card">
+            <article key={r.id} className="card lib-card">
               <div className="lib-top">
                 <span className="ic" style={ICON[r.type]}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"></path><path d="M14 3v5h5"></path><path d="M10 13h6"></path><path d="M10 17h6"></path></svg></span>
                 <div className="row g8"><span className="bdg b-cat">{r.type}</span></div>
