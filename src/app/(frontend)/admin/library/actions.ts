@@ -6,6 +6,7 @@ import { LIBRARY_TYPES } from '@/collections/LibraryResources'
 import { requireAdmin } from '@/lib/admin/auth'
 import { uploadToMedia } from '@/lib/admin/media'
 import { getPayloadClient } from '@/lib/payload'
+import { isChosenUpload } from '@/lib/uploads/chosen'
 
 type LibType = (typeof LIBRARY_TYPES)[number]
 
@@ -37,7 +38,7 @@ export async function saveLibraryResource(id: number | null, formData: FormData)
     return { ok: false, errors: { form: 'The form could not be read. Reload the page and try again.' } }
   }
   const file = formData.get('file')
-  const hasNewFile = !!file && typeof file !== 'string' && file.size > 0
+  const hasNewFile = isChosenUpload(file)
   const url = clean(f.externalUrl, 1000)
   const errors: Record<string, string> = {}
   if (!clean(f.title)) errors.title = 'Enter a title.'
