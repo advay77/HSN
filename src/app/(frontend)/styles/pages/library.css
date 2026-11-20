@@ -1,11 +1,12 @@
-
-.lib-grid{align-items:start}
-.lib-card{display:flex;flex-direction:column;gap:10px;padding:18px 20px}
-.lib-card .ic{width:40px;height:40px;border-radius:10px}
-.lib-top{display:flex;align-items:center;gap:12px}
-.lib-meta{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:14px;color:#4A5F63;font-weight:600}
-/* Card title with its View resource button on the same line (wraps under the title on narrow cards). */
-.lib-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.lib-head .h4{margin:0;flex:1 1 0;min-width:0}
-@media (max-width:480px){.lib-head{flex-wrap:wrap}.lib-head .h4{flex-basis:100%}}
-.lib-head .btn{flex:none}
+.lib-sec{background:#FFFDF8;border:1px solid #D9D2C1;border-radius:14px;overflow:hidden}
+.lib-h{margin:0}
+.lib-h button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:56px;padding:0 18px;border:0;background:none;font:inherit;font-weight:700;font-size:18px;color:#134E5E;cursor:pointer;text-align:start}
+.lib-h button:hover{background:#F5F1E6}
+.lib-tbl th,.lib-tbl td{vertical-align:middle}
+.lib-tbl td:last-child,.lib-tbl th:last-child{text-align:end;white-space:nowrap}
+@container (max-width:600px){
+  .lib-tbl thead{display:none}
+  .lib-tbl tr{display:block;padding:12px 16px;border-top:1px solid #D9D2C1}
+  .lib-tbl td{display:block;border:0;padding:4px 0}
+  .lib-tbl td:last-child{text-align:start;padding-top:8px}
+}

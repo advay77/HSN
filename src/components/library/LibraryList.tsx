@@ -1,6 +1,6 @@
 'use client'
 
-// Type filter, search and resource cards from Library.dc.html.
+// Library resources grouped under type headings. A heading opens a short table: title, access, download.
 import Link from 'next/link'
 import React, { useState } from 'react'
 
@@ -16,89 +16,91 @@ export type LibraryRow = {
   locked: boolean
 }
 
-const TYPES = ['All', 'Guide', 'Toolkit', 'Checklist', 'Report', 'Template', 'Policy/Program'] as const
-const typeName = (n: (typeof TYPES)[number]) => (n === 'All' ? 'All types' : n === 'Policy/Program' ? 'Policies/Programs' : `${n}s`)
-const ICON: Record<LibraryRow['type'], React.CSSProperties> = {
-  Guide: { background: '#E3F1E4', color: '#0B6B3A' },
-  Toolkit: { background: '#DDF0F6', color: '#1C6E8A' },
-  Checklist: { background: '#E7F3EA', color: '#134E5E' },
-  Report: { background: '#FBEFD5', color: '#8A5A00' },
-  Template: { background: '#EDE7D8', color: '#17323A' },
-  'Policy/Program': { background: '#E4EEF2', color: '#134E5E' },
-}
+const GROUPS: LibraryRow['type'][] = ['Guide', 'Toolkit', 'Checklist', 'Report', 'Template', 'Policy/Program']
+const groupName = (type: LibraryRow['type']) => (type === 'Policy/Program' ? 'Policies/Programs' : `${type}s`)
 
 export function LibraryList({ rows, signedIn }: { rows: LibraryRow[]; signedIn: boolean }) {
-  const [ty, setTy] = useState<(typeof TYPES)[number]>('All')
   const [q, setQ] = useState('')
+  const [open, setOpen] = useState<LibraryRow['type'] | null>(null)
   const ql = q.trim().toLowerCase()
-  const shown = rows.filter((r) => (ty === 'All' || r.type === ty) && (!ql || `${r.title} ${r.desc}`.toLowerCase().includes(ql)))
+  const shown = rows.filter((r) => !ql || `${r.title} ${r.desc}`.toLowerCase().includes(ql))
+  const groups = GROUPS.map((type) => ({ type, items: shown.filter((r) => r.type === type) })).filter((g) => !ql || g.items.length > 0)
 
   return (
-    <div className="wrap stack g32">
-      <div className="stack g20">
-        <div className="row between g16">
-          <span className="small muted" role="status">{`Showing ${shown.length} of ${rows.length}`}</span>
-        </div>
-        <div className="row g16 between">
-          <div className="row g8 scrollx" role="group" aria-label="Filter by type">
-            {TYPES.map((n) => {
-              const on = ty === n
-              return (
-                <button key={n} className={on ? 'chp on' : 'chp'} aria-pressed={on} onClick={() => setTy(n)}>
-                  {on && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>}{' '}
-                  {typeName(n)}{' '}<span className="cnt">{n === 'All' ? rows.length : rows.filter((r) => r.type === n).length}</span>
-                </button>
-              )
-            })}
-          </div>
-          <div className="fld" style={{ flex: '0 1 360px', minWidth: '240px' }}>
-            <label className="sr" htmlFor="ls">Search the library</label>
-            <span className="sel" style={{ position: 'relative' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5F63" strokeWidth="2" strokeLinecap="round" aria-hidden="true" style={{ position: 'absolute', insetInlineStart: '14px', top: '14px' }}><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-              <input className="inp" id="ls" type="search" placeholder="Search the library" value={q} onChange={(e) => setQ(e.target.value)} style={{ paddingInlineStart: '44px' }} />
-            </span>
-          </div>
+    <div className="wrap stack g24">
+      <div className="row between g16">
+        <span className="small muted" role="status">{`Showing ${shown.length} of ${rows.length}`}</span>
+        <div className="fld" style={{ flex: '0 1 360px', minWidth: '220px', margin: 0 }}>
+          <label className="sr" htmlFor="ls">Search the library</label>
+          <span className="sel" style={{ position: 'relative' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5F63" strokeWidth="2" strokeLinecap="round" aria-hidden="true" style={{ position: 'absolute', insetInlineStart: '14px', top: '14px' }}><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+            <input className="inp" id="ls" type="search" placeholder="Search the library" value={q} onChange={(e) => setQ(e.target.value)} style={{ paddingInlineStart: '44px' }} />
+          </span>
         </div>
       </div>
-      {shown.length > 0 && (
-        <div className="grid c2 lib-grid">
-          {shown.map((r) => (
-            <article key={r.id} className="card lib-card">
-              <div className="lib-top">
-                <span className="ic" style={ICON[r.type]}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"></path><path d="M14 3v5h5"></path><path d="M10 13h6"></path><path d="M10 17h6"></path></svg></span>
-                <div className="row g8"><span className="bdg b-cat">{r.type}</span></div>
-              </div>
-              {/* Title with its button beside it, then who can open it; format and length are not shown (HSN request). */}
-              <div className="lib-head">
-                <h3 className="h4">{r.title}</h3>
-                {r.href ? (
-                  r.locked ? (
-                    <Link className="btn btn-s btn-sm" href={r.href} aria-label={`${r.title}: ${signedIn ? 'members only, see membership' : 'members only, log in to view'}`}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
-                      {signedIn ? 'Members only' : 'Log in to view'}
-                    </Link>
-                  ) : (
-                    <a className="btn btn-s btn-sm" href={r.href} target="_blank" rel="noopener">View resource</a>
-                  )
-                ) : null}
-              </div>
-              <span className={r.access === 'Members' ? 'bdg b-reg self-start' : 'bdg b-ok self-start'}>{r.access === 'Members' ? 'Member Access' : 'Open Access'}</span>
-              {r.desc && <p className="muted" style={{ margin: '0' }}>{r.desc}</p>}
-            </article>
-          ))}
+      {groups.length > 0 && (
+        <div className="stack g12">
+          {groups.map((g) => {
+            const on = open === g.type || ql.length > 0
+            return (
+              <section key={g.type} className="lib-sec">
+                <h2 className="lib-h">
+                  <button type="button" aria-expanded={on} onClick={() => setOpen(on && !ql ? null : g.type)}>
+                    <span>{groupName(g.type)}</span>
+                    <span className="row g8">
+                      <span className="cnt">{g.items.length}</span>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true" style={{ transform: on ? 'rotate(90deg)' : undefined }}><path d="m9 6 6 6-6 6"></path></svg>
+                    </span>
+                  </button>
+                </h2>
+                {on && (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table className="tbl lib-tbl">
+                      <caption className="sr">{groupName(g.type)}</caption>
+                      <thead>
+                        <tr><th scope="col">Title</th><th scope="col">Access</th><th scope="col"><span className="sr">Download</span></th></tr>
+                      </thead>
+                      <tbody>
+                        {g.items.length === 0 && (
+                          <tr><td colSpan={3} className="muted">No documents in this group yet.</td></tr>
+                        )}
+                        {g.items.map((r) => (
+                          <tr key={r.id}>
+                            <td>
+                              <span className="strong">{r.title}</span>
+                              {r.desc && <span className="small muted" style={{ display: 'block', marginTop: '2px' }}>{r.desc}</span>}
+                            </td>
+                            <td><span className={r.access === 'Members' ? 'bdg b-reg' : 'bdg b-ok'}>{r.access === 'Members' ? 'Member Access' : 'Open Access'}</span></td>
+                            <td style={{ textAlign: 'end', width: '1%' }}>
+                              {r.href ? (
+                                r.locked ? (
+                                  <Link className="btn btn-s btn-sm" href={r.href}>{signedIn ? 'Members only' : 'Log in to view'}</Link>
+                                ) : (
+                                  <a className="btn btn-s btn-sm" href={r.href} target="_blank" rel="noopener">Download</a>
+                                )
+                              ) : <span className="small muted">No file yet</span>}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </section>
+            )
+          })}
         </div>
       )}
       {rows.length === 0 && (
-        <div className="card pad-l stack g12" style={{ alignItems: 'center', textAlign: 'center' }}>
+        <div className="card pad stack g12" style={{ alignItems: 'center', textAlign: 'center' }}>
           <h3 className="h4">No resources yet</h3>
-          <p className="muted">HSN guides, toolkits, reports and templates will appear here as they are published.</p>
+          <p className="muted">Guides, checklists, and the other documents will appear here as they are published.</p>
         </div>
       )}
-      {rows.length > 0 && shown.length === 0 && (
-        <div className="card pad-l stack g12" style={{ alignItems: 'center', textAlign: 'center' }}>
+      {rows.length > 0 && groups.length === 0 && (
+        <div className="card pad stack g12" style={{ alignItems: 'center', textAlign: 'center' }}>
           <h3 className="h4">No resources match your search</h3>
-          <p className="muted">Try another word, or show every type.</p>
-          <button className="btn btn-s" onClick={() => { setTy('All'); setQ('') }}>Show all resources</button>
+          <button className="btn btn-s" onClick={() => setQ('')}>Show all resources</button>
         </div>
       )}
     </div>
