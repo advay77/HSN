@@ -16,7 +16,7 @@ export type LibraryRow = {
   locked: boolean
 }
 
-const GROUPS: LibraryRow['type'][] = ['Guide', 'Toolkit', 'Checklist', 'Report', 'Template', 'Policy/Program']
+const GROUPS: LibraryRow['type'][] = ['Checklist', 'Guide', 'Policy/Program', 'Report', 'Template', 'Toolkit']
 const groupName = (type: LibraryRow['type']) => (type === 'Policy/Program' ? 'Policies/Programs' : `${type}s`)
 
 export function LibraryList({ rows, signedIn }: { rows: LibraryRow[]; signedIn: boolean }) {
