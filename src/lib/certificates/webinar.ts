@@ -6,11 +6,12 @@ export type WebinarCertificate = {
   recipient: string
   webinar: string
   heldOn: string
-  leftName: string
-  leftTitle: string
+  certificateNo: number
   rightName: string
   rightTitle: string
 }
+
+export const formatCertificateNo = (n: number) => String(n).padStart(4, '0')
 
 export const roleLabel = (role: WebinarRole) => (role === 'moderator' ? 'Moderator' : 'Speaker')
 

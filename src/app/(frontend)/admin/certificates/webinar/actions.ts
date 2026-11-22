@@ -16,17 +16,15 @@ export async function issueWebinarCertificate(_prev: WebinarFormState, formData:
   const recipient = clean(formData.get('recipient'), 160)
   const webinar = clean(formData.get('webinar'), 240)
   const heldOn = clean(formData.get('heldOn'), 80)
-  const leftName = clean(formData.get('leftName'), 120)
-  const leftTitle = clean(formData.get('leftTitle'), 120)
-  const rightName = clean(formData.get('rightName'), 120)
-  const rightTitle = clean(formData.get('rightTitle'), 120)
-  if (!role || !recipient || !webinar || !heldOn || !leftName || !leftTitle || !rightName || !rightTitle) {
-    return { error: 'Fill in every field, including both people who sign the certificate.' }
+  const rightName = clean(formData.get('rightName'), 120) || 'Dr. Nishant Jaiswal'
+  const rightTitle = clean(formData.get('rightTitle'), 120) || 'Founder'
+  if (!role || !recipient || !webinar || !heldOn) {
+    return { error: 'Fill in the person’s name, the webinar, and the date.' }
   }
   const payload = await getPayloadClient()
   const doc = await payload.create({
     collection: 'webinar-certificates',
-    data: { role: role as WebinarRole, recipient, webinar, heldOn, leftName, leftTitle, rightName, rightTitle },
+    data: { role: role as WebinarRole, recipient, webinar, heldOn, rightName, rightTitle },
   })
   redirect(`/admin/certificates/webinar/${doc.id}`)
 }

@@ -7,7 +7,7 @@ import { listCompletions } from '@/lib/admin/certificates'
 import { requireAdmin } from '@/lib/admin/auth'
 import { RestartNumbering } from '@/components/admin/RestartNumbering'
 import { formatIssuedAt, nextCertificateNumber } from '@/lib/courses/certificate'
-import { roleLabel } from '@/lib/certificates/webinar'
+import { formatCertificateNo, roleLabel } from '@/lib/certificates/webinar'
 import { getPayloadClient } from '@/lib/payload'
 
 export const metadata = { title: 'Certificates' }
@@ -83,10 +83,11 @@ export default async function AdminCertificatesPage() {
             <div className="card" style={{ overflowX: 'auto' }}>
               <table className="atbl m">
                 <caption className="sr">Issued webinar certificates</caption>
-                <thead><tr><th scope="col">Person</th><th scope="col">Role</th><th scope="col">Webinar</th><th scope="col">Date</th><th scope="col"><span className="sr">Open</span></th></tr></thead>
+                <thead><tr><th scope="col">No.</th><th scope="col">Person</th><th scope="col">Role</th><th scope="col">Webinar</th><th scope="col">Date</th><th scope="col"><span className="sr">Open</span></th></tr></thead>
                 <tbody>
                   {webinars.docs.map((doc) => (
                     <tr key={doc.id}>
+                      <td data-l="No.">{doc.certificateNo ? formatCertificateNo(doc.certificateNo) : '—'}</td>
                       <td><strong>{doc.recipient}</strong></td>
                       <td data-l="Role">{roleLabel(doc.role)}</td>
                       <td data-l="Webinar" className="small">{doc.webinar}</td>

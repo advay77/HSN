@@ -1,6 +1,22 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
 import { staffOnly } from './access'
+
+// The first issued certificate is 0001. Each one after that takes the next number.
+const assignCertificateNo: CollectionBeforeChangeHook = async ({ data, operation, req }) => {
+  if (operation !== 'create' || data.certificateNo) return data
+  const top = await req.payload.find({
+    collection: 'webinar-certificates',
+    where: { certificateNo: { greater_than: 0 } },
+    sort: '-certificateNo',
+    limit: 1,
+    depth: 0,
+    req,
+    overrideAccess: true,
+  })
+  data.certificateNo = (top.docs[0]?.certificateNo ?? 0) + 1
+  return data
+}
 
 // Moderator and speaker certificates issued by hand from Admin → Certificates.
 export const WebinarCertificates: CollectionConfig = {
@@ -25,10 +41,10 @@ export const WebinarCertificates: CollectionConfig = {
     { name: 'recipient', type: 'text', required: true },
     { name: 'webinar', label: 'Webinar title', type: 'text', required: true },
     { name: 'heldOn', label: 'Date', type: 'text', required: true },
-    { name: 'leftName', label: 'Left signature name', type: 'text', required: true },
-    { name: 'leftTitle', label: 'Left signature title', type: 'text', required: true },
-    { name: 'rightName', label: 'Right signature name', type: 'text', required: true },
-    { name: 'rightTitle', label: 'Right signature title', type: 'text', required: true },
+    { name: 'certificateNo', label: 'Certificate number', type: 'number', index: true, admin: { readOnly: true } },
+    { name: 'rightName', label: 'Founder name', type: 'text', required: true },
+    { name: 'rightTitle', label: 'Founder title', type: 'text', required: true },
   ],
+  hooks: { beforeChange: [assignCertificateNo] },
   timestamps: true,
 }

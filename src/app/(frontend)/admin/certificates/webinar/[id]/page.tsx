@@ -28,8 +28,7 @@ export default async function WebinarCertificatePage({ params }: { params: Promi
     recipient: doc.recipient,
     webinar: doc.webinar,
     heldOn: doc.heldOn,
-    leftName: doc.leftName,
-    leftTitle: doc.leftTitle,
+    certificateNo: doc.certificateNo ?? 0,
     rightName: doc.rightName,
     rightTitle: doc.rightTitle,
   }

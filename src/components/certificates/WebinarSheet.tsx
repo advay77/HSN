@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { CertificateFit } from '@/components/courses/CertificateFit'
-import { certificateYear, roleLabel, type WebinarCertificate } from '@/lib/certificates/webinar'
+import { certificateYear, formatCertificateNo, roleLabel, type WebinarCertificate } from '@/lib/certificates/webinar'
 
 export function WebinarSheet({ cert }: { cert: WebinarCertificate }) {
   const role = roleLabel(cert.role)
@@ -28,9 +28,9 @@ export function WebinarSheet({ cert }: { cert: WebinarCertificate }) {
           in sincere appreciation of your valued participation as {cert.role === 'moderator' ? <strong>Moderator</strong> : <>a <strong>Speaker</strong></>} {cert.role === 'moderator' ? 'of' : 'at'} the HSN webinar <strong>“{cert.webinar}”</strong>, held on {cert.heldOn}. {thanks}
         </p>
         <div className="wcert-foot">
-          <div className="wcert-sign">
-            <b>{cert.leftName}</b>
-            <span>{cert.leftTitle}, HSN</span>
+          <div className="wcert-no">
+            <span>Certificate No.</span>
+            <b>{formatCertificateNo(cert.certificateNo)}</b>
           </div>
           <div className="wcert-seal-wrap">
             <span className="wcert-seal"><span>HSN</span><span>{year}</span></span>

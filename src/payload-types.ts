@@ -508,8 +508,7 @@ export interface WebinarCertificate {
   recipient: string;
   webinar: string;
   heldOn: string;
-  leftName: string;
-  leftTitle: string;
+  certificateNo?: number | null;
   rightName: string;
   rightTitle: string;
   updatedAt: string;
@@ -1236,8 +1235,7 @@ export interface WebinarCertificatesSelect<T extends boolean = true> {
   recipient?: T;
   webinar?: T;
   heldOn?: T;
-  leftName?: T;
-  leftTitle?: T;
+  certificateNo?: T;
   rightName?: T;
   rightTitle?: T;
   updatedAt?: T;

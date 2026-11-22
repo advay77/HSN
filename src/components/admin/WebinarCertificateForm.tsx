@@ -6,7 +6,7 @@ import { issueWebinarCertificate, type WebinarFormState } from '@/app/(frontend)
 
 const initial: WebinarFormState = {}
 
-export function WebinarCertificateForm() {
+export function WebinarCertificateForm({ nextNo }: { nextNo: string }) {
   const [state, action, pending] = useActionState(issueWebinarCertificate, initial)
   return (
     <form action={action} className="card pad stack g16" style={{ maxWidth: '760px' }}>
@@ -21,11 +21,10 @@ export function WebinarCertificateForm() {
       <div className="fld"><label className="lbl" htmlFor="wc-name">Person’s name</label><input className="inp" id="wc-name" name="recipient" required /></div>
       <div className="fld"><label className="lbl" htmlFor="wc-web">Webinar title</label><input className="inp" id="wc-web" name="webinar" required /></div>
       <div className="fld"><label className="lbl" htmlFor="wc-date">Date</label><input className="inp" id="wc-date" name="heldOn" placeholder="22 November 2026" required /></div>
+      <p className="small muted" style={{ margin: 0 }}>This certificate will be No. {nextNo}. The next one continues from there. Only the founder signs, on the right.</p>
       <div className="grid c2" style={{ gap: '16px' }}>
-        <div className="fld"><label className="lbl" htmlFor="wc-ln">Left signature name</label><input className="inp" id="wc-ln" name="leftName" defaultValue="Dr. Nishant Jaiswal" required /></div>
-        <div className="fld"><label className="lbl" htmlFor="wc-lt">Left signature title</label><input className="inp" id="wc-lt" name="leftTitle" defaultValue="Founder" required /></div>
-        <div className="fld"><label className="lbl" htmlFor="wc-rn">Right signature name</label><input className="inp" id="wc-rn" name="rightName" required /></div>
-        <div className="fld"><label className="lbl" htmlFor="wc-rt">Right signature title</label><input className="inp" id="wc-rt" name="rightTitle" required /></div>
+        <div className="fld"><label className="lbl" htmlFor="wc-rn">Founder name</label><input className="inp" id="wc-rn" name="rightName" defaultValue="Dr. Nishant Jaiswal" required /></div>
+        <div className="fld"><label className="lbl" htmlFor="wc-rt">Founder title</label><input className="inp" id="wc-rt" name="rightTitle" defaultValue="Founder" required /></div>
       </div>
       <button className="btn btn-p" disabled={pending}>{pending ? 'Issuing…' : 'Issue certificate'}</button>
     </form>
