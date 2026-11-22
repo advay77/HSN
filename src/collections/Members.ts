@@ -1,11 +1,14 @@
 import type { CollectionConfig } from 'payload'
 
+import { staffOnly } from './access'
+
 import { memberActivity } from './hooks/activity'
 
 // Learners and members of the public site. They sign in with Google or an emailed one-time code
 // (see src/lib/auth), not with the admin panel's password login.
 export const Members: CollectionConfig = {
   slug: 'members',
+  access: staffOnly,
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'email', 'membershipTier', 'membershipStatus', 'lastLoginAt'],

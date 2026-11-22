@@ -1,8 +1,11 @@
 import type { CollectionConfig } from 'payload'
 
+import { staffOnly } from './access'
+
 // Admin panel accounts (HSN founder and team). Learners are in `members`, not here.
 export const Users: CollectionConfig = {
   slug: 'users',
+  access: staffOnly,
   labels: { singular: 'Admin', plural: 'Admins' },
   admin: {
     useAsTitle: 'email',

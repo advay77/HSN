@@ -1,10 +1,13 @@
 import type { CollectionConfig } from 'payload'
 
+import { staffOnly } from './access'
+
 export const LIBRARY_TYPES = ['Guide', 'Toolkit', 'Checklist', 'Report', 'Template', 'Policy/Program'] as const
 
 // Library page resources (guides, toolkits, checklists, reports, templates, policies).
 export const LibraryResources: CollectionConfig = {
   slug: 'library-resources',
+  access: staffOnly,
   labels: { singular: 'Library resource', plural: 'Library' },
   admin: {
     useAsTitle: 'title',

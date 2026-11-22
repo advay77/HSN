@@ -1,9 +1,12 @@
 import type { CollectionConfig } from 'payload'
 
+import { staffOnly } from './access'
+
 // What members do on the site: logins, course progress, submissions. Feeds the admin Overview
 // (logins per day, live activity) and the member detail timeline. Written by the app, never by hand.
 export const Activity: CollectionConfig = {
   slug: 'activity',
+  access: staffOnly,
   admin: { group: 'People', useAsTitle: 'type', defaultColumns: ['type', 'member', 'detail', 'createdAt'] },
   defaultSort: '-createdAt',
   fields: [
@@ -34,6 +37,7 @@ export const Activity: CollectionConfig = {
 // Page views with time spent, for "Most viewed sections" and each member's journey. One row per page visit.
 export const PageViews: CollectionConfig = {
   slug: 'page-views',
+  access: staffOnly,
   admin: { hidden: true },
   fields: [
     { name: 'section', type: 'text', required: true, index: true },
@@ -52,6 +56,7 @@ export const PageViews: CollectionConfig = {
 // Clicks on links and buttons (their visible label and where a link goes). Never what anyone types.
 export const ClickEvents: CollectionConfig = {
   slug: 'click-events',
+  access: staffOnly,
   admin: { hidden: true },
   fields: [
     { name: 'path', type: 'text', required: true, index: true },

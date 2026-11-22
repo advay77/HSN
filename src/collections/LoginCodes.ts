@@ -1,8 +1,11 @@
 import type { CollectionConfig } from 'payload'
 
+import { staffOnly } from './access'
+
 // One-time sign-in codes sent by email. Only the hash is stored. Hidden from the admin panel.
 export const LoginCodes: CollectionConfig = {
   slug: 'login-codes',
+  access: staffOnly,
   admin: { hidden: true },
   fields: [
     { name: 'email', type: 'email', required: true, index: true },

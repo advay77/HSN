@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { staffOnly } from './access'
+
 import { slugField } from './fields/slug'
 import { caseActivity } from './hooks/activity'
 
@@ -17,6 +19,7 @@ export const CASE_REGIONS = ['India', 'GCC', 'International'] as const
 // Fields follow the CaseStudies list and CaseStudy page designs.
 export const CaseStudies: CollectionConfig = {
   slug: 'case-studies',
+  access: staffOnly,
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', 'organization', 'status', 'updatedAt'],

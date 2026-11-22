@@ -2,12 +2,16 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 import { exchangeCode, OAUTH_COOKIE } from '@/lib/auth/google'
 import { safeNext } from '@/lib/auth/redirect'
+import { rateLimit } from '@/lib/rate-limit'
 import { createSessionToken, SESSION_COOKIE, sessionCookieOptions } from '@/lib/auth/session'
 import { getPayloadClient } from '@/lib/payload'
 
 // Google sends the user back here. Checks state, swaps the code for the profile, then finds or creates the member
 // (linked by Google id, or by verified email for someone who first signed up with an email code).
 export async function GET(req: NextRequest) {
+  if (!(await rateLimit('google-callback', 30, 15 * 60))) {
+    return NextResponse.redirect(new URL('/login?error=too-many', req.url))
+  }
   const fail = (reason: string, next = '/my') => {
     const res = NextResponse.redirect(new URL(`/login?error=${reason}&next=${encodeURIComponent(next)}`, req.url))
     res.cookies.delete({ name: OAUTH_COOKIE, path: '/api/auth/google' })

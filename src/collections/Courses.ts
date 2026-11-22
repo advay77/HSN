@@ -1,11 +1,14 @@
 import type { CollectionConfig } from 'payload'
 
+import { staffOnly } from './access'
+
 import { slugField } from './fields/slug'
 
 // One course = the Course page (hero, facts, outcomes, modules, certificate) plus its lessons for the Player.
 // Mirrors the five tabs of the AdminCourses design: Basics, What you'll learn, Modules & lessons, Certificate, Publishing.
 export const Courses: CollectionConfig = {
   slug: 'courses',
+  access: staffOnly,
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'level', 'kind', 'published', 'featured'],

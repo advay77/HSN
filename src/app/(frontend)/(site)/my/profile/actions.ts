@@ -5,12 +5,14 @@ import { revalidatePath } from 'next/cache'
 import { isEmail, normalizeEmail } from '@/lib/auth/codes'
 import { getCurrentMember } from '@/lib/auth/session'
 import { getPayloadClient } from '@/lib/payload'
+import { rateLimit, TOO_MANY } from '@/lib/rate-limit'
 
 export type ProfileState = { saved?: boolean; error?: string; field?: string }
 
-const clean = (v: FormDataEntryValue | null, max = 200) => String(v ?? '').trim().slice(0, max)
+const clean = (v: FormDataEntryValue | null, max = 200) => String(v ?? '').replace(/[<>]/g, '').trim().slice(0, max)
 
 export async function saveProfile(_prev: ProfileState, form: FormData): Promise<ProfileState> {
+  if (!(await rateLimit('profile', 20, 60 * 60))) return { error: TOO_MANY }
   const member = await getCurrentMember()
   if (!member) return { error: 'Your session has ended. Please log in again.' }
 

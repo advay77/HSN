@@ -1,5 +1,7 @@
 import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
+import { staffOnly } from './access'
+
 import { enrollmentActivity, membershipActivity, registrationActivity } from './hooks/activity'
 
 // Certificate numbers: when a course is completed, the enrollment gets the next number (highest so far + 1).
@@ -16,6 +18,7 @@ const assignCertificateNo: CollectionBeforeChangeHook = async ({ data, originalD
 // Course progress per member: which lessons are done, quiz results, completion.
 export const Enrollments: CollectionConfig = {
   slug: 'enrollments',
+  access: staffOnly,
   admin: {
     useAsTitle: 'id',
     defaultColumns: ['member', 'course', 'progress', 'completedAt'],
@@ -44,6 +47,7 @@ export const Enrollments: CollectionConfig = {
 // "Register for this course" form (Register page).
 export const CourseRegistrations: CollectionConfig = {
   slug: 'course-registrations',
+  access: staffOnly,
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'email', 'course', 'createdAt'],
@@ -69,6 +73,7 @@ export const CourseRegistrations: CollectionConfig = {
 // configured the same record tracks the payment (see src/lib/payments).
 export const MembershipApplications: CollectionConfig = {
   slug: 'membership-applications',
+  access: staffOnly,
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'email', 'tier', 'region', 'paymentStatus', 'createdAt'],
@@ -124,6 +129,7 @@ export const MembershipApplications: CollectionConfig = {
 // Course completion delegate feedback. One response per member per course.
 export const CourseFeedback: CollectionConfig = {
   slug: 'course-feedback',
+  access: staffOnly,
   admin: {
     useAsTitle: 'delegateName',
     defaultColumns: ['delegateName', 'courseTitle', 'overallSatisfaction', 'recommend', 'createdAt'],
@@ -181,6 +187,7 @@ export const CourseFeedback: CollectionConfig = {
 // Website feedback form shown on Home, About and /feedback. Anyone can send it; admins read it in Admin → Feedback.
 export const SiteFeedback: CollectionConfig = {
   slug: 'site-feedback',
+  access: staffOnly,
   admin: {
     useAsTitle: 'message',
     defaultColumns: ['name', 'rating', 'message', 'page', 'createdAt'],

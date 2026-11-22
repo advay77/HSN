@@ -1,8 +1,11 @@
 import type { CollectionConfig } from 'payload'
 
+import { staffOnly } from './access'
+
 // People shown on /founder (Our Team). Managed in Admin → Our Team.
 export const TeamMembers: CollectionConfig = {
   slug: 'team-members',
+  access: staffOnly,
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'role', 'published', 'sort'],

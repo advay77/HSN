@@ -39,6 +39,18 @@ const poolUrl = databaseCa ? databaseUrl.replace(/([?&])sslmode=[^&]*&?/, '$1').
 // Uploads go to Supabase Storage (S3-compatible) when S3_BUCKET is set; otherwise to the local media/ folder.
 const useS3 = Boolean(process.env.S3_BUCKET)
 
+if (process.env.NODE_ENV === 'production' && (process.env.PAYLOAD_SECRET || '').length < 32) {
+  throw new Error('PAYLOAD_SECRET must be set to a random value of at least 32 characters.')
+}
+if (process.env.NODE_ENV === 'production' && !usePostgres) {
+  throw new Error('DATABASE_URL must be the production Postgres connection.')
+}
+
+const siteOrigin = (process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://healthcaresustainabilitynetwork.com').replace(/\/$/, '')
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? [siteOrigin]
+  : [siteOrigin, 'http://localhost:3000', 'http://127.0.0.1:3000']
+
 // Database: Postgres (Supabase) when DATABASE_URL starts with postgres://, otherwise a local SQLite file.
 export default buildConfig({
   admin: {
@@ -74,6 +86,10 @@ export default buildConfig({
   ],
   // The site uses Payload's local API only; GraphQL is switched off to shrink the attack surface.
   graphQL: { disable: true },
+  // Production never returns Payload's extra error detail. The API only accepts this site's own address.
+  debug: false,
+  cors: allowedOrigins,
+  csrf: allowedOrigins,
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

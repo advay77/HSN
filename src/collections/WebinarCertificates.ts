@@ -1,8 +1,11 @@
 import type { CollectionConfig } from 'payload'
 
+import { staffOnly } from './access'
+
 // Moderator and speaker certificates issued by hand from Admin → Certificates.
 export const WebinarCertificates: CollectionConfig = {
   slug: 'webinar-certificates',
+  access: staffOnly,
   labels: { singular: 'Webinar certificate', plural: 'Webinar certificates' },
   admin: {
     useAsTitle: 'recipient',

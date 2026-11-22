@@ -1,8 +1,11 @@
 import type { CollectionConfig } from 'payload'
 
+import { staffOnly } from './access'
+
 // Advisory Board members shown on /advisory. Managed in Admin → Advisory Board.
 export const Advisors: CollectionConfig = {
   slug: 'advisors',
+  access: staffOnly,
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'role', 'published', 'sort'],
