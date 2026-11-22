@@ -55,6 +55,7 @@ const nextConfig: NextConfig = {
   },
   // Case study submissions send attachments (up to 10 MB each) through a server action.
   experimental: {
+    agentUpgrade: 'security',
     serverActions: { bodySizeLimit: '32mb' },
   },
   images: {
