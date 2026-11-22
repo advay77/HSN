@@ -71,6 +71,7 @@ export interface Config {
     'case-studies': CaseStudy;
     'library-resources': LibraryResource;
     advisors: Advisor;
+    'webinar-certificates': WebinarCertificate;
     'team-members': TeamMember;
     'site-copy': SiteCopy;
     media: Media;
@@ -96,6 +97,7 @@ export interface Config {
     'case-studies': CaseStudiesSelect<false> | CaseStudiesSelect<true>;
     'library-resources': LibraryResourcesSelect<false> | LibraryResourcesSelect<true>;
     advisors: AdvisorsSelect<false> | AdvisorsSelect<true>;
+    'webinar-certificates': WebinarCertificatesSelect<false> | WebinarCertificatesSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     'site-copy': SiteCopySelect<false> | SiteCopySelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -498,6 +500,23 @@ export interface Advisor {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webinar-certificates".
+ */
+export interface WebinarCertificate {
+  id: number;
+  role: 'moderator' | 'speaker';
+  recipient: string;
+  webinar: string;
+  heldOn: string;
+  leftName: string;
+  leftTitle: string;
+  rightName: string;
+  rightTitle: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "team-members".
  */
 export interface TeamMember {
@@ -881,6 +900,10 @@ export interface PayloadLockedDocument {
         value: number | Advisor;
       } | null)
     | ({
+        relationTo: 'webinar-certificates';
+        value: number | WebinarCertificate;
+      } | null)
+    | ({
         relationTo: 'team-members';
         value: number | TeamMember;
       } | null)
@@ -1201,6 +1224,22 @@ export interface AdvisorsSelect<T extends boolean = true> {
   photoPath?: T;
   sort?: T;
   published?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webinar-certificates_select".
+ */
+export interface WebinarCertificatesSelect<T extends boolean = true> {
+  role?: T;
+  recipient?: T;
+  webinar?: T;
+  heldOn?: T;
+  leftName?: T;
+  leftTitle?: T;
+  rightName?: T;
+  rightTitle?: T;
   updatedAt?: T;
   createdAt?: T;
 }
