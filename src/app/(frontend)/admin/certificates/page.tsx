@@ -87,7 +87,7 @@ export default async function AdminCertificatesPage() {
                 <tbody>
                   {webinars.docs.map((doc) => (
                     <tr key={doc.id}>
-                      <td data-l="No.">{doc.certificateNo ? formatCertificateNo(doc.certificateNo) : '—'}</td>
+                      <td data-l="No.">{doc.certificateNo ? formatCertificateNo(doc.certificateNo, doc.heldOn) : '—'}</td>
                       <td><strong>{doc.recipient}</strong></td>
                       <td data-l="Role">{roleLabel(doc.role)}</td>
                       <td data-l="Webinar" className="small">{doc.webinar}</td>

@@ -11,7 +11,11 @@ export type WebinarCertificate = {
   rightTitle: string
 }
 
-export const formatCertificateNo = (n: number) => String(n).padStart(4, '0')
+/** Webinar numbers are separate from course certificates: HSN/WEB/0001/2026. */
+export const formatCertificateNo = (n: number, heldOn?: string) => {
+  const year = heldOn ? certificateYear(heldOn) : String(new Date().getFullYear())
+  return `HSN/WEB/${String(n).padStart(4, '0')}/${year}`
+}
 
 export const roleLabel = (role: WebinarRole) => (role === 'moderator' ? 'Moderator' : 'Speaker')
 

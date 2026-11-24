@@ -44,36 +44,22 @@
 .cert-sig{font-family:'Great Vibes','Brush Script MT',cursive;font-size:calc(var(--u)*38);line-height:1.15;color:#1F2D6B;white-space:nowrap;padding:0 calc(var(--u)*6) calc(var(--u)*6);border-bottom:calc(var(--u)*1.5) solid #8A948F;width:100%}
 .cert-sign>span:last-child{margin-top:calc(var(--u)*8);font-family:'EB Garamond',Georgia,serif;font-size:calc(var(--u)*14.5);line-height:1.35;color:#4A5A57}
 
+.wcert-body{margin:calc(var(--u)*16) 0 0;max-width:calc(var(--u)*560);font-size:calc(var(--u)*15);line-height:1.4;color:#17323A}
+.wcert-body strong{font-weight:700}
+.wcert-no{display:flex;flex-direction:column;gap:calc(var(--u)*3);font-family:Inter,system-ui,sans-serif;font-weight:400;font-size:calc(var(--u)*13.5);line-height:1.35;letter-spacing:.03em;color:#5D6B67}
+.cert-sign>.wcert-who{font-family:Inter,system-ui,sans-serif;font-weight:700;font-size:calc(var(--u)*15);line-height:1.35;color:#17323A}
+.cert-sign>.wcert-who b{font-weight:700}
+
 @media (max-width:720px){
   .cert-tip{text-align:left}
 }
-.wcert-sheet{--u:.1cqw;position:relative;aspect-ratio:297/210;display:flex;flex-direction:column;align-items:center;text-align:center;background:#FFFFFF;border-radius:calc(var(--u)*6);overflow:hidden;font-family:Inter,system-ui,sans-serif;color:#17323A;padding:calc(var(--u)*48) calc(var(--u)*64) calc(var(--u)*36);-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.cert.fit .wcert-sheet{--u:1px;width:1000px;height:707px;transform:scale(var(--fit));transform-origin:0 0}
-.wcert-sheet::before,.wcert-sheet::after{content:"";position:absolute;pointer-events:none}
-.wcert-sheet::before{inset:calc(var(--u)*14);border:calc(var(--u)*3) solid #0B6B3A}
-.wcert-sheet::after{inset:calc(var(--u)*22);border:calc(var(--u)*1) solid #9CC9AE}
-.wcert-logo{height:calc(var(--u)*72);width:auto}
-.wcert-series{margin-top:calc(var(--u)*16);font-size:calc(var(--u)*13);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#1C6E8A}
-.wcert-k{margin-top:calc(var(--u)*8);font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:calc(var(--u)*32);color:#134E5E}
-.wcert-role{margin-top:calc(var(--u)*12);font-size:calc(var(--u)*14);font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#0B6B3A}
-.wcert-pre{margin-top:calc(var(--u)*22);font-family:'EB Garamond',Georgia,serif;font-style:italic;font-size:calc(var(--u)*18);color:#3F504D}
-.wcert-name{margin-top:calc(var(--u)*6);font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:calc(var(--u)*40);line-height:1.15;color:#0B6B3A;max-width:calc(var(--u)*760)}
-.wcert-body{margin:calc(var(--u)*16) 0 0;max-width:calc(var(--u)*720);font-size:calc(var(--u)*16);line-height:1.45;color:#17323A}
-.wcert-body strong{font-weight:700}
-.wcert-signs{margin-top:auto;width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:calc(var(--u)*40);padding:0 calc(var(--u)*36)}
-.wcert-signs .wcert-no,.wcert-sign{display:flex;flex-direction:column;align-items:center;width:calc(var(--u)*280)}
-.wcert-sign b{font-family:'Playfair Display',Georgia,serif;font-size:calc(var(--u)*18);color:#134E5E;padding-bottom:calc(var(--u)*6);border-bottom:calc(var(--u)*1.5) solid #8A948F;width:100%}
-.wcert-sign span,.wcert-no span{margin-top:calc(var(--u)*6);font-size:calc(var(--u)*13);color:#4A5A57}
-.wcert-no b{font-family:'Playfair Display',Georgia,serif;font-size:calc(var(--u)*28);color:#134E5E}
-.wcert-foot{margin-top:calc(var(--u)*22);font-size:calc(var(--u)*12);letter-spacing:.04em;color:#5D6B67}
-
 @media print{
   @page{size:A4 landscape;margin:0}
   html,body,.pg{background:#FFFFFF !important;margin:0 !important;padding:0 !important;min-height:0 !important}
   .cert-actions,.nav-prog,.a11y-fab,.a11y-btn,.sfb-tab{display:none !important}
   .cert-wrap{padding:0;margin:0;max-width:none;width:297mm;gap:0}
   .cert,.cert.fit{filter:none;width:297mm;height:auto;overflow:visible}
-  .cert-sheet,.cert.fit .cert-sheet,.wcert-sheet,.cert.fit .wcert-sheet{--u:.297mm;width:297mm;height:209.5mm;aspect-ratio:auto;border-radius:0;break-inside:avoid;transform:none}
+  .cert-sheet,.cert.fit .cert-sheet{--u:.297mm;width:297mm;height:209.5mm;aspect-ratio:auto;border-radius:0;break-inside:avoid;transform:none}
   .aside,.atop{display:none !important}
   .adm{display:block !important}
   .pg main{animation:none !important}
