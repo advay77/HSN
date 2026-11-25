@@ -46,7 +46,8 @@
 
 .wcert-body{margin:calc(var(--u)*16) 0 0;max-width:calc(var(--u)*560);font-size:calc(var(--u)*15);line-height:1.4;color:#17323A}
 .wcert-body strong{font-weight:700}
-.wcert-no{display:flex;flex-direction:column;gap:calc(var(--u)*3);font-family:Inter,system-ui,sans-serif;font-weight:400;font-size:calc(var(--u)*13.5);line-height:1.35;letter-spacing:.03em;color:#5D6B67}
+.wcert .wcert-no{position:relative;z-index:1;margin-top:auto;margin-bottom:calc(var(--u)*62);display:flex;flex-direction:column;align-items:center;text-align:center;gap:calc(var(--u)*4);width:calc(var(--u)*230);font-family:Inter,system-ui,sans-serif;font-weight:400;font-size:calc(var(--u)*13.5);line-height:1.35;letter-spacing:.02em;color:#5D6B67}
+.wcert-org{flex:1;align-self:flex-end;text-align:center;font-family:Inter,system-ui,sans-serif;font-weight:700;font-size:calc(var(--u)*15);line-height:1.35;color:#17323A;padding-bottom:calc(var(--u)*6)}
 .cert-sign>.wcert-who{font-family:Inter,system-ui,sans-serif;font-weight:700;font-size:calc(var(--u)*15);line-height:1.35;color:#17323A}
 .cert-sign>.wcert-who b{font-weight:700}
 

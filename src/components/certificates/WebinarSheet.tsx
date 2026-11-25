@@ -33,9 +33,9 @@ export function WebinarSheet({ cert }: { cert: WebinarCertificate }) {
       <div className="cert-sheet wcert">
         <aside className="cert-side">
           <img className="cert-tree" src="/images/certificate/hsn-tree.png" alt="" aria-hidden="true" />
-          <span className="cert-date">
-            <b>{cert.heldOn}</b>
-            <span>Date of webinar</span>
+          <span className="wcert-no">
+            <span>Certificate number</span>
+            {formatCertificateNo(cert.certificateNo, cert.heldOn)}
           </span>
         </aside>
         <section className="cert-main">
@@ -48,15 +48,10 @@ export function WebinarSheet({ cert }: { cert: WebinarCertificate }) {
             in sincere appreciation of your valued participation {cert.role === 'moderator' ? <>as <strong>Moderator</strong> of</> : <>as a <strong>Speaker</strong> at</>} the HSN webinar <strong>“{cert.webinar}”</strong>, held on {cert.heldOn}. {cert.role === 'moderator' ? 'Thank you for guiding a thoughtful and engaging discussion, and for being part of the HSN community.' : 'Thank you for sharing practical and thoughtful insights, and for being part of the HSN community.'}
           </p>
           <div className="cert-foot">
-            <div className="cert-ver">
-              <span className="wcert-no">
-                <span>Certificate number</span>
-                {formatCertificateNo(cert.certificateNo, cert.heldOn)}
-              </span>
-            </div>
+            <span className="wcert-org">{issuer}</span>
             <div className="cert-sign">
               <span className="cert-sig">{cert.rightName}</span>
-              <span className="wcert-who"><b>{cert.rightTitle}</b><br /><b>{issuer}</b></span>
+              <span className="wcert-who"><b>{cert.rightTitle}</b></span>
             </div>
           </div>
         </section>
