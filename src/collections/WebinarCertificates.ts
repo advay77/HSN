@@ -2,7 +2,7 @@ import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
 import { staffOnly } from './access'
 
-// The first issued certificate is 0001. Each one after that takes the next number.
+// The first issued certificate is 001. Each one after that takes the next number.
 const assignCertificateNo: CollectionBeforeChangeHook = async ({ data, operation, req }) => {
   if (operation !== 'create' || data.certificateNo) return data
   const top = await req.payload.find({

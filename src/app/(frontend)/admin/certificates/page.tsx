@@ -19,6 +19,9 @@ export default async function AdminCertificatesPage() {
   const next = await nextCertificateNumber()
   const payload = await getPayloadClient()
   const webinars = await payload.find({ collection: 'webinar-certificates', sort: '-createdAt', limit: 50, depth: 0 })
+  const topWebinar = await payload.find({ collection: 'webinar-certificates', where: { certificateNo: { greater_than: 0 } }, sort: '-certificateNo', limit: 1, depth: 0 })
+  const nextWebinarNo = formatCertificateNo((topWebinar.docs[0]?.certificateNo ?? 0) + 1)
+  const lastWebinar = webinars.docs[0]
 
   return (
     <>
@@ -78,20 +81,33 @@ export default async function AdminCertificatesPage() {
           </div>
         )}
         <div className="stack g12">
-          <h2 className="h3" style={{ margin: 0 }}>Moderator and speaker certificates</h2>
+          <div className="row between g16" style={{ alignItems: 'flex-end' }}>
+            <div className="stack g4">
+              <h2 className="h3" style={{ margin: 0 }}>Moderator and speaker certificates</h2>
+              {lastWebinar ? (
+                <p className="small muted" style={{ margin: 0 }}>
+                  Last issued {formatIssuedAt(lastWebinar.createdAt)} to {lastWebinar.recipient}. Certificate number {lastWebinar.certificateNo ? formatCertificateNo(lastWebinar.certificateNo, lastWebinar.heldOn) : 'not assigned'}. The next number is assigned automatically: {nextWebinarNo}.
+                </p>
+              ) : (
+                <p className="small muted" style={{ margin: 0 }}>None issued yet. The first number, assigned automatically, will be {nextWebinarNo}.</p>
+              )}
+            </div>
+            <a className="btn btn-s" href="/admin/certificates/webinar/record">Download Word record</a>
+          </div>
           {webinars.docs.length > 0 ? (
             <div className="card" style={{ overflowX: 'auto' }}>
               <table className="atbl m">
                 <caption className="sr">Issued webinar certificates</caption>
-                <thead><tr><th scope="col">No.</th><th scope="col">Person</th><th scope="col">Role</th><th scope="col">Webinar</th><th scope="col">Date</th><th scope="col"><span className="sr">Open</span></th></tr></thead>
+                <thead><tr><th scope="col">Certificate number</th><th scope="col">Issued to</th><th scope="col">Issued on</th><th scope="col">Role</th><th scope="col">Webinar</th><th scope="col">Webinar date</th><th scope="col"><span className="sr">Open</span></th></tr></thead>
                 <tbody>
                   {webinars.docs.map((doc) => (
                     <tr key={doc.id}>
-                      <td data-l="No.">{doc.certificateNo ? formatCertificateNo(doc.certificateNo, doc.heldOn) : '—'}</td>
+                      <td data-l="Certificate number">{doc.certificateNo ? formatCertificateNo(doc.certificateNo, doc.heldOn) : '—'}</td>
                       <td><strong>{doc.recipient}</strong></td>
+                      <td data-l="Issued on" className="small" style={{ whiteSpace: 'nowrap' }}>{formatIssuedAt(doc.createdAt)}</td>
                       <td data-l="Role">{roleLabel(doc.role)}</td>
                       <td data-l="Webinar" className="small">{doc.webinar}</td>
-                      <td data-l="Date" className="small">{doc.heldOn}</td>
+                      <td data-l="Webinar date" className="small">{doc.heldOn}</td>
                       <td><Link className="btn btn-s btn-sm" href={`/admin/certificates/webinar/${doc.id}`}>Open</Link></td>
                     </tr>
                   ))}

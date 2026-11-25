@@ -44,7 +44,8 @@
 .cert-sig{font-family:'Great Vibes','Brush Script MT',cursive;font-size:calc(var(--u)*38);line-height:1.15;color:#1F2D6B;white-space:nowrap;padding:0 calc(var(--u)*6) calc(var(--u)*6);border-bottom:calc(var(--u)*1.5) solid #8A948F;width:100%}
 .cert-sign>span:last-child{margin-top:calc(var(--u)*8);font-family:'EB Garamond',Georgia,serif;font-size:calc(var(--u)*14.5);line-height:1.35;color:#4A5A57}
 
-.wcert-body{margin:calc(var(--u)*16) 0 0;max-width:calc(var(--u)*560);font-size:calc(var(--u)*15);line-height:1.4;color:#17323A}
+.wcert .cert-name{margin-top:calc(var(--u)*12)}
+.wcert-body{margin:calc(var(--u)*28) 0 0;max-width:calc(var(--u)*580);font-size:calc(var(--u)*17);line-height:2.05;color:#17323A}
 .wcert-body strong{font-weight:700}
 .wcert .wcert-no{position:relative;z-index:1;margin-top:auto;margin-bottom:calc(var(--u)*62);display:flex;flex-direction:column;align-items:center;text-align:center;gap:calc(var(--u)*4);width:calc(var(--u)*230);font-family:Inter,system-ui,sans-serif;font-weight:400;font-size:calc(var(--u)*13.5);line-height:1.35;letter-spacing:.02em;color:#5D6B67}
 .wcert-org{flex:1;align-self:flex-end;text-align:center;font-family:Inter,system-ui,sans-serif;font-weight:700;font-size:calc(var(--u)*15);line-height:1.35;color:#17323A;padding-bottom:calc(var(--u)*6)}
