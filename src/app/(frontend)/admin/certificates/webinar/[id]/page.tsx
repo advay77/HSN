@@ -5,11 +5,12 @@ import React from 'react'
 import '@/app/(frontend)/styles/pages/certificate.css'
 
 import { AdminTopbar } from '@/components/admin/AdminTopbar'
-import { PrintCertificate } from '@/components/certificates/PrintCertificate'
+import { DeleteWebinarCertificate } from '@/components/admin/DeleteWebinarCertificate'
+import { DownloadCertificatePdf } from '@/components/certificates/DownloadCertificatePdf'
 import { WebinarSheet } from '@/components/certificates/WebinarSheet'
 import { requireAdmin } from '@/lib/admin/auth'
 import { getPayloadClient } from '@/lib/payload'
-import { roleLabel, type WebinarCertificate } from '@/lib/certificates/webinar'
+import { certificateFileName, formatCertificateNo, roleLabel, type WebinarCertificate } from '@/lib/certificates/webinar'
 
 export const metadata = { title: 'Webinar certificate' }
 export const dynamic = 'force-dynamic'
@@ -42,8 +43,10 @@ export default async function WebinarCertificatePage({ params }: { params: Promi
         <div className="cert-wrap">
           <div className="cert-actions row g12">
             <Link className="btn btn-s" href="/admin/certificates">Back to certificates</Link>
-            <PrintCertificate />
-            <p className="small muted cert-tip">In the print window choose “Save as PDF”, landscape.</p>
+            <span className="row g12" style={{ flexWrap: 'wrap', alignItems: 'flex-start' }}>
+              <DeleteWebinarCertificate id={cert.id} label={`${formatCertificateNo(cert.certificateNo, cert.heldOn)} for ${cert.recipient}`} />
+              <DownloadCertificatePdf fileName={certificateFileName(formatCertificateNo(cert.certificateNo, cert.heldOn))} />
+            </span>
           </div>
           <WebinarSheet cert={cert} />
         </div>

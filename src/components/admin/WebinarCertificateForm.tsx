@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import React, { useActionState } from 'react'
 
 import { issueWebinarCertificate, type WebinarFormState } from '@/app/(frontend)/admin/certificates/webinar/actions'
@@ -10,7 +11,14 @@ export function WebinarCertificateForm({ nextNo }: { nextNo: string }) {
   const [state, action, pending] = useActionState(issueWebinarCertificate, initial)
   return (
     <form action={action} className="card pad stack g16" style={{ maxWidth: '760px' }}>
-      {state.error && <div className="note note-err" role="alert"><span>{state.error}</span></div>}
+      {state.error && (
+        <div className="note note-err" role="alert">
+          <span className="stack g8">
+            <span>{state.error}</span>
+            {state.existing && <Link className="btn btn-p btn-sm self-start" href={`/admin/certificates/webinar/${state.existing.id}`}>Open {state.existing.number}</Link>}
+          </span>
+        </div>
+      )}
       <fieldset className="stack g12" style={{ border: 0, margin: 0, padding: 0 }}>
         <legend className="lbl">Certificate</legend>
         <div className="seg self-start" role="group" aria-label="Certificate">

@@ -20,7 +20,7 @@ function Guilloche() {
   }
   return (
     <svg className="cert-gl" viewBox="0 0 720 707" preserveAspectRatio="none" aria-hidden="true">
-      {lines.map((d, i) => <path key={i} d={d} />)}
+      {lines.map((d, i) => <path key={i} d={d} fill="none" stroke="#0B6B3A" strokeWidth=".6" opacity=".07" />)}
     </svg>
   )
 }

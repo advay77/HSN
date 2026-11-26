@@ -23,3 +23,6 @@ export function certificateYear(heldOn: string) {
   const match = heldOn.match(/\b(20\d{2})\b/)
   return match?.[1] || String(new Date().getFullYear())
 }
+
+/** A file name from a certificate number, e.g. HSN/WEB/001/2026 → HSN-WEB-001-2026. */
+export const certificateFileName = (label: string) => label.replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'certificate'

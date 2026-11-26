@@ -6,6 +6,7 @@ import { AdminTopbar } from '@/components/admin/AdminTopbar'
 import { listCompletions } from '@/lib/admin/certificates'
 import { requireAdmin } from '@/lib/admin/auth'
 import { RestartNumbering } from '@/components/admin/RestartNumbering'
+import { DeleteWebinarCertificate } from '@/components/admin/DeleteWebinarCertificate'
 import { formatIssuedAt, nextCertificateNumber } from '@/lib/courses/certificate'
 import { formatCertificateNo, roleLabel } from '@/lib/certificates/webinar'
 import { getPayloadClient } from '@/lib/payload'
@@ -98,7 +99,7 @@ export default async function AdminCertificatesPage() {
             <div className="card" style={{ overflowX: 'auto' }}>
               <table className="atbl m">
                 <caption className="sr">Issued webinar certificates</caption>
-                <thead><tr><th scope="col">Certificate number</th><th scope="col">Issued to</th><th scope="col">Issued on</th><th scope="col">Role</th><th scope="col">Webinar</th><th scope="col">Webinar date</th><th scope="col"><span className="sr">Open</span></th></tr></thead>
+                <thead><tr><th scope="col">Certificate number</th><th scope="col">Issued to</th><th scope="col">Issued on</th><th scope="col">Role</th><th scope="col">Webinar</th><th scope="col">Webinar date</th><th scope="col"><span className="sr">Actions</span></th></tr></thead>
                 <tbody>
                   {webinars.docs.map((doc) => (
                     <tr key={doc.id}>
@@ -108,7 +109,7 @@ export default async function AdminCertificatesPage() {
                       <td data-l="Role">{roleLabel(doc.role)}</td>
                       <td data-l="Webinar" className="small">{doc.webinar}</td>
                       <td data-l="Webinar date" className="small">{doc.heldOn}</td>
-                      <td><Link className="btn btn-s btn-sm" href={`/admin/certificates/webinar/${doc.id}`}>Open</Link></td>
+                      <td><span className="row g8" style={{ flexWrap: 'nowrap' }}><Link className="btn btn-s btn-sm" href={`/admin/certificates/webinar/${doc.id}`}>Open</Link><DeleteWebinarCertificate small id={doc.id} label={`${doc.certificateNo ? formatCertificateNo(doc.certificateNo, doc.heldOn) : ''} for ${doc.recipient}`} /></span></td>
                     </tr>
                   ))}
                 </tbody>

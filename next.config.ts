@@ -24,7 +24,8 @@ const csp = [
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https:",
   "media-src 'self' blob:",
-  `connect-src 'self'${supabaseOrigin ? ' ' + supabaseOrigin : ''}${dev ? ' ws: wss:' : ''}`,
+  // Google Fonts: the certificate's Download PDF reads the font files to draw them into the PDF.
+  `connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com${supabaseOrigin ? ' ' + supabaseOrigin : ''}${dev ? ' ws: wss:' : ''}`,
   "frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com https://challenges.cloudflare.com",
   "frame-ancestors 'self'",
   "form-action 'self'",
