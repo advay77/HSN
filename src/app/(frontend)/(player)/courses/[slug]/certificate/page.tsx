@@ -96,7 +96,7 @@ export default async function CertificatePage({ params }: Props) {
 
   return (
     <main className="cert-wrap">
-      <CertificateActions linkedIn={linkedIn} />
+      <CertificateActions linkedIn={linkedIn} fileName={`HSN-certificate-${id.replace(/[^A-Za-z0-9]+/g, '-')}`} />
       <CertificateSheet name={member.name} course={course.title} issued={formatIssued(issued)} id={id} verifyUrl={verifyUrl} qr={qr} issuer={issuer} />
     </main>
   )
