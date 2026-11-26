@@ -72,6 +72,7 @@ export interface Config {
     'library-resources': LibraryResource;
     advisors: Advisor;
     'webinar-certificates': WebinarCertificate;
+    webinars: Webinar;
     'team-members': TeamMember;
     'site-copy': SiteCopy;
     media: Media;
@@ -98,6 +99,7 @@ export interface Config {
     'library-resources': LibraryResourcesSelect<false> | LibraryResourcesSelect<true>;
     advisors: AdvisorsSelect<false> | AdvisorsSelect<true>;
     'webinar-certificates': WebinarCertificatesSelect<false> | WebinarCertificatesSelect<true>;
+    webinars: WebinarsSelect<false> | WebinarsSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     'site-copy': SiteCopySelect<false> | SiteCopySelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -516,6 +518,37 @@ export interface WebinarCertificate {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webinars".
+ */
+export interface Webinar {
+  id: number;
+  title: string;
+  heldOn: string;
+  /**
+   * Optional, e.g. "6:00–7:00 pm IST".
+   */
+  time?: string | null;
+  summary?: string | null;
+  speakers?:
+    | {
+        name: string;
+        role?: string | null;
+        /**
+         * e.g. Speaker, Moderator, Panelist.
+         */
+        label?: string | null;
+        photo?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  youtubeUrl?: string | null;
+  video?: (number | null) | Media;
+  published?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "team-members".
  */
 export interface TeamMember {
@@ -903,6 +936,10 @@ export interface PayloadLockedDocument {
         value: number | WebinarCertificate;
       } | null)
     | ({
+        relationTo: 'webinars';
+        value: number | Webinar;
+      } | null)
+    | ({
         relationTo: 'team-members';
         value: number | TeamMember;
       } | null)
@@ -1238,6 +1275,30 @@ export interface WebinarCertificatesSelect<T extends boolean = true> {
   certificateNo?: T;
   rightName?: T;
   rightTitle?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webinars_select".
+ */
+export interface WebinarsSelect<T extends boolean = true> {
+  title?: T;
+  heldOn?: T;
+  time?: T;
+  summary?: T;
+  speakers?:
+    | T
+    | {
+        name?: T;
+        role?: T;
+        label?: T;
+        photo?: T;
+        id?: T;
+      };
+  youtubeUrl?: T;
+  video?: T;
+  published?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -14,6 +14,7 @@ import { Courses } from './collections/Courses'
 import { LibraryResources } from './collections/LibraryResources'
 import { Advisors } from './collections/Advisors'
 import { WebinarCertificates } from './collections/WebinarCertificates'
+import { Webinars } from './collections/Webinars'
 import { TeamMembers } from './collections/TeamMembers'
 import { SiteCopy } from './collections/SiteCopy'
 import { LoginCodes } from './collections/LoginCodes'
@@ -69,6 +70,7 @@ export default buildConfig({
     LibraryResources,
     Advisors,
     WebinarCertificates,
+    Webinars,
     TeamMembers,
     SiteCopy,
     Media,

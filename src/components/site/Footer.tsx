@@ -38,6 +38,7 @@ export function Footer({ caseStudiesLabel = SITE_COPY.caseStudiesMenu, tagline =
               <span className="ftr-h">{footer.network}</span>
               <Link className="ftr-l" href="/case-studies">{caseStudiesLabel}</Link>
               <Link className="ftr-l" href="/library">{footer.library}</Link>
+              <Link className="ftr-l" href="/webinars">{footer.webinars}</Link>
               <Link className="ftr-l" href="/get-involved">{footer.involved}</Link>
               <Link className="ftr-l" href="/membership">{footer.membership}</Link>
               <Link className="ftr-l" href="/login">{footer.login}</Link>
