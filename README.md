@@ -6,8 +6,9 @@ Pages are ported from the approved design in `D:\HSN-Design-System` and keep its
 ## Run locally
 1. `npm install`
 2. Copy `.env.example` to `.env` and fill it in (a SQLite file is used in development).
-3. `npm run dev`, then open http://localhost:3000. The first visit to `/admin` asks you to create the first admin account.
-4. Optional demo courses (delete them later from the admin panel): `npx payload run scripts/seed-demo-courses.ts`
+3. Create the admin panel account: set `ADMIN_EMAIL` and `ADMIN_PASSWORD` (12+ characters) in `.env`, then run `npx payload run scripts/create-admin.ts`. Run it again after changing either value.
+4. `npm run dev`, then open http://localhost:3000. Log in to the admin panel at `/admin` (it redirects to `/login?admin=1`).
+5. Optional demo courses (delete them later from the admin panel): `npx payload run scripts/seed-demo-courses.ts`
 
 Without SMTP settings, sign-in codes are printed in the dev server console.
 
