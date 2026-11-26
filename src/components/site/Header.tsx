@@ -34,6 +34,7 @@ const menuFrom = (nav: NavCopy, casesLabel: string): NavItem[] => [
     items: [
       { id: 'cases', label: casesLabel, href: '/case-studies', sub: nav.casesBlurb },
       { id: 'library', label: nav.library, href: '/library', sub: nav.libraryBlurb },
+      { id: 'webinars', label: nav.webinars, href: '/webinars', sub: nav.webinarsBlurb },
     ],
   },
   { id: 'membership', label: nav.membership, href: '/membership' },

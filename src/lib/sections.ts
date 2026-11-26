@@ -5,6 +5,7 @@ const SECTIONS: [string, string][] = [
   ['/courses', 'Courses'],
   ['/case-studies', 'Case Studies'],
   ['/library', 'Library'],
+  ['/webinars', 'Webinars'],
   ['/get-involved', 'Get Involved'],
   ['/membership', 'Membership'],
   ['/contact', 'Contact'],

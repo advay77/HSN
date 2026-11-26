@@ -14,6 +14,8 @@ export type NavCopy = {
   casesBlurb: string
   library: string
   libraryBlurb: string
+  webinars: string
+  webinarsBlurb: string
   join: string
   whatsapp: string
   whatsappBlurb: string
@@ -42,6 +44,7 @@ export type FooterCopy = {
   services: string
   courses: string
   library: string
+  webinars: string
   involved: string
   membership: string
   login: string
@@ -66,7 +69,7 @@ export const SITE_FONTS = [
 ] as const
 export const fontStack = (id: string) => SITE_FONTS.find((f) => f.id === id)?.stack || SITE_FONTS[0].stack
 export const pageIdFromPath = (path: string) => {
-  const hit: [string, string][] = [['/about', 'about'], ['/advisory', 'advisory'], ['/founder', 'team'], ['/services', 'services'], ['/courses', 'courses'], ['/case-studies', 'cases'], ['/library', 'library'], ['/get-involved', 'involved'], ['/membership', 'membership'], ['/contact', 'contact'], ['/feedback', 'feedback'], ['/privacy', 'privacy']]
+  const hit: [string, string][] = [['/about', 'about'], ['/advisory', 'advisory'], ['/founder', 'team'], ['/services', 'services'], ['/courses', 'courses'], ['/case-studies', 'cases'], ['/library', 'library'], ['/webinars', 'webinars'], ['/get-involved', 'involved'], ['/membership', 'membership'], ['/contact', 'contact'], ['/feedback', 'feedback'], ['/privacy', 'privacy']]
   return hit.find(([href]) => path === href || path.startsWith(href + '/'))?.[1] || 'home'
 }
 export type PrivacyCopy = {
@@ -129,6 +132,8 @@ export type SiteCopy = {
   caseStudiesIntro: string
   libraryTitle: string
   libraryIntro: string
+  webinarsTitle: string
+  webinarsIntro: string
   involvedTitle: string
   involvedIntro: string
   involvedPros: string
@@ -212,6 +217,8 @@ Today, HSN connects healthcare leaders, quality and patient safety professionals
   caseStudiesMenu: 'Case Studies & Posters',
   caseStudiesIntro: 'Real-world projects from hospitals cutting carbon, waste and cost without compromising patient safety.',
   libraryTitle: 'Library',
+  webinarsTitle: 'Webinars',
+  webinarsIntro: 'Recordings of HSN webinars with healthcare and sustainability experts. Watch any session, any time.',
   libraryIntro: 'Guides, toolkits, reports and templates to help healthcare teams plan, measure and report sustainability improvements.',
   involvedTitle: 'Get Involved',
   involvedIntro: 'Whether you lead a ward, run a hospital or research healthcare decarbonization, there’s a practical way to take part.',
@@ -292,6 +299,7 @@ Today, HSN connects healthcare leaders, quality and patient safety professionals
     advisory: 'Advisory Board', advisoryBlurb: 'Visionary Healthcare Leaders', team: 'Our Team', teamBlurb: 'The people of HSN',
     courses: 'Courses', services: 'Services', resources: 'Resources', casesBlurb: 'Real Hospital Projects',
     library: 'Library', libraryBlurb: 'Downloadable Toolkits, Guides and Documents',
+    webinars: 'Webinars', webinarsBlurb: 'Talks and Recordings from HSN Experts',
     join: 'Join HSN', whatsapp: 'Join WhatsApp Group', whatsappBlurb: 'Opens WhatsApp',
     linkedin: 'Follow on LinkedIn', linkedinBlurb: 'Opens LinkedIn',
     membership: 'Membership', membershipBlurb: 'Plans and How to Join', involved: 'Get Involved', involvedBlurb: 'Ways to Take Part',
@@ -300,7 +308,7 @@ Today, HSN connects healthcare leaders, quality and patient safety professionals
   footer: {
     explore: 'Explore', network: 'Network', support: 'Support',
     home: 'Home', about: 'About Us', advisory: 'Advisory Board', team: 'Our Team', services: 'Services', courses: 'Courses',
-    library: 'Library', involved: 'Get Involved', membership: 'Membership', login: 'Log in',
+    library: 'Library', webinars: 'Webinars', involved: 'Get Involved', membership: 'Membership', login: 'Log in',
     accessibility: 'Accessibility', feedback: 'Feedback', privacy: 'Privacy Policy', contact: 'Contact us',
     copyright: 'Healthcare Sustainability Network',
   },

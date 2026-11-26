@@ -16,6 +16,7 @@ const NAV: [string, string][] = [
   ['/admin/interest', 'Membership interest'],
   ['/admin/case-studies', 'Case studies'],
   ['/admin/library', 'Library'],
+  ['/admin/webinars', 'Webinars'],
   ['/admin/advisory', 'Advisory Board'],
   ['/admin/team', 'Our Team'],
   ['/admin/site-text', 'Page text'],

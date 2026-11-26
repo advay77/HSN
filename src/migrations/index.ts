@@ -22,6 +22,7 @@ import * as migration_20261119_140000_library_types from './20261119_140000_libr
 import * as migration_20261119_140100_library_checklist_row from './20261119_140100_library_checklist_row';
 import * as migration_20261122_160000_webinar_certificates from './20261122_160000_webinar_certificates';
 import * as migration_20261122_231500_webinar_certificate_number from './20261122_231500_webinar_certificate_number';
+import * as migration_20261126_120000_webinars from './20261126_120000_webinars';
 
 export const migrations = [
   {
@@ -143,5 +144,10 @@ export const migrations = [
     up: migration_20261122_231500_webinar_certificate_number.up,
     down: migration_20261122_231500_webinar_certificate_number.down,
     name: '20261122_231500_webinar_certificate_number',
+  },
+  {
+    up: migration_20261126_120000_webinars.up,
+    down: migration_20261126_120000_webinars.down,
+    name: '20261126_120000_webinars',
   },
 ];

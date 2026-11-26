@@ -53,6 +53,7 @@ const GROUPS: Group[] = [
     ],
   },
   { id: 'library', title: 'Library', href: '/library', fields: [{ key: 'libraryTitle', label: 'Page heading' }, { key: 'libraryIntro', label: 'Introduction', area: true, hint: 'The files are edited in Library.' }] },
+  { id: 'webinars', title: 'Webinars', href: '/webinars', fields: [{ key: 'webinarsTitle', label: 'Page heading' }, { key: 'webinarsIntro', label: 'Introduction', area: true, hint: 'The webinars themselves are edited in Webinars.' }] },
   {
     id: 'involved', title: 'Get Involved', href: '/get-involved',
     fields: [
@@ -124,7 +125,7 @@ export function SiteTextAdmin({ initial }: { initial: SiteCopy }) {
     ['home', 'Home'], ['about', 'About Us menu name'], ['aboutPage', 'About Us link name'], ['aboutBlurb', 'About Us subtitle'],
     ['advisory', 'Advisory Board'], ['advisoryBlurb', 'Advisory Board subtitle'], ['team', 'Our Team'], ['teamBlurb', 'Our Team subtitle'],
     ['courses', 'Courses'], ['services', 'Services'], ['resources', 'Resources menu name'], ['casesBlurb', 'Case studies subtitle'],
-    ['library', 'Library'], ['libraryBlurb', 'Library subtitle'], ['join', 'Join button'],
+    ['library', 'Library'], ['libraryBlurb', 'Library subtitle'], ['webinars', 'Webinars'], ['webinarsBlurb', 'Webinars subtitle'], ['join', 'Join button'],
     ['whatsapp', 'WhatsApp link'], ['whatsappBlurb', 'WhatsApp subtitle'], ['linkedin', 'LinkedIn link'], ['linkedinBlurb', 'LinkedIn subtitle'],
     ['membership', 'Membership'], ['membershipBlurb', 'Membership subtitle'], ['involved', 'Get Involved'], ['involvedBlurb', 'Get Involved subtitle'],
     ['login', 'Log in'], ['myHsn', 'My HSN'], ['dashboard', 'My dashboard'], ['logout', 'Log out'], ['joinShort', 'Join heading on small screens'], ['logo1', 'Logo line 1'], ['logo2', 'Logo line 2'],
@@ -143,7 +144,7 @@ export function SiteTextAdmin({ initial }: { initial: SiteCopy }) {
   const footerFields: [keyof SiteCopy['footer'], string][] = [
     ['explore', 'Explore column title'], ['network', 'Network column title'], ['support', 'Support column title'],
     ['home', 'Home'], ['about', 'About Us'], ['advisory', 'Advisory Board'], ['team', 'Our Team'], ['services', 'Services'], ['courses', 'Courses'],
-    ['library', 'Library'], ['involved', 'Get Involved'], ['membership', 'Membership'], ['login', 'Log in'],
+    ['library', 'Library'], ['webinars', 'Webinars'], ['involved', 'Get Involved'], ['membership', 'Membership'], ['login', 'Log in'],
     ['accessibility', 'Accessibility'], ['feedback', 'Feedback'], ['privacy', 'Privacy Policy'], ['contact', 'Contact us'], ['copyright', 'Copyright name'],
   ]
   const setCard = (key: CardKey, i: number, patch: Partial<ServiceLine>) =>

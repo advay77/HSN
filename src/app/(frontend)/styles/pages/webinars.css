@@ -1,0 +1,14 @@
+/* Resources → Webinars: one card per webinar, recording on the left, details and speakers on the right. */
+.web-card{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);overflow:hidden}
+.web-media{position:relative;background:#0E1F22;aspect-ratio:16/9;align-self:start}
+.web-media iframe,.web-media video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#0E1F22}
+.web-soon{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#BFE6F3;font-weight:600;background:linear-gradient(160deg,#134E5E,#0F4251)}
+.web-summary p{margin:0;color:#17323A;font-size:17px;line-height:28px}
+.web-speakers{list-style:none;margin:0;padding:16px 0 0;border-top:1px solid #EDE7D8;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.web-speaker{display:flex;gap:12px;align-items:center}
+.web-speaker img,.web-initials{width:56px;height:56px;border-radius:999px;object-fit:cover;object-position:center top;flex:none;background:#E7EEF0}
+.web-initials{display:inline-flex;align-items:center;justify-content:center;font-family:Montserrat,Inter,sans-serif;font-weight:700;color:#134E5E}
+.web-label{color:#0B6B3A;text-transform:uppercase;letter-spacing:.04em;font-size:12px}
+@container (max-width:900px){
+  .web-card{grid-template-columns:1fr}
+}

@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 
 const SITE = 'https://healthcaresustainabilitynetwork.com'
 
-const PATHS = ['/', '/about', '/advisory', '/founder', '/services', '/courses', '/case-studies', '/library', '/get-involved', '/membership', '/contact', '/privacy']
+const PATHS = ['/', '/about', '/advisory', '/founder', '/services', '/courses', '/case-studies', '/library', '/webinars', '/get-involved', '/membership', '/contact', '/privacy']
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date()

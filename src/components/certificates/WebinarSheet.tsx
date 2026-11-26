@@ -47,11 +47,12 @@ export function WebinarSheet({ cert }: { cert: WebinarCertificate }) {
           <p className="wcert-body">
             in sincere appreciation of your valued participation {cert.role === 'moderator' ? <>as <strong>Moderator</strong> of</> : <>as a <strong>Speaker</strong> at</>} the HSN webinar <strong>“{cert.webinar}”</strong>, held on {cert.heldOn}. {cert.role === 'moderator' ? 'Thank you for guiding a thoughtful and engaging discussion, and for being part of the HSN community.' : 'Thank you for sharing practical and thoughtful insights, and for being part of the HSN community.'}
           </p>
-          <div className="cert-foot">
-            <span className="wcert-org">{issuer}</span>
+          {/* One signature block in the middle: the signature, then the founder's title and the network together under it. */}
+          <div className="cert-foot wcert-foot">
             <div className="cert-sign">
               <span className="cert-sig">{cert.rightName}</span>
               <span className="wcert-who"><b>{cert.rightTitle}</b></span>
+              <span className="wcert-org">{issuer}</span>
             </div>
           </div>
         </section>
