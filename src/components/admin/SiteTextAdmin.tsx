@@ -53,7 +53,7 @@ const GROUPS: Group[] = [
     ],
   },
   { id: 'library', title: 'Library', href: '/library', fields: [{ key: 'libraryTitle', label: 'Page heading' }, { key: 'libraryIntro', label: 'Introduction', area: true, hint: 'The files are edited in Library.' }] },
-  { id: 'webinars', title: 'Webinars', href: '/webinars', fields: [{ key: 'webinarsTitle', label: 'Page heading' }, { key: 'webinarsIntro', label: 'Introduction', area: true, hint: 'The webinars themselves are edited in Webinars.' }] },
+  { id: 'webinars', title: 'Webinars', href: '/webinars', fields: [{ key: 'webinarsTitle', label: 'Page heading', hint: 'The webinars themselves are edited in Webinars.' }] },
   {
     id: 'involved', title: 'Get Involved', href: '/get-involved',
     fields: [

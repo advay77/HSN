@@ -133,7 +133,6 @@ export type SiteCopy = {
   libraryTitle: string
   libraryIntro: string
   webinarsTitle: string
-  webinarsIntro: string
   involvedTitle: string
   involvedIntro: string
   involvedPros: string
@@ -218,7 +217,6 @@ Today, HSN connects healthcare leaders, quality and patient safety professionals
   caseStudiesIntro: 'Real-world projects from hospitals cutting carbon, waste and cost without compromising patient safety.',
   libraryTitle: 'Library',
   webinarsTitle: 'Webinars',
-  webinarsIntro: 'Recordings of HSN webinars with healthcare and sustainability experts. Watch any session, any time.',
   libraryIntro: 'Guides, toolkits, reports and templates to help healthcare teams plan, measure and report sustainability improvements.',
   involvedTitle: 'Get Involved',
   involvedIntro: 'Whether you lead a ward, run a hospital or research healthcare decarbonization, there’s a practical way to take part.',

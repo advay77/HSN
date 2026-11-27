@@ -9,7 +9,7 @@ export type { CompareRow, FooterCopy, NavCopy, PrivacyCopy, ServiceLine, SiteCop
 export { SITE_COPY } from '@/lib/site/copy-defaults'
 const TEXT_KEYS = [
   'homeTitle', 'homeSubtitle', 'homeLead', 'impactTitle', 'communityTitle', 'communityText', 'goalTitle', 'goalText',
-  'partnersIntro', 'coursesTitle', 'libraryTitle', 'libraryIntro', 'webinarsTitle', 'webinarsIntro', 'involvedTitle', 'involvedIntro',
+  'partnersIntro', 'coursesTitle', 'libraryTitle', 'libraryIntro', 'webinarsTitle', 'involvedTitle', 'involvedIntro',
   'contactTitle', 'contactIntro', 'membershipTitle', 'membershipIntro', 'involvedPros', 'involvedHospitals', 'involvedResearchers', 'advisoryTitle', 'teamPageTitle',
   'submitTitle', 'feedbackTitle', 'feedbackIntro', 'footerTagline',
   'membershipCompareTitle', 'membershipNote', 'membershipPriceSoon', 'membershipCta', 'membershipCtaLive',
