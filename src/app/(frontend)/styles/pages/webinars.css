@@ -1,14 +1,32 @@
-/* Resources → Webinars: one card per webinar, recording on the left, details and speakers on the right. */
-.web-card{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);overflow:hidden}
-.web-media{position:relative;background:#0E1F22;aspect-ratio:16/9;align-self:start}
-.web-media iframe,.web-media video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#0E1F22}
-.web-soon{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#BFE6F3;font-weight:600;background:linear-gradient(160deg,#134E5E,#0F4251)}
-.web-summary p{margin:0;color:#17323A;font-size:17px;line-height:28px}
-.web-speakers{list-style:none;margin:0;padding:16px 0 0;border-top:1px solid #EDE7D8;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-.web-speaker{display:flex;gap:12px;align-items:center}
-.web-speaker img,.web-initials{width:56px;height:56px;border-radius:999px;object-fit:cover;object-position:center top;flex:none;background:#E7EEF0}
-.web-initials{display:inline-flex;align-items:center;justify-content:center;font-family:Montserrat,Inter,sans-serif;font-weight:700;color:#134E5E}
-.web-label{color:#0B6B3A;text-transform:uppercase;letter-spacing:.04em;font-size:12px}
+/* Resources → Webinars: a compact table, one row per webinar. Watch opens the video under its row. */
+.web-wrap{overflow:hidden}
+.web-tbl td{vertical-align:middle}
+.web-c-date{width:190px}
+.web-c-date .strong{white-space:nowrap}
+.web-c-sp{width:30%}
+.web-c-act{width:150px;text-align:end}
+.web-c-date>span:not(.bdg){display:block}
+.web-time{margin-top:2px}
+.web-up{display:inline-flex;margin-top:6px}
+.web-title{font-weight:600;color:#134E5E;font-size:17px;line-height:25px}
+.web-tbl .web-names{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;font-size:15px;line-height:22px}
+.web-row.on td{background:#F4F9F5}
+.web-c-act .btn{gap:6px;white-space:nowrap}
+.web-open td{padding:0 16px 20px;border-top:0;background:#F4F9F5}
+.web-panel{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;align-items:start}
+.web-player{position:relative;aspect-ratio:16/9;background:#0E1F22;border-radius:12px;overflow:hidden}
+.web-player iframe,.web-player video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.web-about p{margin:0;color:#17323A;font-size:16px;line-height:26px}
+.web-tbl .web-people{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.web-people li{display:flex;gap:12px;align-items:center}
+.web-people img,.web-initials{width:44px;height:44px;border-radius:999px;object-fit:cover;object-position:center top;flex:none;background:#E7EEF0}
+.web-initials{display:inline-flex;align-items:center;justify-content:center;font-family:Montserrat,Inter,sans-serif;font-weight:700;font-size:14px;color:#134E5E}
 @container (max-width:900px){
-  .web-card{grid-template-columns:1fr}
+  .web-panel{grid-template-columns:1fr}
+}
+/* Phones: the table's rows become stacked blocks (see .tbl-m); keep the Watch button on the left. */
+@container (max-width:600px){
+  .web-c-date,.web-c-sp,.web-c-act{width:auto;text-align:start}
+  .web-c-act{padding-top:8px !important}
+  .web-open td{padding:0 16px 16px}
 }
