@@ -2,7 +2,7 @@
 // Instagram and Facebook icons only show once their link is set (no placeholder pages).
 export const SOCIAL = {
   whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_URL || 'https://chat.whatsapp.com/HSN-GROUP-INVITE',
-  linkedin: 'https://www.linkedin.com/company/145476154/',
+  linkedin: 'https://www.linkedin.com/company/healthcaresustainabilitynetwork/',
   instagram: process.env.NEXT_PUBLIC_INSTAGRAM_URL || '',
   facebook: process.env.NEXT_PUBLIC_FACEBOOK_URL || '',
 }
